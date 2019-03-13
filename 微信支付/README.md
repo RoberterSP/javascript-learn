@@ -13,7 +13,7 @@
     API密钥              key          支付交易,产生的签名密钥,仅保留在商户系统和微信支付平台
     Appsecret           secret       是AppID对应的接口密码,用于获取接口调用凭证access_token
 ####    接口规则
-    协议规则 --->  参考:https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_1
+    协议规则 --->  参考:https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_1(https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_1)
     参数规定 --->  参考:https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_2
     安全规范 --->  参考:https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_3
 
