@@ -1,0 +1,9 @@
+*.lock
+.gitignore
+yarn-error.log
+settings.json
+package-lock.json
+
+node_modules
+
+rev-manifest.json
