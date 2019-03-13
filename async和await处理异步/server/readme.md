@@ -1,0 +1,1 @@
+#### 模拟一下后端接口，我们新建一个node 项目。 新建一个文件夹 async, 然后npm init -y 新建package.json文件，npm install express --save 安装后端依赖，再新建server.js 文件作为服务端代码， public文件夹作为静态文件的放置位置， 在public 文件夹里面放index.html 文件, 输入: npm start,  启动成功后，在浏览器中输入 http://localhost:3000
