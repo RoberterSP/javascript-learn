@@ -1,0 +1,34 @@
+{
+  "name": "webpack-demo",
+  "version": "1.0.0",
+  "description": "ceshi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack",
+    "server": "webpack-dev-server --open",
+    "b": "webpack-dev-server --config ./build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --hot --inline  --watch"
+  },
+  "keywords": [
+    "webpack-demo"
+  ],
+  "author": "csp",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {
+    "clean-webpack-plugin": "^1.0.0",
+    "css-loader": "^2.0.1",
+    "express": "^4.16.3",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "less-loader": "^4.1.0",
+    "style-loader": "^0.23.1",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "url-loader": "^1.1.2",
+    "webpack-dev-server": "^3.1.10"
+  }
+}
