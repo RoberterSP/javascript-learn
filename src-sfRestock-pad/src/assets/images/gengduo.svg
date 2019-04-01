@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180px" height="80px" viewBox="0 0 180 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.3 (67297) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 17 Copy 4</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="录入界面" transform="translate(-1799.000000, -188.000000)">
+            <g id="Group-17-Copy-4" transform="translate(1799.000000, 188.000000)">
+                <g id="symbols/button/ghost/noraml">
+                    <rect id="Rectangle-14-Copy-11" stroke="#1296DB" stroke-width="2" fill="#FFFFFF" x="1" y="1" width="178" height="78" rx="4"></rect>
+                    <g id="Group" stroke-width="1" transform="translate(18.000000, 21.000000)" fill="#1296DB">
+                        <text id="更多" font-family="PingFangSC-Regular, PingFang SC" font-size="24" font-weight="normal">
+                            <tspan x="72" y="28">更多</tspan>
+                        </text>
+                        <g id="icon/通用/更多-more">
+                            <rect id="Rectangle-5" x="0.8" y="16" width="6.4" height="6.4" rx="0.8"></rect>
+                            <rect id="Rectangle-5-Copy" x="16" y="16" width="6.4" height="6.4" rx="0.8"></rect>
+                            <rect id="Rectangle-5-Copy-2" x="31.2" y="16" width="6.4" height="6.4" rx="0.8"></rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

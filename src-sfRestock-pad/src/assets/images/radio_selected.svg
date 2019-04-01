@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>Combined Shape</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon/list/radio-on" fill="#1296DB">
+            <path d="M25,50 C11.1928813,50 0,38.8071187 0,25 C0,11.1928813 11.1928813,1.77635684e-15 25,1.77635684e-15 C38.8071187,1.77635684e-15 50,11.1928813 50,25 C50,38.8071187 38.8071187,50 25,50 Z M38.5359912,12 L21.6519824,29.975735 L11.4819824,18.9008992 L7,23.6684532 L21.6519824,39.5294118 L43,16.7675539 L38.5359912,12 Z" id="Combined-Shape"></path>
+        </g>
+    </g>
+</svg>
