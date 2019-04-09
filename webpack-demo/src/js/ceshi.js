@@ -3,7 +3,7 @@ import './a.js';
 function ceshi(aa) {
     document.write(aa)
 }
-ceshi("Csp")
+ceshi("我是ceshi.js")
 //将之前写的require('./style.css');改成下面的语句
  
 require('!style-loader!css-loader!./../css/ceshi.css');
