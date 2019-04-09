@@ -1,5 +1,5 @@
 console.log('陈少鹏')
-import a from './a.js';
+import './a.js';
 function ceshi(aa) {
     document.write(aa)
 }
