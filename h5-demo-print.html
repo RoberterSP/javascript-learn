@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0">
+    <title>H5打印测试用例</title>
+</head>
+<style>
+.btn {
+    padding: 8px 16px;
+    border: 1px solid;
+    cursor: pointer;
+}
+</style>
+<body>
+    <div class="ticket">
+        <h1>打印测试</h1>
+        <button class="btn" onclick="printDemo">打印</button>
+    </div>
+</body>
+
+</html>
+<script>
+/**
+ * 使用H5打印测试说明：
+ * 1.WebViewJavascriptBridge: 是WebView和Js交互通信的桥梁
+ *  H5调用原生的方法: callHandler                
+ *      示例: js_bridge.callHandler('getDataTableCallback', {'getUserInfo':'ceshi'},function(data) {})
+ *  原生调用H5的方法: registerHandler
+ *      示例: js_bridge.callHandler('getDataTableRegisterHandler',function(data, responseCallback) {})
+ * 2.打印流程:
+ *    H5通过 callHandler 方法调用原生注册的 registerHandler 方法,原生的通过内置的打印方法把前端H5页面进行截图,然后再进行打印 
+ */
+
+
+    // bridge暴露出来的全局变量
+    var js_bridge = '';
+    // 初始化JS的WebViewJavascriptBridge
+    init_jsbridge();
+    // 搭建OC和js互相调用的桥梁
+    function setupWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) {
+            return callback(WebViewJavascriptBridge);
+        }
+        if (window.WVJBCallbacks) {
+            return window.WVJBCallbacks.push(callback);
+        }
+        // 创建一个 WVJBCallbacks 全局属性数组，并将 callback 插入到数组中。
+        window.WVJBCallbacks = [callback];
+
+        // 创建一个 iframe 元素
+        var WVJBIframe = document.createElement('iframe');
+        // 不显示
+        WVJBIframe.style.display = 'none';
+        // 设置iframe的属性
+        WVJBIframe.src = 'wvjbscheme://__BRIDGE_LOADED__';
+        // 把iframe添加到当前的文档流里面
+        document.documentElement.appendChild(WVJBIframe);
+        setTimeout(function() {
+            document.documentElement.removeChild(WVJBIframe)
+        }, 0)
+    }
+
+    function connectWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) {
+            callback(WebViewJavascriptBridge)
+        } else {
+            document.addEventListener('WebViewJavascriptBridgeReady', function() {
+                callback(WebViewJavascriptBridge)
+            }, false)
+        }
+    }
+
+    function init_jsbridge() {
+        setupWebViewJavascriptBridge(function(bridge) {
+            _share(bridge, 'ios');
+        })
+        // 注册回调函数，第一次连接时调用 初始化函数
+        // bridge.init 只有android需要调用初始化，可以使用Object.keys(bridge) 打开查看对象，ios没有init方法
+        connectWebViewJavascriptBridge(function(bridge) {
+            bridge.init(function(message, responseCallback) {
+                var data = {
+                    'Javascript Responds': 'Wee!'
+                }
+                responseCallback(data)
+            })
+            _share(bridge, 'android');
+        })
+    }
+    
+    function _share(bridge, device) {
+        js_bridge = bridge;
+    }
+
+    function printDemo() {
+        // 打印调用原生的方法   http://api.doc.nexttao.com/index.php?s=/65&page_id=2810
+        js_bridge.callHandler('getDataTableCallback', {},function(data) {})
+    }
+</script>
