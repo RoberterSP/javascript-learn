@@ -29,3 +29,25 @@ let { a, b, c} = detail
 console.log('a=', a, 'b=', b, 'c=', c)
 
 // 对象字面量简写法
+
+class vip {
+  constructor (name, age) {
+    this.name = name
+    this.age = age
+  }
+  showName () {
+    alert(this.name)
+  }
+}
+ class vipSup extends vip{
+   constructor (name, age, level) {
+     super(name, age)
+     this.level = level
+   }
+   vipNameShow () {
+     alert(this.level)
+   }
+ }
+ let vipSup1 = new vipSup('CSP',20,3)
+ vipSup1.vipNameShow()
+ vipSup1.showName()
