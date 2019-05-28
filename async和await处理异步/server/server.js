@@ -1,6 +1,6 @@
-const express = require('express');
-const app = express();// express.static 提供静态文件，就是html, css, js 文件
-app.use(express.static('public'));
+const express = require('express'); // 引入express模块, 是node.js中最有名的web服务器框架
+const app = express();  // 实例化该模块
+app.use(express.static('es6'));// express.static 提供静态文件，就是html, css, js 文件
 
 // 电话号码返回省和市，为了模拟延迟，使用了setTimeout
 app.post('/phoneLocation', (req, res) => {
