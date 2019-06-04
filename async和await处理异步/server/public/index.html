@@ -10,6 +10,11 @@
 </head>
 
 <body>
+    <form action="/process_get" method="POST">
+        <label>first_name</label><input type="text" name="first_name"/>
+        <label>last_name</label><input type="text" name="last_name"/>
+        <input type="submit" value="Submit"/>
+    </form>
     <div id="app">
 
         <!-- 输入框区域 -->
@@ -29,6 +34,7 @@
 
     <!-- js 代码区域 -->
     <script>
+        // import { creatPromise } from './common.js'
         new Vue({
             el: '#app',
             data: {
@@ -36,54 +42,26 @@
                 faceList: ["20元", "30元", "50元"]
             },
             methods: {
+                creatPromise: (url, params) => {
+                     axios.post(url, params)
+                },
                 //获取到城市信息
                 getLocation(phoneNum) {
-                    return axios.post('phoneLocation', {
-                        phoneNum
-                    })
+                    return axios.post('phoneLocation', {phoneNum})
                 },
                 // 获取面值
                 getFaceList(province, city) {
-                    return axios.post('/faceList', {
-                        province,
-                        city
-                    })
+                    return axios.post('/faceList', {province ,city})
                 },
                 // 点击确定按钮时，获取面值列表
-                getFaceResult() {
-                    // 常规代码写法如下:
-                    // this.getLocation(this.phoneNum)
-                    //     .then(res => {
-                    //         if (res.status === 200 && res.data.success) {
-                    //             let province = res.data.obj.province;
-                    //             let city = res.data.obj.city;
-
-                    //             this.getFaceList(province, city)
-                    //                 .then(res => {
-                    //                     if (res.status === 200 && res.data.success) {
-                    //                         this.faceList = res.data.obj
-                    //                     }
-                    //                 })
-                    //         }
-                    //     })
-                    //     .catch(err => {
-                    //         console.log(err)
-                    //     })
-                    // 一下是用await的写法
-                    try {
-                        let location = await this.getLocation(this.phoneNum);
-                        if (location.data.success) {
-                            let province = location.data.obj.province;
-                            let city = location.data.obj.city;
-                            let result = await this.getFaceList(province, city);
-                            if (result.data.success) {
-                                this.faceList = result.data.obj;
-                            }
-                        }
-                    } catch (err) {
-                        console.log(err);
-                    }
-
+                async getFaceResult() {
+                     let res = await this.getLocation(this.phoneNum)
+                     if (res.status === 200 && res.data.success) {
+                        let province = res.data.obj.province;
+                        let city = res.data.obj.city;
+                        let obj = await this.getFaceList(province, city)
+                        this.faceList = obj.data.obj
+                     }
                 }
             }
         })
