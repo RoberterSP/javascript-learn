@@ -1,6 +1,17 @@
 const express = require('express')
 const app = express()
+var path = require("path");
 var bodyParser = require('body-parser'); // 加载Express中间件
+var fs = require('fs');
+
+//创建文件夹目录
+var dirPath = path.join(__dirname, "file");
+if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath);
+    console.log("文件夹创建成功");
+} else {
+    console.log("文件夹已存在");
+}
 
 
 //引入mongodb模块，获得客户端对象
@@ -9,7 +20,73 @@ const MongoClient = require('mongodb').MongoClient;
 const DB_CONN_STR = 'mongodb://localhost:27017/gomall';
 // Database Name
 const dbName = 'gomall'
-
+var data = [{
+    "product_code": "172100",
+    "product_id": 106,
+    "sale_qty": 3.0,
+    "rank": 4,
+    "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "unit_price": 4999.0,
+    "category_id": 9,
+    "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
+    "category_name": "棒球服"
+},{
+    "product_code": "1721005",
+    "product_id": 106,
+    "sale_qty": 3.0,
+    "rank": 4,
+    "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "unit_price": 4999.0,
+    "category_id": 9,
+    "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
+    "category_name": "棒球服"
+},{
+    "product_code": "1721005",
+    "product_id": 106,
+    "sale_qty": 3.0,
+    "rank": 4,
+    "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "unit_price": 4999.0,
+    "category_id": 9,
+    "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
+    "category_name": "棒球服"
+},{
+    "product_code": "1721005",
+    "product_id": 106,
+    "sale_qty": 3.0,
+    "rank": 4,
+    "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "unit_price": 4999.0,
+    "category_id": 9,
+    "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
+    "category_name": "棒球服"
+},{
+    "product_code": "1721005",
+    "product_id": 106,
+    "sale_qty": 3.0,
+    "rank": 4,
+    "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "unit_price": 4999.0,
+    "category_id": 9,
+    "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
+    "category_name": "棒球服"
+},{
+    "product_code": "1721005",
+    "product_id": 106,
+    "sale_qty": 3.0,
+    "rank": 4,
+    "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
+    "unit_price": 4999.0,
+    "category_id": 9,
+    "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
+    "category_name": "棒球服"
+}];
 //定义函数表达式，用于操作数据库并返回结果
 var insertData = function(db, callback) {
     //获得指定的集合 
@@ -21,73 +98,7 @@ var insertData = function(db, callback) {
     //     obj.name = `chenshaopeng${key}`
     //     data.push(obj)
     // }
-    var data = [{
-        "product_code": "172100",
-        "product_id": 106,
-        "sale_qty": 3.0,
-        "rank": 4,
-        "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "unit_price": 4999.0,
-        "category_id": 9,
-        "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
-        "category_name": "棒球服"
-    },{
-        "product_code": "1721005",
-        "product_id": 106,
-        "sale_qty": 3.0,
-        "rank": 4,
-        "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "unit_price": 4999.0,
-        "category_id": 9,
-        "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
-        "category_name": "棒球服"
-    },{
-        "product_code": "1721005",
-        "product_id": 106,
-        "sale_qty": 3.0,
-        "rank": 4,
-        "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "unit_price": 4999.0,
-        "category_id": 9,
-        "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
-        "category_name": "棒球服"
-    },{
-        "product_code": "1721005",
-        "product_id": 106,
-        "sale_qty": 3.0,
-        "rank": 4,
-        "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "unit_price": 4999.0,
-        "category_id": 9,
-        "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
-        "category_name": "棒球服"
-    },{
-        "product_code": "1721005",
-        "product_id": 106,
-        "sale_qty": 3.0,
-        "rank": 4,
-        "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "unit_price": 4999.0,
-        "category_id": 9,
-        "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
-        "category_name": "棒球服"
-    },{
-        "product_code": "1721005",
-        "product_id": 106,
-        "sale_qty": 3.0,
-        "rank": 4,
-        "thumbnail_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "image_url": "http://oss2.nexttao.com/crm/images/1721005.jpg",
-        "unit_price": 4999.0,
-        "category_id": 9,
-        "product_name": "新品男士英伦西服套装 绅士修身商务正装职业西服",
-        "category_name": "棒球服"
-    }];
+    
     collection.insert(data, function(err, result) {
         //如果存在错误
         if (err) {
@@ -99,7 +110,11 @@ var insertData = function(db, callback) {
     });
 
 }
-
+var str_json = JSON.stringify(data);
+fs.writeFile('graph.json', str_json, 'utf8', function(){
+    // 保存完成后的回调函数
+    console.log("保存完成");
+});
 // connect
 MongoClient.connect(DB_CONN_STR, function(err, db) {
     if (err) {
@@ -178,6 +193,6 @@ app.post('/process_get', urlencodeParser, (req, res) => { // 先进行回调第�
     res.end(JSON.stringify(response)); // 将获取到的值转为JSON格式的值，然后进行返回
 });
 
-var server = app.listen(800, () => {
+var server = app.listen(8220, () => {
     console.log(server.address());
 })
