@@ -1,0 +1,154 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    </head>
+
+    <body>
+        <style>
+            ul ul{
+                display: none;
+            }
+        </style>
+        <div id="container">
+
+        </div>
+        <div id="showlist" ></div>
+        <script>
+       /** var json = [{
+            "name": "中科慈航",
+            "code": "ZKCH",
+            "icon": "icon-th",
+            "people":["a","b"],
+            "child": [{
+                "name": "广州中科慈航",
+                "icon": "icon-minus-sign",
+                "code": "GZZKCH",
+                "people":["c","d","e"],
+                "parentCode": "ZKCH",
+                "child": [{
+                    "name": "广州中科慈航天河区分行",
+                    "code": "GZZKCHTQFH",
+                    "icon": "",
+                     "people":["f","g","h","k"],
+                    "parentCode": "GZZKCH",
+                    "child": []
+                }]
+            },
+            {
+                "name": "北京中科慈航",
+                "icon": "",
+                "code": "BJZKCH",
+                "parentCode": "ZKCH",
+                "people":["i","g","l","m"],
+                "child": [{
+                    "name": "北京中科慈航中城区分行",
+                    "code": "BJZKCHZCFH",
+                    "icon": "",
+                    "people":["p1","p2","p3","p4"],
+                    "parentCode": "BJZKCH",
+                    "child": []
+                }]
+            }]
+        },
+        {
+            "name": "中科科技",
+            "code": "ZKKJ",
+            "icon": "icon-th",
+            "people":["m1","m2","m3","m4"],
+            "child": [{
+                "name": "广州中科科技",
+                "code": "GZZKKJ",
+                "icon": "icon-minus-sign",
+                "parentCode": "ZKKJ",
+                "people":["k1","k2","k3","k4"],
+                "child": [{
+                    "name": "广州天河中科科技",
+                    "code": "GZTHZKKJ",
+                    "icon": "",
+                    "parentCode": "GZZKKJ",
+                    "people":["s1","s2","s3","s4"],
+                    "child": []
+                }]
+            }]
+        }];*/
+       var data = [
+            {'id': 6, 'parent_id': 2, 'data': '这是其他数据', 'name':'id6'},
+            {'id': 7, 'parent_id': 3, 'data': '这是其他数据', 'name':'id7'},
+            {'id': 2, 'parent_id': 1, 'data': '这是其他数据', 'name':'id2'},
+            {'id': 4, 'parent_id': 2, 'data': '这是其他数据', 'name':'id4'},
+            {'id': 1, 'parent_id': 0, 'data': '这是其他数据', 'name':'id1'},
+            {'id': 9, 'parent_id': 5, 'data': '这是其他数据', 'name':'id9'},
+            {'id': 8, 'parent_id': 3, 'data': '这是其他数据', 'name':'id8'},
+            {'id': 3, 'parent_id': 1, 'data': '这是其他数据', 'name':'id3'},
+            {'id': 5, 'parent_id': 2, 'data': '这是其他数据', 'name':'id5'},
+            {'id': 10, 'parent_id':6, 'data': '这是其他数据', 'name':'id10'}
+            ] 
+function jsontree(data){
+    var idmap = new Array();
+    var jsontree=new Array();
+    var id;
+    var pid;
+    for(var i =0;i<data.length;i++){
+        id=data[i].id;
+        idmap[id]=data[i];
+        idmap[id].children=[];
+    }
+    for(var i =0;i<data.length;i++){
+        id = data[i].id;
+        pid = data[i].parent_id;
+        if(idmap[pid]){
+            console.log("here");
+            idmap[pid].children.push(idmap[id]);         
+        }else{
+            jsontree.push(idmap[id]);
+        }
+    }
+    console.log(jsontree);
+    return jsontree;
+}
+var jsontree = jsontree(data);
+        function tree(data){
+            if(data!=""){
+                var ul = '<ul>';
+                for(var i=0;i<data.length;i++){
+                    if(data[i].children!=""){
+                        ul+='<li data-code='+data[i].code+" "+'data-people='+data[i].people+'><span><button>+</button></span>'+data[i].name;//若还有子元素，则显示折层按钮
+                        console.log("here");
+                        ul+=tree(data[i].children);
+                    }else{
+                        ul+='<li data-code='+data[i].code+" "+'data-people='+data[i].people+'>'+data[i].name; //无子元素，单独显示
+                    }
+                }
+                ul+='</li></ul>' ;
+            }
+            return ul;
+        }
+           var ul = tree(jsontree);
+           $("#container").append(ul);
+           $('span').each(function(){
+               $(this).click(function(){
+                event.stopPropagation();
+                   $(this).next().toggle(function(){
+                       if($(this).css("display")=="none"){
+                            $(this).prev().children().html("+");
+                       }else{
+                           $(this).prev().children().html("-");
+                    }
+                   });
+               })
+           })
+           $('li').each(function(){
+               $(this).click(function(){
+                    $("#showlist").html("");
+                   var str=$(this).attr("data-people");
+                   var arr = str.split(",");
+                   for(var i=0;i<arr.length;i++){
+                    $("#showlist").append('<p>'+arr[i]+'</p>');
+                   }
+                   return false; //执行一次  不再冒泡
+               })
+           })
+        </script>
+    </body>
+</html>
