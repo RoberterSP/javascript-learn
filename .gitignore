@@ -1,9 +1,10 @@
 *.lock
+nt-***
 .gitignore
 yarn-error.log
 settings.json
+.DS_Store
 package-lock.json
-
 node_modules
 
 rev-manifest.json
