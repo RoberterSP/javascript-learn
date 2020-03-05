@@ -46,20 +46,20 @@ router.post('/signin', async (ctx, next) => {
     
     var name = ctx.request.body.name || '',
         password = ctx.request.body.password || '';
-    let msg = new User({
-        password: password,
-        name: name,
-        author: ctx.request.body.author || '',
-        title: ctx.request.body.title || '',
-        body: ctx.request.body.body || ''
-    })
-    msg.save((err,res) => {
-        if (err) {
-            console.log(err)
-            return
-        }
-        console.log('save success issue')
-    })
+    // let msg = new User({
+    //     password: password,
+    //     name: name,
+    //     author: ctx.request.body.author || '',
+    //     title: ctx.request.body.title || '',
+    //     body: ctx.request.body.body || ''
+    // })
+    // msg.save((err,res) => {
+    //     if (err) {
+    //         console.log(err)
+    //         return
+    //     }
+    //     console.log('save success issue')
+    // })
     const token = sign({name}, secret, {expiresIn: '1h'})
     if (name === 'koa' && password === '123') {
         ctx.response.body = `<h1>Welcome, ${name}!</h1><div>token: ${token}</div>`;
