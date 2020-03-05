@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="20px" viewBox="0 0 28 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>菜单</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nav/首页1_black" transform="translate(-173.000000, -14.000000)" fill="#FFFFFF">
+            <g id="Group-5">
+                <g id="菜单" transform="translate(168.000000, 5.000000)">
+                    <g id="icon/nav/menu_白_off">
+                        <path d="M5,9 L33,9 L33,12.3333333 L5,12.3333333 L5,9 Z M5,25.6666667 L21,25.6666667 L21,29 L5,29 L5,25.6666667 Z M5,17.3333333 L33,17.3333333 L33,20.6666667 L5,20.6666667 L5,17.3333333 Z" id="Shape" fill-rule="nonzero"></path>
+                        <g id="箭头-三角形" stroke-width="1" fill-rule="evenodd" transform="translate(27.799999, 26.500000) rotate(-90.000000) translate(-27.799999, -26.500000) translate(25.299999, 21.500000)">
+                            <polygon id="Shape" fill-rule="nonzero" points="5 10 0 5 5 0"></polygon>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

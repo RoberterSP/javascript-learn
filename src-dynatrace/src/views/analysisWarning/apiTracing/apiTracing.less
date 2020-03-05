@@ -1,0 +1,201 @@
+.apiTracing {
+
+	.empty_logs{
+		font-size: 16px;
+		margin-left: 20px;
+		margin-right: 20px;
+		color: #4B647E;
+		font-family: 'PingFang SC', 'Microsoft YaHei';
+		border-bottom: 1px solid #ebeef5;
+		height: 48px;
+}
+	.my-autocomplete {
+		li {
+				line-height: normal;
+				padding: 7px;
+				.name {
+					text-overflow: ellipsis;
+					overflow: hidden;
+				}
+				.addr {
+					font-size: 12px;
+					color: #b4b4b4;
+				}
+				.highlighted .addr {
+					color: #ddd;
+				}
+		}
+	}
+	.title {
+		background: #fff;
+		border-bottom: 1px solid #E4E4E5;
+		font-size: 14px;
+		color: #003366;
+		padding: 18px 20px 18px 0;
+		.num{
+			width: 30px;
+			text-align: center;
+			display: inline-block;
+		}
+		.signBox{
+			margin-left: 22px;
+			span {
+				/* /apl/v6/shop…方法名/: */
+				border-radius: 100px;
+				position: relative;
+
+				cursor: pointer;
+				user-select: none;
+				outline: none;
+				background: #FFFFFF;
+				border: 1px solid #1296DB;
+				padding: 5px 15px;
+				// padding-right: 25px;
+				font-family: ArialMT;
+				font-size: 14px;
+				color: #00A2FF;
+				letter-spacing: 0;
+				text-align: center;
+				margin-right: 9px;
+				img {
+					width: 8px;
+				}
+			}
+		}
+	}
+	.trackBox {
+		background-color: #FFFFFF;
+		margin-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 20px;
+		padding-right: 20px;
+		.boxHeight {
+			min-height: 420px;
+		}
+	}
+	.track {
+		overflow: scroll;
+		.contain {
+			// margin-right: 34px;
+			.list {
+				cursor: pointer;
+				// margin-bottom: 20px;
+				padding-right: 22px;
+				padding-left: 22px;
+				padding-bottom: 16px;
+				background: #ffffff;
+				.timeBox{
+					width: 100%;
+					padding: 16px 10px 10px 0;
+					.percentBox {
+						margin-top: 5px;
+						margin-bottom: 5px;
+						.percent {
+							/* Mask Copy 5: */
+								background: @blue-6;
+								border-radius: 100px;
+								color: #ffffff;
+								padding: 4px 15px;;
+								font-size: 14px;
+								span{
+									font-weight: bold;
+								}
+								.ms {
+									margin-right: 10px;
+								}
+						}
+						.percentNum{
+							margin-left: 20px;
+							font-weight: bold;
+							color: #34495E;
+						}
+					}
+				}
+				.api {
+					font-size: 16px;
+					color: #003366;
+					line-height: 30px;
+				}
+				.methodName {
+					line-height: 30px;
+					color: #003366;
+					font-size: 16px;
+					.listName{
+						span{
+								position: relative;
+								/* Mask Copy 6: */
+								// background: rgba(52,73,94,0.6);;
+								border-radius: 2px;
+								/* /apl/v6/shop…方法名/ x: */
+								font-family: PingFangSC-Regular;
+								font-size: 14px;
+								color: #FFFFFF;
+								padding: 2px 4px;
+								margin-right: 8px;
+						}
+						span:hover{
+							span{
+								background: #34495E !important
+							}
+							background: #34495E !important
+						}
+						.selected{
+							background: #0980E2!important;
+						}
+						.selected:hover{
+							span{
+								background: rgba(9,128,226,0)!important;
+							}
+							background: rgba(9,128,226,0.6)!important;
+						}
+					}
+				}
+			}
+			.line{
+				height: 1px;
+				background: #E4E4E5;
+				margin: 0 22px;
+			}
+		}
+	}
+  .active {
+		/* Mask Copy 4: */
+		.list {
+			background-color: #F2FAFF !important;
+			.timeBox{
+				.percent {
+					// background-color: #114990 !important;
+				}
+			}
+			.methodName{
+				.listName{
+					span{
+						// background-color: #2E343F !important;
+					}
+				}
+			}
+
+		}
+	}
+	.inputPosition{
+		position: absolute;
+		top: 0px;
+		left: 8px;
+		color: #c0c4cc;
+	}
+	._input {
+		width: 102px;
+		input {
+			// text-indent: 54px;
+		}
+	}
+	._inputLimit {
+		width: 102px;
+		input {
+			// text-indent: 30px;
+		}
+	}
+	.el-input__inner{
+		border-radius: 2px;
+	}
+}

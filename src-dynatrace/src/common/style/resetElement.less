@@ -1,0 +1,119 @@
+@import "~common/style/variable";
+
+// 表格第一列字重加大
+.el-table__row td:first-child .header-style .title,
+.el-table__row td:first-child .header-style .title a {
+  font-weight: 600;
+}
+// 图标 400
+.el-table__row td:first-child .header-style .title .iconfont {
+  font-weight: 400;
+}
+
+.popper__arrow {
+  display: none !important;
+}
+
+.el-select-dropdown {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  // transform: translateY(-4px);
+}
+
+.el-select .el-input .el-select__caret {
+  color: @theme-color;
+}
+
+.el-form-item__label:before {
+  display: none;
+}
+.el-form--label-top .el-form-item__label {
+  line-height: 14px !important;
+}
+
+.el-form-item.is-error .el-input__inner, .el-form-item.is-error .el-input__inner:focus, .el-form-item.is-error .el-textarea__inner, .el-form-item.is-error .el-textarea__inner:focus, .el-message-box__input input.invalid, .el-message-box__input input.invalid:focus {
+  border-color: #CCCCCC !important;
+}
+
+.el-form-item__error {
+  width: 100% !important;
+  color: #DC172A !important;
+  line-height: 33px !important;
+  height: 33px !important;
+  padding: 0 13px !important;
+  border: 1px solid #CCCCCC !important;
+  border-top: 2px solid #DC172A !important;
+  top: 88% !important;
+  background: #F8F8F8;
+}
+.el-form-item.is-error {
+  margin-bottom: 37px;
+}
+
+.el-form-item.full-content .el-form-item__content{
+  width: 100%;
+}
+
+.el-button.el-button--primary {
+  background: #00A1B2;
+}
+.el-button.el-button--primary.is-plain {
+  color: #00A1B2;
+  background: #e6f6f7;
+  border-color: #99d9e0;
+}
+.el-button.el-button--primary:hover {
+  background: #00848E;
+  border-color: #00848E;
+}
+.el-button.el-button--primary:active {
+  background: #006D75;
+  border-color: #006D75;
+}
+.el-button.el-button--primary:focus {
+  background: #00A1B2;
+  border-color: #00A1B2;
+  color: #ffffff;
+}
+.el-button.el-button--primary.is-disabled {
+  background-color: #CCCCCC;
+  border-color: #CCCCCC;
+}
+.el-button.el-button--default.el-button {
+  background: 0 0;
+  //border-color: #fff;
+  //color: #fff;
+}
+.el-button.el-button--default:hover {
+  border-color: #00848E;
+  color: #006D75;
+  background: #f8f8f8;
+}
+.el-button.el-button--default.btn-cancel {
+  color: #FFFFFF;
+  border: 1px solid rgba(255,255,255,1);
+  background: 0 0;
+  &:hover, &:focus{
+    background:rgba(255,255,255,0.2);
+    border:1px solid rgba(255,255,255,1);
+  }
+}
+
+.el-button.el-button--default:active, .el-button.el-button--default:focus {
+  border-color: #006D75;
+  color: #00A1B2;
+  background: #f8f8f8;
+}
+.el-button.el-button--default.is-disabled {
+  border-color: #CCCCCC;
+  color: #CCCCCC;
+  background: #f8f8f8;
+}
+.el-button.el-button--primary.is-disabled:hover {
+  background-color: #CCCCCC;
+  border-color: #CCCCCC;
+}
+
+.el-tag {
+  margin-right: 10px;
+}

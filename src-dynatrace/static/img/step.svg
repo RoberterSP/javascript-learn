@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>icon/通用/step</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/通用/step" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+            <rect id="Rectangle" x="0" y="0" width="16" height="16"></rect>
+            <polygon id="Triangle" fill="#CCCCCC" transform="translate(8.473684, 8.000000) rotate(-270.000000) translate(-8.473684, -8.000000) " points="8.47368421 2.52631579 16.4736842 13.4736842 0.473684211 13.4736842"></polygon>
+        </g>
+    </g>
+</svg>

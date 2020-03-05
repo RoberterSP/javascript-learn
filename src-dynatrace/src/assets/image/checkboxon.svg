@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>Button/checkbox/focus</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Button/checkbox/focus" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+        <path d="M4,4 L20,4 L20,20 L4,20 L4,4 Z M6,6 L6,18 L18,18 L18,6 L6,6 Z" id="Combined-Shape" fill="#00A1B2" fill-rule="nonzero"></path>
+        <g id="对勾" transform="translate(7.000000, 8.000000)" fill="#00A1B2" fill-rule="nonzero" stroke="#00A1B2" stroke-width="0.5">
+            <polygon id="Path" points="3.47845762 6.11780764 9.13055133 0 10 0.941088382 3.47845762 8 2.60900895 7.05956678 0 4.23563087 0.869448672 3.29385613"></polygon>
+        </g>
+    </g>
+</svg>

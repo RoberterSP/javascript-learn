@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>icon/form/编辑 copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="4.-日志监控" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="4.1.2-调用跟踪详情" transform="translate(-59.000000, -473.000000)" fill="#0980E2">
+            <g id="Group-Copy-4" transform="translate(22.000000, 456.000000)">
+                <g id="icon/通用/节点_2_open" transform="translate(36.000000, 16.000000)">
+                    <g id="Group" transform="translate(1.285714, 1.285714)">
+                        <path d="M7.71428571,15.4285714 C3.45380336,15.4285714 0,11.9747681 0,7.71428571 C0,3.45380336 3.45380336,0 7.71428571,0 C11.9747681,0 15.4285714,3.45380336 15.4285714,7.71428571 C15.4285714,11.9747681 11.9747681,15.4285714 7.71428571,15.4285714 Z M7.71428571,14.1428571 C11.2646877,14.1428571 14.1428571,11.2646877 14.1428571,7.71428571 C14.1428571,4.16388375 11.2646877,1.28571429 7.71428571,1.28571429 C4.16388375,1.28571429 1.28571429,4.16388375 1.28571429,7.71428571 C1.28571429,11.2646877 4.16388375,14.1428571 7.71428571,14.1428571 Z" id="Combined-Shape"></path>
+                        <rect id="Combined-Shape" x="3.85714286" y="7.19999988" width="7.71428571" height="1.28571429" rx="0.100000001"></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

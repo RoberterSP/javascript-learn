@@ -1,0 +1,213 @@
+// 过滤条件
+.sf-tagsinput{
+  display: flex;
+  flex-wrap: wrap;
+  // align-items: center;
+  min-height: 32px;
+  border:1px solid #cccccc;
+  border-radius: 3px;
+  background-color: #fff;
+  // padding: 2px 0;
+  padding-bottom: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 80%;
+  .tagsinput_prev{
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+    white-space: nowrap;
+    .iconfont-icon{
+      font-size: 14px;
+      color: #898989;
+      margin-left: 10px;
+      margin-right: 4px;
+    }
+  }
+  .tagsinput_values{
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    align-items: center;
+    .tag_item{
+      display: flex;
+      align-items: center;
+      height: 26px;
+      border-radius:3px;
+      border:1px solid rgba(230,230,230,1);
+      background-color: #F2F2F2;
+      font-family:PingFangSC-Regular,PingFang SC;
+      font-weight:400;
+      color:rgba(137,137,137,1);
+      font-size:12px;
+      line-height:18px;
+      padding-left: 4px;
+      padding-right: 5px;
+      margin-right: 5px;
+      // margin-bottom: 1px;
+      &:hover{
+        background-color: #e6e6e6;
+        .tag_val{
+          color: #242424;
+        }
+      }
+      &.no_value_key{
+        border: 0;
+        background-color: rgba(0,0,0,0);
+      }
+      .tag_invert{
+        color:rgba(0,161,178,1);
+        margin-right: 5px;
+      }
+      .tag_key{
+        white-space: nowrap;
+      }
+      .tag_val{
+        color:rgba(0,161,178,1);
+        max-width: 220px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .tags_remove{
+        cursor: pointer;
+        margin-left: 5px;
+        line-height: 15px;
+        i{
+          font-size: 16px;
+          font-weight: bolder;
+          color:rgba(0,161,178,1);
+        }
+      }
+    }
+  }
+  .tagsinput_input{
+    flex: 1;
+    position: relative;
+    min-width: 60px;
+    input{
+      width: 100%;
+      height: 28px;
+      border: 0;
+    }
+    .filter_keys_pop{
+      position: absolute;
+      left: 0;
+      top: 28px;
+      min-width:115px;
+      border:1px solid #cccccc;
+      z-index: 9;
+      max-height: 200px;
+      overflow-y: auto;
+
+      .key_item{
+        width: 100%;
+        height:28px;
+        background-color:rgba(255,255,255,1);
+        font-size:12px;
+        font-family:PingFangSC-Regular,PingFang SC;
+        font-weight:400;
+        color:rgba(69,70,70,1);
+        line-height:28px;
+        padding: 0 12px;
+        &:hover{
+          background-color:rgba(225,247,249,1);
+          .name_value{
+            background-color: #FFEE7C;
+          }
+        }
+      }
+    }
+    .name_filter{
+      min-width: 100px;
+    }
+    .filter_values_pop{
+      position: absolute;
+      left: 0;
+      top: 28px;
+      min-width: 200px;
+      border:1px solid rgba(160,160,160,1);
+      background-color: #fff;
+      z-index: 9;
+      .container{
+        .pop-body{
+          max-height: 300px;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+        }
+        .radio-list{
+          flex-direction: column;
+          padding: 7px;
+          .radio-item{
+            white-space: nowrap;
+            width: 100%;
+            text-align: left;
+            height: 48px;
+            padding-left: 7px;
+            label{
+              max-width: 300px;
+              font-size:14px;
+              font-family:PingFangSC-Regular,PingFang SC;
+              font-weight:400;
+              color:rgba(69,70,70,1);
+              line-height:20px;
+            }
+          }
+        }
+        .dy-checkbox{
+          flex-direction: column;
+          padding: 8px 7px;
+          .checkbox-item{
+            width: 100% !important;
+            min-height: 48px;
+            input{
+              height: unset;
+            }
+          }
+        }
+        .select_custom_input-section{
+          position: relative;
+          min-width: 370px;
+          .custom_input_box{
+            position: absolute;
+            bottom: 16px;
+            right: 7px;
+            input{
+              width: 160px;
+              padding: 0 15px;
+              height: 32px;
+              border-radius: 3px;
+              background:rgba(242,242,242,1);
+              border:1px solid rgba(201,201,201,1);
+            }
+          }
+        }
+        .filter_input-section{
+          display: flex;
+          align-items: center;
+          padding: 8px 17px;
+          min-width: 260px;
+          input{
+            height:32px;
+            border:1px solid rgba(201,201,201,1);
+            background-color: #fff;
+            border-radius: 3px;
+            margin: 0 6px;
+            padding: 0 15px;
+          }
+        }
+        .bottom{
+          margin-bottom: 10px;
+          padding: 0 7px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+        }
+      }
+    }
+    .vergeOfEdge{
+      left: unset !important;
+      right: 0 !important;
+    }
+  }
+}

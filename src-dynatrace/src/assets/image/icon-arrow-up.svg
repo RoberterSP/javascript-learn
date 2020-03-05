@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>icon/arrow-up</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/arrow-up" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" x="0" y="0" width="20" height="20"></rect>
+        <g id="Icons/通用/arrow-up" fill="#00A1B2" fill-rule="nonzero">
+            <path d="M8.40944754,9.68259155 L14.5577966,15.8444073 L12.870478,17.536811 L6.14326051,10.794859 C6.10494636,10.7666667 6.06825122,10.7352687 6.03354327,10.700665 L5.7008303,10.3689518 C5.33400574,10.0032294 5.32468934,9.41463366 5.67353473,9.03759917 C5.68437614,9.02557827 5.6955751,9.01376529 5.70713161,9.00217396 L6.03884489,8.669461 C6.05347658,8.65478521 6.06846501,8.64068165 6.08378235,8.62715036 L12.8757766,1.85 L14.5681803,3.53731865 L8.40944754,9.68259155 Z" id="Combined-Shape" transform="translate(9.993405, 9.693405) rotate(90.000000) translate(-9.993405, -9.693405) "></path>
+        </g>
+    </g>
+</svg>

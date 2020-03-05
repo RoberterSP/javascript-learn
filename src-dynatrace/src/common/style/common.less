@@ -1,0 +1,457 @@
+@import './variable.less';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  vertical-align: middle;
+}
+
+ul, li {
+  list-style: none;
+}
+
+input, select, textarea {
+  outline: none;
+  -webkit-appearance: none;
+  border: 1px solid #ccc;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* 清除浮动 */
+.clearfix {
+  content: "";
+  display: block;
+  clear: both;
+  overflow: hidden;
+}
+
+.clear {
+  zoom: 1;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0;
+}
+
+body {
+  font-size: 14px;
+  font-family: SourceHanSansSC-Regular, SourceHanSansSC;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 29px;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+h4 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+label {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+a {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.cursor_pointer {
+  cursor: pointer
+}
+
+.flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.flex-center {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: center;
+  -ms-justify-content: center;
+  align-items: center;
+  -ms-align-items: center;
+}
+
+.flex-start {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: flex-start;
+  -ms-justify-content: flex-start;
+  align-items: center;
+  -ms-align-items: center;
+}
+
+.flex-end {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: flex-end;
+  -ms-justify-content: flex-end;
+  align-items: center;
+  -ms-align-items: center;
+}
+
+.flex-around {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: space-around;
+  -ms-justify-content: space-around;
+  align-items: center;
+  -ms-align-items: center;
+}
+
+.flex-between {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: space-between;
+  -ms-justify-content: space-between;
+  align-items: center;
+  -ms-align-items: center;
+}
+
+.flex-row {
+  flex-direction: row;
+  -ms-flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+  -ms-flex-direction: column;
+}
+
+.pointer {
+  cursor: pointer
+}
+
+.text-center {
+  text-align: center;
+}
+
+.no-warp {
+  white-space: nowrap
+}
+
+// 省略
+.ellipsis {
+  .no-warp;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.box-check::after {
+  display: block;
+  padding-left: 13px;
+  background: rgba(248, 248, 248, 1);
+  border-top: 2px solid rgba(220, 23, 42, 1);
+  font-size: 12px;
+  font-family: SourceHanSansSC-Regular, SourceHanSansSC;
+  font-weight: 400;
+  color: rgba(220, 23, 42, 1);
+  line-height: 33px;
+  transform: translateX(-10000px);
+}
+
+.box-check-show::after {
+  transform: translateX(0);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.halfWidth {
+  width: 50%;
+}
+
+.default-label {
+  font-family: @default-font;
+  font-size: @default-font-size;
+  color: @default-font-color;
+  font-weight: @default-font-weight;
+  line-height: @default-line-height;
+}
+
+.common_bg {
+  background-repeat: no-repeat;
+  background-size: 88px 88px;
+  content: "";
+  position: absolute;
+  width: 88px;
+  height: 88px;
+  left: 0;
+  bottom: 0;
+}
+
+.common_bg01 {
+  background-repeat: no-repeat;
+  background-size: 66px 66px;
+  content: "";
+  position: absolute;
+  width: 66px;
+  height: 60px;
+  left: -22px;
+  bottom: -16px;
+  opacity: 0.4;
+}
+
+// 健康指数
+.health_index::before {
+  background-image: url('./../../assets/image/health_index.svg');
+  &:extend(.common_bg);
+}
+
+// 访问量
+.request_num::before {
+  background-image: url('./../../assets/image/request_num.svg');
+  &:extend(.common_bg);
+}
+
+// 平均响应时间
+.avg_response_time::before {
+  background-image: url('./../../assets/image/avg_response_time.svg');
+  &:extend(.common_bg);
+}
+
+// 流量
+.traffic::before {
+  background-image: url('./../../assets/image/traffic.svg');
+  &:extend(.common_bg);
+}
+
+// 节点
+.node::before {
+  background-image: url('./../../assets/image/node.svg');
+  &:extend(.common_bg);
+}
+
+// 正常节点
+.run_node::before {
+  background-image: url('./../../assets/image/run_node.svg');
+  &:extend(.common_bg);
+}
+
+// 接口数
+.endpoint::before {
+  background-image: url('./../../assets/image/endpoint.svg');
+  &:extend(.common_bg);
+}
+
+// 异常节点
+.error_node::before {
+  background-image: url('./../../assets/image/error_node.svg');
+  &:extend(.common_bg);
+}
+
+// 部署组
+.appliance::before {
+  background-image: url('./../../assets/image/appliance.svg');
+  &:extend(.common_bg);
+}
+
+// 订阅事件
+.bookevent::before {
+  background-image: url('./../../assets/image/bookevent.svg');
+  &:extend(.common_bg);
+}
+
+// 持续时间
+.timeIcon::before {
+  background-image: url('./../../assets/image/time.svg');
+  &:extend(.common_bg01);
+}
+
+// 服务
+.serverIcon::before {
+  background-image: url('./../../assets/image/serverIcon.svg');
+  &:extend(.common_bg01);
+}
+
+// 深度
+.deepIcon::before {
+  background-image: url('./../../assets/image/deepIcon.svg');
+  &:extend(.common_bg01);
+}
+
+// span数量
+.spanCount::before {
+  background-image: url('./../../assets/image/spanCount.svg');
+  &:extend(.common_bg01);
+}
+
+// 蓝色的自定义tooltip 主题， 由于 element 优先级设计缺陷，需要加 import 提权重
+.custom-tooltip {
+  color: #fff;
+  background-color: #00A1B2 !important;
+
+  &[x-placement^=bottom] .popper__arrow {
+    border-bottom-color: #00A1B2 !important;
+
+    &:after {
+      border-bottom-color: #00A1B2 !important;
+    }
+  }
+
+  &[x-placement^=top] .popper__arrow {
+    border-top-color: #00A1B2 !important;
+
+    &:after {
+      border-top-color: #00A1B2 !important;
+    }
+  }
+}
+
+// 自定义的 popper
+.custom-popper {
+  background-color: @theme-edit-light !important;
+  color: #FFFFFF !important;
+}
+
+// 全局常驻 tooltip样式
+.resident-tooltip {
+  position: absolute;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background-color: #00A1B2;
+  border-radius: 3px;
+  padding: 5px 0;
+  height: 30px;
+  width: 60px;
+
+  &.disabled {
+    background-color: #CCCCCC;
+  }
+}
+
+.rotate180 {
+  transform: rotate(180deg);
+}
+
+
+// 高度自适应居中的 form-item
+.middle-form-item {
+  display: flex;
+  align-items: center;
+
+  .el-form-item__content {
+    flex: 1;
+  }
+
+  .demonstration {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+// icon 颜色
+.iconfont {
+  &.red {
+    color: @slider-color-error;
+  }
+
+  &.yellow {
+    color: @warning-color;
+  }
+
+  &.green {
+    color: @slider-color-success;
+  }
+
+  &.icon-title {
+    font-size: 52px;
+  }
+}
+
+// buttons
+.btns {
+  margin-top: 32px;
+}
+
+
+// form 相关
+.addPanel {
+  padding: 20px 0 30px 20px;
+  background-color: @default-gray;
+  margin-top: 28px;
+}
+
+
+// 媒介自适应box
+
+@media only screen and (min-width: 1280px) and (max-width: 1440px) {
+  .scale-box {
+    transform: scale(0.9);
+  }
+}
+
+
+@media only screen and (max-width: 1280px) {
+  .scale-box {
+    transform: scale(0.75);
+  }
+}
+
+/*---------- 动画效果 ------------*/
+// fade
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s @default-bezier;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0 !important;
+}
+
+// scale
+.scale-enter-active, .scale-leave-active {
+  transition: transform .2s @default-bezier;
+}
+
+.scale-enter, .scale-leave-to {
+  transform: scale(0);
+}
+
+// slider
+.slider-enter-active, .slider-leave-active {
+  transition: width 0.15s @default-bezier;
+}
+
+.slider-enter, .slider-leave-to {
+  width: 0 !important;
+}

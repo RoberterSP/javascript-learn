@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="92px" height="92px" viewBox="0 0 92 92" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>img/card/bookevent</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="92" height="92"></rect>
+    </defs>
+    <g id="img/card/bookevent" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon/功能">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Mask"></g>
+            <g id="events" opacity="0.2" mask="url(#mask-2)" fill="#FFFFFF">
+                <g transform="translate(-23.000000, 24.000000)" id="Combined-Shape">
+                    <path d="M68.175,15.975 L68.175,75.2625 C68.175,77.4975 69.1875,78.615 71.2125,78.615 C73.2375,78.615 74.25,77.4975 74.25,75.2625 L74.0275328,15.975 L80.55,15.975 C80.55,35.2867842 80.55,55.0492842 80.55,75.2625 C80.55,81.1549571 75.3210412,84.915 71.5143757,84.915 C67.0694175,84.915 64.5313357,84.915 63.9001304,84.915 L62.775,84.915 L14.49,84.915 C12.2035411,84.915 10.35,83.0614589 10.35,80.775 L10.35,15.975 L10.35,13.815 C10.35,11.5285411 12.2035411,9.675 14.49,9.675 L64.035,9.675 C66.3214589,9.675 68.175,11.5285411 68.175,13.815 L68.175,15.975 Z M17.1,15.975 L17.1,78.615 L61.425,78.615 L61.425,15.975 L17.1,15.975 Z M22.05,23.85 L56.475,23.85 L56.475,38.25 L22.05,38.25 L22.05,23.85 Z M22.05,47.475 L56.475,47.475 L56.475,51.975 L22.05,51.975 L22.05,47.475 Z M22.05,56.475 L56.475,56.475 L56.475,60.975 L22.05,60.975 L22.05,56.475 Z"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

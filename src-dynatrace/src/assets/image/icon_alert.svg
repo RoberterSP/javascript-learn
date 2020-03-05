@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>icon/alert</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/alert" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" x="0" y="0" width="20" height="20"></rect>
+        <g id="alert">
+            <path d="M10.02,2.95 L17.85,16.2638845 L2.15,16.2638845 L10.02,2.95 Z M9.15,13.15 L9.15,14.75 L10.85,14.75 L10.85,13.15 L9.15,13.15 Z M9.15,6.35 L9.15,11.5 L10.85,11.5 L10.85,6.35 L9.15,6.35 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+            <g id="注意" stroke-width="1" transform="translate(9.150000, 6.450000)"></g>
+        </g>
+    </g>
+</svg>

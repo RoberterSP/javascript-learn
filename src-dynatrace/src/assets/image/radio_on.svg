@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>icon/Form/radio off</title>
+    <desc>Created with Sketch.</desc>
+    <g id="ALL" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="DF-NXMC-UI-Guideline-V_1.0（2.Components_01）" transform="translate(-699.000000, -6757.000000)">
+            <g id="Group-14" transform="translate(678.000000, 6540.000000)">
+                <g id="Form/group/radio-label-+-Form/group/radio-label-Copy-Mask" transform="translate(16.000000, 153.000000)">
+                    <g id="Form/group/radio-label-Copy" transform="translate(0.000000, 56.000000)">
+                        <g id="Button/radio/focus" transform="translate(3.000000, 6.000000)">
+                            <rect id="Rectangle" x="0" y="0" width="24" height="24"></rect>
+                            <g id="Group" stroke-width="1" fill-rule="evenodd" transform="translate(2.000000, 2.000000)">
+                                <circle id="Oval" cx="10" cy="10" r="10"></circle>
+                                <path d="M10,20 C4.4771525,20 0,15.5228475 0,10 C0,4.4771525 4.4771525,0 10,0 C15.5228475,0 20,4.4771525 20,10 C20,15.5228475 15.5228475,20 10,20 Z M10,18 C14.418278,18 18,14.418278 18,10 C18,5.581722 14.418278,2 10,2 C5.581722,2 2,5.581722 2,10 C2,14.418278 5.581722,18 10,18 Z" id="Combined-Shape" fill="#00A1B2" fill-rule="nonzero"></path>
+                                <circle id="Combined-Shape" fill="#00A1B2" fill-rule="nonzero" cx="10" cy="10" r="5"></circle>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
