@@ -4,12 +4,12 @@
       <stepper :stepper="stepper" @goRouter="goRouter"></stepper>
       <div class="content flex">
         <div class="left-content">
-          <div class="side-title">应用设置</div>
+          <h1 class="side-title">应用设置</h1>
           <div class="side-nav-title" v-if="!item.isHide" v-for="(item,index) in sideList" :key="index" :class="{'side-nav-active': (item.active && !item.lock), 'side-nav-disable': item.lock}" @click="clickSide(item)">{{item.name}}</div>
         </div>
-        <div class="right-content p10">
+        <DYCard class="full-width overflow-x-hidden">
           <router-view></router-view>
-        </div>
+        </DYCard>
       </div>
     </div>
   </div>
@@ -71,7 +71,7 @@ export default {
     clickSide (obj) {
       if (obj.lock) return
       this.sideList.forEach(item => {
-        let active = item.active
+        let {active} = item
         item.active = false
         if (item.code === obj.code) item.active = !active
       })
@@ -110,7 +110,7 @@ export default {
       let params = {
         name: this.detailData.name,
         routerTo: 'appDetail',
-        myCoutomRouter: true
+        myCustomRouter: true
       }
       this.stepper.splice(1, 1, params)
     }
@@ -119,10 +119,10 @@ export default {
   },
   created () {
     let accessRoutes = this.$store.getters.access_routes
-    let superuser = this.$store.getters.superuser
+    let superUser = this.$store.getters.superuser
     this.sideList.forEach(items => {
       items.isHide = false
-      if (accessRoutes.indexOf(items.code) === -1 && !superuser) {
+      if (accessRoutes.indexOf(items.code) === -1 && !superUser) {
         items.isHide = true
       }
     })
@@ -192,10 +192,6 @@ export default {
 
         .side-title {
           padding: 20px 0 20px 24px;
-          font-size: 28px;
-          font-family: PingFangSC-Medium, PingFang SC,serif;
-          font-weight: 500;
-          color: @default-font-color;
         }
         .side-nav-title {
           cursor: pointer;
@@ -203,29 +199,24 @@ export default {
           padding-left: 24px;
           line-height: 60px;
           font-size: 15px;
-          font-family: SourceHanSansSC-Medium, SourceHanSansSC,serif;
           font-weight: 500;
+
           &:hover {
-            background: @theme-gray;
-            color: @theme-color
+            background: @gray-03;
+            color: @turq-06
           }
         }
         .side-nav-active {
-          color: @theme-color;
-          background: @theme-gray !important;
+          color: @turq-06;
+          background: @gray-03 !important;
         }
         .side-nav-disable {
           color: rgba(204, 204, 204, 1);
           &:hover {
             color: rgba(204, 204, 204, 1);
-            background: @default-gray;
+            background: @gray-02;
           }
         }
-      }
-      .right-content {
-        background: #ffffff;
-        display: inline-block;
-        width: calc(100% - 284px);
       }
     }
   }

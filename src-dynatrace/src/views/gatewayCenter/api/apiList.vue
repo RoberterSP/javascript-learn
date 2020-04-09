@@ -2,108 +2,132 @@
   <div class="wrapper">
     <stepper :stepper="stepper" theme="purple"></stepper>
     <div class="apiList" v-if="tableData.length > 0 || filtersModel.length > 0">
-      <div class="headTitle flex-between">
-        <div class="head_title_l">
-          <div class="bannericon iconfont iconAPI"></div>
-          <div class="title">接口</div>
-        </div>
-        <div class="head_title_r">
-          <!-- 确认发布popup -->
-          <ntPopover :show.sync="showSurePopup" type="small">
-            <el-button slot="reference" type="primary" @click="batchPublish" v-permission="'gatewayCenter_apiList_patchDeploy'">批量发布</el-button>
-            <div class="surePopup">
-              <div class="title">确认批量发布{{chooseList.length}}个接口？</div>
-
+      <DYPageHeader
+        theme="purple"
+        icon="API"
+        title="接口"
+        @eventGetHeight="getHeight"
+      >
+        <div slot="actions">
+          <DYButtonGroup>
+            <!-- 确认发布popup -->
+            <DYPopover :show.sync="showSurePopup" type="small">
+              <DYButton slot="reference" type="primary" @click="batchPublish"
+                        v-permission="'gatewayCenter_scopeList_add'">批量发布
+              </DYButton>
               <div>
-                <el-button type="primary" :disabled="!chooseList.length" @click="resetWriteList()">发布</el-button>
-                <el-button @click="showSurePopup = false" type="primary" class="btn-cancel">取消</el-button>
+                <p class="mb10">确认批量发布{{chooseList.length}}个接口？</p>
+                <DYButtonGroup>
+                  <DYButton theme="dark" type="primary" :disabled="!chooseList.length" @click="resetWriteList()">发布
+                  </DYButton>
+                  <DYButton theme="dark" @click="showSurePopup = false">取消</DYButton>
+                </DYButtonGroup>
+
+                <el-divider class="mt40"></el-divider>
+
+                <div style="min-width: 200px">
+                  <img src="../../../assets/image/api-deploy.png" width="200" alt="占位">
+
+                  <p class="mt10">对于服务注册到网关的接口，只有通过发布，才能被外部系统正常访问。</p>
+                </div>
+
               </div>
+            </DYPopover>
 
-              <el-divider class="mt40"></el-divider>
+            <!-- 更多popup -->
+            <DYPopover :show.sync="showMorePopup" type="small" @onClose="showSecondSurePopup = false">
+              <DYButton slot="reference" @click="showMorePopup = true" v-if="isShowEle">
+                <DYIcon type="more" size="14"></DYIcon>
+              </DYButton>
 
-              <div style="min-width: 200px">
-                <img src="../../../assets/image/api-deploy.png" width="200" alt="占位">
+              <DYButtonGroup direction="column" v-if="!showSecondSurePopup">
+                <DYButton theme="dark" @click="cancelWriteList()"
+                          v-permission="'gatewayCenter_apiList_patchUnDeploy'">取消发布
+                </DYButton>
+                <DYButton theme="dark" @click="updateCache()"
+                          v-permission="'gatewayCenter_apiList_updateCache'">更新缓存
+                </DYButton>
+              </DYButtonGroup>
 
-                <p class="mt10">对于服务注册到网关的接口，只有通过发布，才能被外部系统正常访问。</p>
-              </div>
+              <template v-if="showSecondSurePopup">
+                <p class="mb10 no-warp">{{secondSureType === 'updateCache' ? '确认更新缓存?' : secondSureType ===
+                  'cancelWriteList' ? '确认取消发布?' : ''}}</p>
 
-            </div>
-          </ntPopover>
-
-          <span class="mr10"></span>
-
-          <!-- 更多popup -->
-          <ntPopover :show.sync="showMorePopup" type="small">
-            <el-button slot="reference" icon="el-icon-more" @click="showMorePopup = true" v-if="isShowEle"></el-button>
-
-            <div class="footer">
-              <el-button type="primary" @click="cancelWriteList();showMorePopup = false" v-permission="'gatewayCenter_apiList_patchUnDeploy'">取消发布</el-button>
-              <el-button type="primary" @click="updateCache();showMorePopup = false" v-permission="'gatewayCenter_apiList_updateCache'">更新缓存</el-button>
-            </div>
-          </ntPopover>
-
-          <!-- 二次确认popup -->
-          <ntPopover :show.sync="showSecondSurePopup" type="small" width="140">
-            <div class="contain">{{secondSureType === 'updateCache' ? '确认更新缓存?' : secondSureType === 'cancelWriteList' ? '确认取消发布?' : ''}}</div>
-            <div class="second_sure_footer">
-              <el-button type="primary" @click="yesClick()">是</el-button>
-              <el-button type="primary" @click="showSecondSurePopup = false">否</el-button>
-            </div>
-          </ntPopover>
+                <DYButtonGroup :between="true">
+                  <DYButton type="primary" theme="dark" @click="yesClick()">是</DYButton>
+                  <DYButton theme="dark" @click="showSecondSurePopup = false">否</DYButton>
+                </DYButtonGroup>
+              </template>
+            </DYPopover>
+          </DYButtonGroup>
         </div>
+      </DYPageHeader>
+
+      <div class="p20">
+        <!--        <tags-input ref="curTagsInput" :filterKeys="filterTagsInputData" :keysValue="keysValue"-->
+        <!--                    @returnFilterFunc="returnFilterFunc" :userInputQuery="true"/>-->
+
+        <DYFilter
+          class="input-filter"
+          :filtersModel="filtersModel"
+          :filterKeys="filterTagsInputData"
+          :quickSearch="{label: '名称', key: 'name'}"
+          @returnFilterFunc="returnFilterFunc"
+        />
       </div>
-      <div class="p10">
-        <div class="p10">
-          <tags-input ref="curTagsInput" :filterKeys="filterTagsInputData" :keysValue="keysValue" @returnFilterFunc="returnFilterFunc" :userInputQuery="true"></tags-input>
-        </div>
-      </div>
-      <div class="api-list flex" >
+
+      <div class="api-list flex" :style="{minHeight: appHeight + 'px'}">
         <div class="api-left">
-          <div class="filter">
-            <div class="filter-item" v-for="(filter, index) in filterKeys" :key="index" :class="{'select':filter.selected}" @click="tofilter(filter, index)">
-              <div class="up">{{filter.name}}</div>
-              <div class="down">
-                <div>{{filter.select_name}}</div>
-                <div class="cursor_pointer">编辑</div>
-              </div>
-            </div>
-          </div>
+          <left-filter :filter-list="filterKeys" @click="tofilter"/>
         </div>
-        <div class="api-right" v-if="this_page === 'list'">
-          <div class="api-list-title">
-            <div class="head">{{tableData.length}}个接口</div>
-          </div>
-          <div class="api-data-list">
-            <my-table
-              :tableData="tableData"
-              :columns="columns"
-              :tableSet="tableSet"
-              @changeSwitch="changeSwitch"
-              @checkAll="checkAll"
-              @checkOne="checkOne"
-              @readDetail="readDetail"
-            ></my-table>
-          </div>
-        </div>
-        <!-- 选择过滤 -->
-        <div class="api-right" v-if="this_page === 'filter-view'">
-          <div class="head_title pt16 pl16">{{filterViewData.title}}</div>
-          <div class="desc">{{filterViewData.desc}}</div>
-          <!-- ntredio -->
-          <nt-redio v-if="!filterViewData.isMultiple && hardRender" class="category-list" :name="filterViewData[keysValue[0]]" :list="filterViewData.list" :keyValue="redioKeyValue" v-on:redioChecked="redioChecked"></nt-redio>
-          <!-- ntCheckbox -->
-          <nt-checkbox v-if="filterViewData.isMultiple && hardRender" class="category-list" :name="filterViewData[keysValue[0]]" :list="filterViewData.list" :keyValue="checkboxKeyValue" v-on:checkboxChecked="checkboxChecked"></nt-checkbox>
-          <div class="footer" v-if="showOptTooltip">
-            <div class="tag default-label">是否保存修改？</div>
-            <el-button class="btn-cancel" @click="cancelPage(filterViewData)">取消</el-button>
-            <el-button class="btn-save" type="primary" :disabled="!isNeedSave" @click="savePage(filterViewData)">保存</el-button>
-          </div>
+
+        <div class="app-right">
+          <DYCard class="full-height">
+            <template v-if="this_page === 'list'">
+              <DYHeader class="row-title" :title="`${tableData.length}个接口`" type="small" no-gap/>
+
+              <my-table
+                class="row-content"
+                :tableData="tableData"
+                :columns="columns"
+                :tableSet="tableSet"
+                @checkAll="checkAll"
+                @checkOne="checkOne"
+                @readDetail="readDetail"
+              />
+            </template>
+
+            <!-- 选择过滤 -->
+            <template v-if="this_page === 'filter-view'">
+              <DYHeader :title="filterViewData.title" type="small" no-gap/>
+              <div class="row-desc">{{filterViewData.desc}}</div>
+
+              <!-- ntRadio -->
+              <nt-radio v-if="!filterViewData.isMultiple && hardRender" class="category-edit-list"
+                        :name="filterViewData[keysValue[0]]" :list="filterViewData.list" :keyValue="radioKeyValue"
+                        v-on:radioChecked="radioChecked"></nt-radio>
+              <!-- ntCheckbox -->
+              <nt-checkbox v-if="filterViewData.isMultiple && hardRender" class="category-edit-list"
+                           :name="filterViewData[keysValue[0]]" :list="filterViewData.list" :keyValue="checkboxKeyValue"
+                           v-on:checkboxChecked="checkboxChecked"></nt-checkbox>
+            </template>
+          </DYCard>
         </div>
       </div>
     </div>
-    <blank v-if="tableData.length <= 0 && filtersModel.length <= 0"
-      @createScope="goDetail"
-      :blankData="blankData"
+
+    <DYConfirmationDialog
+      :show="showOptTooltip"
+      message="是否保存修改？"
+      okText="保存"
+      :okDisabled="!isNeedSave"
+      @onOk="savePage"
+      @onCancel="cancelPage"
+    />
+
+    <blank v-if="showEmpty"
+           @createScope="goDetail"
+           :blankData="blankData"
     ></blank>
   </div>
 </template>
@@ -111,29 +135,30 @@
 <script>
 import blank from 'components/base/blank.vue'
 import stepper from 'components/stepper/stepper.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import ntRedio from 'components/base/redio.vue'
-import ntPopover from 'components/base/popover.vue'
+
+import ntRadio from 'components/base/radio.vue'
 import ntCheckbox from 'components/base/checkbox.vue'
 import myTable from 'components/ntTable/ntTable.vue'
-import tagsInput from '@/components/tagsInput/tagsInput.vue'
 import bus from '@/assets/eventBus.js'
+import leftFilter from '@/components/leftFilter/leftFilter.vue'
 
 import {
-  API_LIST_GET,
-  API_UPDATE_POST,
-  POST_MESH_ENDPOINT_DEPLOY,
-  POST_MESH_ENDPOINT_UNDEPLOY,
   API_CACHE_UPDATE,
-  NXMC_MESH_LIST_GET
+  API_LIST_GET,
+  NXMC_MESH_LIST_GET,
+  POST_MESH_ENDPOINT_DEPLOY,
+  POST_MESH_ENDPOINT_UNDEPLOY
 } from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import {PAGESIZE} from '@/common/util/common.js'
+
 let DEFAULT_NAME = '任意'
 
 export default {
   data () {
     return {
-      // 强制渲染
+      appHeight: '',
+      pageHeaderHeight: '',
+      showEmpty: false,
       blankData: {
         title: '管理接口',
         img_num: 3,
@@ -183,9 +208,8 @@ export default {
           code: 'endpoint', // 表身
           type: 'edit',
           showicon: 'iconfont',
-          icon_url: 'iconAPI',
-          showDel: false,
-          width: 200
+          icon_url: 'API',
+          showDel: false
         },
         {
           name: '名称', // 表头名字
@@ -202,18 +226,10 @@ export default {
         {
           name: '公共接口', // 表头名字
           code: 'public_status', // 表身显示值
-          icon_urls: ['iconpublic', 'iconprivate'],
-          width: 80,
+          icon_urls: ['public', 'private'],
+          width: 100,
           type: 'idxIcon',
           textAlign: 'center'
-        },
-        {
-          name: '详细日志', // 表头名字
-          code: 'log_enable', // 表身显示值
-          width: 80,
-          textAlign: 'center',
-          disable: false,
-          type: 'switch'
         },
         {
           name: '发布', // 表头名字
@@ -221,6 +237,14 @@ export default {
           type: 'text',
           width: 80,
           showDel: false
+        },
+        {
+          name: '详细日志', // 表头名字
+          code: 'log_enable', // 表身显示值
+          width: 80,
+          textAlign: 'right',
+          disable: true,
+          type: 'switch'
         },
         {
           name: '全选', // 表头名字
@@ -257,7 +281,7 @@ export default {
           value: false,
           default: false
         }],
-        title: '接口',
+        title: '公共接口',
         desc: ''
       }, {
         name: '详细日志',
@@ -278,7 +302,7 @@ export default {
           default: false
         }],
         type: 'select_obj',
-        title: '日志',
+        title: '详细日志',
         desc: ''
       }, {
         name: '发布状态',
@@ -299,7 +323,7 @@ export default {
           default: false
         }],
         type: 'select_obj',
-        title: '状态',
+        title: '发布状态',
         desc: ''
       }, {
         name: '所属服务',
@@ -309,7 +333,7 @@ export default {
         select_name: '任意',
         list: [],
         type: 'select_obj',
-        title: '服务',
+        title: '所属服务',
         desc: ''
       }],
       filterViewData: {
@@ -321,7 +345,7 @@ export default {
         type: 'select_obj',
         list: []
       },
-      redioKeyValue: ['value', 'label'],
+      radioKeyValue: ['value', 'label'],
       checkboxKeyValue: ['value', 'label'],
       nameObj: ''
     }
@@ -340,6 +364,9 @@ export default {
     // }
   },
   methods: {
+    getHeight (value) {
+      this.pageHeaderHeight = value
+    },
     goDetail () {
       this.$router.push({name: 'serviceList'})
     },
@@ -361,7 +388,6 @@ export default {
           }
         })
       })
-      console.log('this.filterKeys', this.filterKeys)
       data.forEach(item => {
         // 过滤的哪个条件
         let filterObj = this.filterKeys.find(row => row[this.keysValue[1]] === item.key)
@@ -377,8 +403,8 @@ export default {
               }
             } else {
               // radio
-              if (item.value === el[this.redioKeyValue[0]]) {
-                filterObj.select_name = el[this.redioKeyValue[1]]
+              if (item.value === el[this.radioKeyValue[0]]) {
+                filterObj.select_name = el[this.radioKeyValue[1]]
                 el.default = true
               } else {
                 el.default = false
@@ -394,7 +420,9 @@ export default {
       // 执行查询
       this.filterSearchFunc(data)
     },
-    tofilter (filter, filterIndex) {
+    tofilter (code, filter, filterIndex) {
+      // topHeader: 44px & stepper: 30px & filter: 72px & confirm: 56px & pageHeader: this.pageHeaderHeight
+      this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 202
       this.this_page = 'filter-view'
       this.hardRender = false
       this.filterKeys = JSON.parse(JSON.stringify(this.filterKeysCopy))
@@ -410,17 +438,17 @@ export default {
       })
       console.log('this.filterViewData', filter, filterIndex)
     },
-    redioChecked (name, checked) {
+    radioChecked (name, checked) {
       this.showOptTooltip = true
       if (name && checked !== undefined) {
         // 点击radio 做处理
         let obj = this.filterKeys.find(row => row[this.keysValue[0]] === name)
         obj.list.forEach(el => {
-          if (el[this.redioKeyValue[0]] === checked) {
+          if (el[this.radioKeyValue[0]] === checked) {
             el.default = true
             el.isSelected = true
             // 当选中的内容有变 才放开保存按钮
-            if (el[this.redioKeyValue[1]] !== obj.select_name) {
+            if (el[this.radioKeyValue[1]] !== obj.select_name) {
               this.isNeedSave = true
             } else {
               this.isNeedSave = false
@@ -454,13 +482,14 @@ export default {
       })
     },
     // 取消
-    cancelPage (filterViewData) {
+    cancelPage () {
+      // topHeader: 44px & stepper: 30px & filter: 72px & pageHeader: this.pageHeaderHeight
+      this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 146
       this.this_page = ''
       // 当有备份时  页面之前保存过
       this.filterKeys = JSON.parse(JSON.stringify(this.filterKeysCopy))
       if (this.filterViewData) {
-        let filterViewData = this.filterKeys.find(row => row[this.keysValue[0]] === this.filterViewData[this.keysValue[0]])
-        this.filterViewData = filterViewData
+        this.filterViewData = this.filterKeys.find(row => row[this.keysValue[0]] === this.filterViewData[this.keysValue[0]])
       }
       this.$nextTick(() => {
         this.this_page = 'list'
@@ -470,7 +499,7 @@ export default {
     // 过滤查询
     filterSearchFunc (filtersModel) {
       this.filtersModel = filtersModel
-      let filterParams = { mesh_codes: [] }
+      let filterParams = {mesh_codes: []}
       filtersModel.forEach(item => {
         if (item.code === 'mesh_codes') {
           // 多选服务
@@ -497,7 +526,9 @@ export default {
       this.api_list_get(postParams)
     },
     // 确定
-    savePage (filterViewData) {
+    savePage () {
+      // topHeader: 44px & stepper: 30px & filter: 72px & pageHeader: this.pageHeaderHeight
+      this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 146
       let filtersModel = []
       if (this.nameObj && this.nameObj !== undefined) {
         filtersModel.push(this.nameObj)
@@ -519,20 +550,20 @@ export default {
             }
           } else {
             // radio
-            if (item.default && item[this.redioKeyValue[1]] !== DEFAULT_NAME) {
-              data.select_name = item[this.redioKeyValue[1]]
+            if (item.default && item[this.radioKeyValue[1]] !== DEFAULT_NAME) {
+              data.select_name = item[this.radioKeyValue[1]]
               filtersModel.push({
                 key: data[this.keysValue[1]],
                 code: data[this.keysValue[0]],
-                value_label: item[this.redioKeyValue[1]],
-                value: item[this.redioKeyValue[0]]
+                value_label: item[this.radioKeyValue[1]],
+                value: item[this.radioKeyValue[0]]
               })
             }
           }
         })
       })
       console.log('保存修改 页面的默认过滤条件', filtersModel, this.filterKeys)
-      this.$refs['curTagsInput'].setModelValues(filtersModel)
+      // this.$refs.curTagsInput.setModelValues(filtersModel)
       this.showOptTooltip = false
       this.filterKeysCopy = JSON.parse(JSON.stringify(this.filterKeys))
       // 执行查询
@@ -547,19 +578,6 @@ export default {
         params: data
       })
     },
-    // 详细日志开关
-    changeSwitch (code, row) {
-      // console.log('test', code, row)
-      API_UPDATE_POST({log_enable: !row[code], endpoint_id: row.id}).then(res => {
-        bus.$emit('openMessage', {
-          message: res.data.result,
-          type: 'success'
-        })
-        if (res.code === 0) {
-          row[code] = !row[code]
-        }
-      })
-    },
     checkAll (list) {
       this.chooseList = list
       console.log('checkAll', list)
@@ -570,8 +588,10 @@ export default {
     },
     // 接口调用方法
     api_list_get (data) {
+      this.showEmpty = false
+
       API_LIST_GET(data).then(res => {
-        res.data.api.map(item => {
+        res.data.api.forEach(item => {
           item.check = false
           if (item.state === 'deployed') {
             item.stateStr = '已发布'
@@ -587,14 +607,16 @@ export default {
         if (!this.$_hasRoute('apiDetail')) {
           this.$set(this.columns[0], 'type', 'text')
         }
-        if (!this.$_accessRoutes('gatewayCenter_apiDetail_baseInfo_edit')) {
-          this.$set(this.columns[4], 'disable', true)
-        }
         this.tableData = res.data.api
         this.tableSet.paginationConfig.total = res.data.total
         this.this_page = 'list'
         this.chooseList = []
         this.tableSet.allCheck = false
+
+        if (res.data.total === 0) {
+          this.showEmpty = true
+        }
+
         this.$forceUpdate()
       })
     },
@@ -610,16 +632,16 @@ export default {
           message: res.data.result,
           type: 'success'
         })
-        let data = {
+        let resData = {
           direct: 'all',
           page_size: PAGESIZE,
           page: 1
         }
         if (that.$route.params.app_id) {
-          data.app_id = that.$route.params.app_id
+          resData.app_id = that.$route.params.app_id
         }
         that.showSurePopup = false
-        that.api_list_get(data)
+        that.api_list_get(resData)
       })
     },
     // 批量取消
@@ -634,15 +656,15 @@ export default {
           message: res.data.result,
           type: 'success'
         })
-        let data = {
+        let resData = {
           direct: 'all',
           page_size: PAGESIZE,
           page: 1
         }
         if (that.$route.params.app_id) {
-          data.app_id = that.$route.params.app_id
+          resData.app_id = that.$route.params.app_id
         }
-        that.api_list_get(data)
+        that.api_list_get(resData)
       })
     },
     // 批量取消发布
@@ -656,25 +678,23 @@ export default {
       }
 
       this.showSecondSurePopup = true
+      this.showMorePopup = false
       this.secondSureType = 'cancelWriteList'
     },
     yesClick () {
-      let that = this
-      that.showSecondSurePopup = false
+      this.showSecondSurePopup = false
+      this.showMorePopup = false
+
       if (this.secondSureType === 'cancelWriteList') {
         let endpoints = []
-        that.chooseList.forEach(item => {
+        this.chooseList.forEach(item => {
           endpoints.push(item.id)
         })
-        that.whitelist_cancel_post({
+        this.whitelist_cancel_post({
           endpoint_ids: endpoints
         })
       } else if (this.secondSureType === 'updateCache') {
         API_CACHE_UPDATE({}).then(res => {
-          // that.$message({
-          //   message: '更新缓存完成啦!',
-          //   type: 'success'
-          // })
           bus.$emit('openMessage', {
             message: res.data.result,
             type: 'success'
@@ -709,8 +729,7 @@ export default {
     },
     // 更新缓存
     updateCache () {
-      let that = this
-      that.showSecondSurePopup = true
+      this.showSecondSurePopup = true
       this.secondSureType = 'updateCache'
     },
     // 获取 所属服务
@@ -738,6 +757,8 @@ export default {
     }
   },
   mounted () {
+    // topHeader: 44px & stepper: 30px & filter: 72px & pageHeader: this.pageHeaderHeight
+    this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 146
   },
   created () {
     this.getMeshList()
@@ -753,389 +774,24 @@ export default {
   components: {
     stepper,
     blank,
-    ntRedio,
-    ntPopover,
+    ntRadio,
     ntCheckbox,
-    splitTitle,
-    myTable,
-    tagsInput
+    leftFilter,
+    myTable
   }
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
+  @import "~common/style/variable";
 
-.headTitle{
-  position: relative;
-  padding: 18px 32px 19px 16px;
-  width: 100%;
-  height: 73px;
-  background: rgba(255,255,255,1);
-  border-bottom: 1px solid @purple-12;
-  .head_title_l {
-    display: flex;
-    align-items: center;
-    height: 40px;
-    .bannericon {
-      width: 36px;
-      height: 40px;
-      font-size: 36px;
-      line-height: 40px;
-    }
-    .title {
-      margin-left: 11px;
-      height: 40px;
-      font-size: 28px;
-      line-height: 40px;
-      font-weight: 500;
-    }
-  }
-  .head_title_r{
-    display: flex;
+  .apiList {
+    .api-list {
+      // min-height: calc(100vh - 74px);
+      position: relative;
 
-    .surePopup{
-      z-index: 10;
-      border-radius:3px;
-
-      .title{
-        font-size:14px;
-        font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-        font-weight:400;
-        color:rgba(255,255,255,1);
-        line-height:20px;
-        margin-bottom: 11px;
-      }
-    }
-
-      .footer{
-        text-align: center;
-        button{
-          margin-left: 0;
-          width:87px;
-          height:32px;
-          border-radius:3px;
-          & + button{
-            margin-top: 5px;
-          }
-        }
-      }
-      .contain{
-        width: 100%;
-        text-align: center;
-        font-size:14px;
-        font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-        font-weight:400;
-        color:rgba(255,255,255,1);
-        line-height:20px;
-        padding: 11px 0;
-      }
-      .second_sure_footer{
-        display: flex;
-        justify-content: space-between;
-        .el-button{
-          padding: 8px 11px;
-        }
-      }
-
-  }
-}
-.apiList{
-  .init-api {
-    margin: 24px;
-    padding-bottom: 88px;
-    display: flex;
-    flex-direction: column;
-    background: rgba(255, 255, 255, 1);
-    .title {
-      margin: 16px 0 0 16px;
-      height: auto;
-      font-size: 28px;
-      font-family: SourceHanSansSC-Medium, SourceHanSansSC;
-      font-weight: 500;
-      color: @default-font-color;
-      line-height: 40px;
-    }
-    .des {
-      margin: 8px 16px 0 16px;
-      height: auto;
-      font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: @default-font-color;
-      line-height: 22px;
-    }
-    .init-step {
-      margin: 9px 16px 0 16px;
-      display: flex;
-      align-items: center;
-      .step {
-        width: 31.5%;
-        height: auto;
-        background: rgba(255, 255, 255, 1);
-      }
-      .icon-step {
-        margin: 0 0.9%;
-        width: 1%;
-        height: auto;
-      }
-    }
-    .oper {
-      margin: 13px 16px 0 16px;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-    }
-  }
-  .api-list {
-    // padding: 15px 16px 16px 0;
-    min-height: calc(100vh - 74px);
-    position: relative;
-    .api-left {
-      width: 238px;
-      position: absolute;
-      left: 0;
-      right: 0;
-      .nav {
-        padding-top: 20px;
-        button {
-          width: 118px;
-          margin: 24px 0 24px 6px;
-          &:first-child {
-            margin-left: 25px;
-          }
-          .box-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          .iconlist, .icongrid {
-            width: 16px;
-            height: 16px;
-          }
-        }
-      }
-      .filter {
-        .filter-item {
-          min-height: 71px;
-          border-bottom:1px solid rgba(230,230,230,1);
-          &.select {
-            background: @theme-gray;
-          }
-          .up {
-            padding: 14px 0 6px 0;
-            margin-left: 16px;
-            margin-right: 8px;
-            font-size: 18px;
-            font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-            font-weight: 400;
-            color: @default-font-color;
-            line-height: 26px;
-          }
-          .down {
-            display: flex;
-            margin-left: 16px;
-            margin-right: 16px;
-            font-size: 14px;
-            font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-            font-weight: 400;
-            color: @default-font-color;
-            line-height: 20px;
-            div:first-child {
-              word-break: break-all;
-              padding-right: 10px;
-            }
-            div:last-child {
-              margin-left: auto;
-              margin-right: 0;
-              color: @theme-color;
-              white-space: nowrap;
-            }
-          }
-        }
-      }
-    }
-    .api-right {
-      padding: 0 16px 0 0;
-      width: 100%;
-      padding-left: 238px;
-      background: rgba(255, 255, 255, 1);
-      background-clip: content-box;
-      .head_title{
-        font-size: 20px;
-        font-family: SourceHanSansSC-Medium,SourceHanSansSC;
-        font-weight: 500;
-        color:rgba(69,70,70,1);
-        line-height: 29px;
-      }
-      .api-list-title {
-        padding: 22px 20px 0 20px;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        .head {
-          font-size: 20px;
-          font-family: @default-font;
-          font-weight: 500;
-          color: @default-font-color;
-          line-height: 40px;
-        }
-        .btn-create {
-          margin-left: auto;
-        }
-        .btn-dot {
-          margin-left: 10px;
-          margin-right: 0;
-        }
-      }
-      .desc {
-        margin: 8px 0 0 20px;
-        width: 50%;
-        font-size: 14px;
-        font-weight: 400;
-        color: @default-font-color;
-        line-height: 20px;
-      }
-      .category-list {
-        margin: 27px 0 50px 25px;
-      }
-      .api-data-list {
-        padding: 0 20px;
-        .grid-list {
-          margin-left: -20px;
-          display: flex;
-          align-items: center;
-          flex-wrap: wrap;
-          .grid {
-            margin: 12px 0 0 24px;
-            width: 405px;
-            height: 151px;
-            border-radius: 3px;
-            border:1px solid @theme-gray;
-            .gg_up {
-              width: 403px;
-              height: 52px;
-              background: @default-gray;
-              display: flex;
-              align-items: center;
-              border-bottom: 1px solid @theme-gray;
-              .ggu_left {
-                width: 56px;
-                height: 53px;
-                background: rgba(124,56,161,1);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                .iconplaceholder {
-                  font-size: 24px;
-                  color: #fff;
-                }
-              }
-              .ggu_right {
-                margin-left: 10px;
-                .ggur_title {
-                  margin-top: 0;
-                  font-size: 15px;
-                  line-height: 21px;
-                }
-                .ggur_appid {
-                  font-size: 12px;
-                  font-family: @default-font;
-                  font-weight: 400;
-                  color: #6D6D6D;
-                  line-height: 17px;
-                }
-              }
-            }
-            .gg_down {
-              display: flex;
-              .ggd_left {
-                width: 100px;
-                height: 99px;
-                padding: 8px 0 24px 15px;
-                .ggdl_value {
-                  font-size: 24px;
-                  line-height: 35px;
-                }
-                .ggdl_name {
-                  margin-top: 7px;
-                }
-              }
-              .ggd_right {
-                width: 100%;
-                .ggdr_up {
-                  display: flex;
-                  .ggdru_box {
-                    display: flex;
-                    height: 57px;
-                    flex-grow: 1;
-                    .iconevents {
-                      padding: 15px 6px 15px 0;
-                      font-size: 14px;
-                      color: @default-font-color;
-                    }
-                    .ggdru_item {
-                      padding-top: 12px;
-                      height: 57px;
-                      .ggdru_value {
-                        line-height:20px;
-                      }
-                      .ggdru_name {
-                        color: #6D6D6D;
-                        font-size: 15px;
-                        line-height: 15px;
-                      }
-                    }
-                  }
-                }
-                .ggdr_down {
-                  display: flex;
-                  .ggdrd_left {
-                    font-size: 10px;
-                    color:rgba(109,109,109,1);
-                    line-height: 15px;
-                  }
-                  .ggdrd_right {
-                    padding: 5px 0 0 12px;
-                    width: 175px;
-                    height: 6px;
-                    .ggdrd_progress {
-                      width: 80%;
-                      height: 6px;
-                      background:rgba(125,197,64,1);
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      .iconmore::before {
-        font-size: 20px;
-        line-height: 14px;
-      }
-      .footer {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding-right: 20px;
-        height: 56px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        background: @default-font-color;
-        .tag {
-          color: #FFFFFF;
-          padding-right: 40px;
-        }
-        .btn-cancel {
-          color: #FFFFFF;
-          border: 1px solid rgba(255,255,255,1);
-          background: @default-font-color;
-        }
+      .api-left {
+        width: 238px;
       }
     }
   }
-}
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div class="editPanel">
     <el-form :model="ruleForm">
-      <split-title class="title" :title="'描述信息'"></split-title>
-      <div style="margin: 10px 0px;">接口描述文档路径：</div>
+      <DYSplitTitle class="title h3-title-mb" :title="'描述信息'"></DYSplitTitle>
+      <div style="margin: 0 0 10px 0px;">接口描述文档路径：</div>
       <div>{{ruleForm.specfile}}</div>
       <div style="margin: 10px 0px;">接口描述文档文件：</div>
       <div class="note">{{ruleForm.specdoc}}</div>
@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 
 export default {
   data () {
@@ -40,7 +39,6 @@ export default {
   created () {
   },
   components: {
-    splitTitle
   }
 }
 </script>
@@ -70,17 +68,10 @@ export default {
     padding: 16px 16px 16px 12px;
   }
   .tilte {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
     margin-bottom: 10px;
   }
   .eventTitle {
-    font-family: @default-font;
     font-size: 20px;
-    color: @default-font-color;
     font-weight: 500;
     line-height: 29px;
     margin-bottom: 26px;

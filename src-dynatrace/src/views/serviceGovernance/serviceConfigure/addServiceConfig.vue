@@ -5,21 +5,22 @@
         <el-input v-model="ruleForm.name" placeholder="请输入内容"></el-input>
       </el-form-item>
       <el-form-item label="配置组标识" prop="code">
-        <el-input v-model="ruleForm.code" placeholder="请输入内容" :disabled="ruleForm.group_id && ruleForm.code ? true : false"></el-input>
+        <el-input v-model="ruleForm.code" placeholder="请输入内容" :disabled="!!(ruleForm.group_id && ruleForm.code)"></el-input>
       </el-form-item>
-      <el-form-item class="mb-30" label="描述" prop="info">
+      <el-form-item label="描述" prop="info">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入内容"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
-      <div class="btns">
-        <el-button @click="submitForm('ruleForm')" type="primary" :disabled="!ruleForm.name || !ruleForm.code">保存</el-button>
-        <el-button @click="cancleForm('ruleForm')">取消</el-button>
-      </div>
+      <DYButtonGroup>
+        <DYButton type="primary" :disabled="!ruleForm.name || !ruleForm.code" @click="submitForm('ruleForm')">保存</DYButton>
+        <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+      </DYButtonGroup>
     </el-form>
   </div>
 </template>
@@ -29,12 +30,10 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-          name: '',
-          code: ''
-        }
-      }
+      default: () => ({
+        name: '',
+        code: ''
+      })
     }
   },
   data () {

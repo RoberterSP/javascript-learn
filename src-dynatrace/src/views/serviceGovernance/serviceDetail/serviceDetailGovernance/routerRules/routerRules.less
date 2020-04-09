@@ -1,3 +1,5 @@
+@import "~common/style/variable";
+
 .router-rule{
   .dy-checkbox {
     .checkbox-item {
@@ -17,7 +19,7 @@
         .sf-checkbox__inner{
           display: inline-block;
           position: relative;
-          border: 2px solid #00a1b2;
+          border: 2px solid @turq-06;
           border-radius: 0;
           box-sizing: border-box;
           width: 20px;
@@ -33,16 +35,16 @@
           svg{
             width: 12px;
             height: 12px;
-            fill: #00a1b2;
+            fill: @turq-06;
             stroke-width: 64;
-            stroke: #00a1b2;
+            stroke: @turq-06;
             margin-top: 2px;
             opacity: 0;
           }
         }
         &.is-checked .sf-checkbox__inner {
-          // background-color: @theme-color;
-          border-color: #00a1b2;
+          // background-color: @turq-06;
+          border-color: @turq-06;
           svg{
             opacity: 1;
           }
@@ -61,10 +63,6 @@
         }
       }
       .sf-checkbox__label{
-        font-size:14px;
-        font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-        font-weight:400;
-        color:rgba(69,70,70,1);
         line-height: 38px;
         margin-left: 10px;
       }
@@ -81,14 +79,12 @@
   }
   .sf-tagsinput{
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     min-height: 32px;
-    border:1px solid #cccccc;
+    border:1px solid @gray-04;
     border-radius: 3px;
     background-color: #fff;
     padding-bottom: 0;
-    display: flex;
     flex-wrap: nowrap;
     padding-left: 15px;
     width: 80%;
@@ -102,9 +98,7 @@
         height: 26px;
         border-radius:3px;
         border:1px solid rgba(230,230,230,1);
-        background-color: #F2F2F2;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
+        background-color: @gray-02;
         color:rgba(137,137,137,1);
         font-size:12px;
         line-height:18px;
@@ -120,7 +114,7 @@
           white-space: nowrap;
         }
         .tag_val{
-          color:rgba(0,161,178,1);
+          color:@turq-06;
           max-width: 220px;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -130,10 +124,9 @@
           cursor: pointer;
           margin-left: 5px;
           line-height: 15px;
-          i{
-            font-size: 16px;
+          .iconClose{
             font-weight: bolder;
-            color:rgba(0,161,178,1);
+            color:@turq-06;
           }
         }
       }
@@ -154,16 +147,13 @@
         left: 0;
         top: 28px;
         min-width:115px;
-        border:1px solid #cccccc;
+        border:1px solid @gray-04;
         z-index: 9;
         .key_item{
           width: 100%;
           height:28px;
           background-color:rgba(255,255,255,1);
           font-size:12px;
-          font-family:PingFangSC-Regular,PingFang SC;
-          font-weight:400;
-          color:rgba(69,70,70,1);
           line-height:28px;
           padding: 0 12px;
           &:hover{
@@ -193,11 +183,8 @@
               text-align: left;
               height: 48px;
               padding-left: 7px;
+
               label{
-                font-size:14px;
-                font-family:PingFangSC-Regular,PingFang SC;
-                font-weight:400;
-                color:rgba(69,70,70,1);
                 line-height:20px;
               }
             }
@@ -286,8 +273,5 @@
 .add-router-rule-container{
   .el-select{
     width: 100%;
-    .el-input .el-input__inner{
-      // height: 32px !important;
-    }
   }
 }

@@ -15,9 +15,7 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {}
-      }
+      default: () => ({})
     }
   },
   data () {
@@ -31,7 +29,7 @@ export default {
     Object.keys(this.clientDetails).forEach(key => {
       if (key !== 'log_content') {
         this.formData.push({
-          key: key,
+          key,
           value: this.clientDetails[key]
         })
       }
@@ -59,8 +57,9 @@ export default {
         }
 
         .file_value {
+          word-break: break-word;
           flex: 1;
-          /*text-align: left;*/
+          word-break: break-word;
         }
       }
     }

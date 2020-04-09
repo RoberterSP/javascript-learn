@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { AUTH_RESOURCE_GET } from '@/api'
 import asyncRouterMaps from './routeJson.js'
-import { sendPiwik } from 'static/projectPiwik.js'
 
 import store from '@/store/index'
 
@@ -11,6 +10,7 @@ import routes from './routes'
 
 // 固定菜单与路由
 import { frameInRoutes } from '@/router/routes'
+
 // 代码生成器生成的菜单与路由
 // import autoGenerateMenusAndRouters from '@/development'
 // import * as userService from "@/api/sys/user";
@@ -59,7 +59,7 @@ let fetchPermissionInfo = async function () {
   // 处理路由 得到每一级的路由设置
   store.commit('initPageRouter', [...frameInRoutes, ...permissionRouter])
   // 设置权限信息
-  store.commit('actionPrimissionData', userPermissionInfo)
+  store.commit('actionPermissionData', userPermissionInfo)
 
   console.log('拉取权限信息', permissionRouter)
 
@@ -73,7 +73,7 @@ let whiteList = ['/login']
  * 权限验证
  */
 router.beforeEach(async (to, from, next) => {
-  sendPiwik(to.path)
+  _paq.push(['trackPageView', document.title]);
   // console.log('to.path', permisssionRouter, store.getters.token, isFetchPermissionInfo)
   if (store.getters.token) {
     // 如果登陆过 有token
@@ -121,4 +121,12 @@ router.afterEach(to => {
   }
 })
 
+// push 容错
+const routerPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return routerPush.call(this, location).catch(error => error)
+}
+
+// check_flag_begin
 export default router
+// check_flag_end

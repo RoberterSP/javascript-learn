@@ -30,7 +30,7 @@
       </el-form-item>
     </el-form>
     <el-form :model="ruleForm" class="custom_width">
-      <el-form-item label="固定延时" class="middle-form-item" v-if="ruleForm.fault_type === 'delay'">
+      <el-form-item label="固定延时" v-if="ruleForm.fault_type === 'delay'">
         <ntSlider
           v-model="ruleForm.fixed_delay"
           :resident-tooltip="true"
@@ -48,7 +48,7 @@
       </el-form-item>
     </el-form>
     <el-form :model="ruleForm" class="custom_width">
-      <el-form-item label="延时比例" class="middle-form-item" v-if="ruleForm.fault_type === 'delay'">
+      <el-form-item label="延时比例" v-if="ruleForm.fault_type === 'delay'">
         <ntSlider
           v-model="ruleForm.delay_percentage"
           show-input
@@ -67,7 +67,7 @@
       </el-form-item>
     </el-form>
     <el-form :model="ruleForm" class="custom_width">
-      <el-form-item label="中断比例" class="middle-form-item" v-if="ruleForm.fault_type === 'abort'">
+      <el-form-item label="中断比例" v-if="ruleForm.fault_type === 'abort'">
         <ntSlider
           v-model="ruleForm.abort_percentage"
           show-input
@@ -86,8 +86,8 @@
       </el-form-item>
     </el-form>
     <el-form class="default-width" :model="ruleForm">
-      <p class="tilte">Header标签</p>
-      <div class="headerList">
+      <p class="el-form-item__label">Header标签</p>
+      <div class="headerList" v-show="ruleForm.match_header&&ruleForm.match_header.length">
         <div class="flex-start header" v-for="(header, index) in ruleForm.match_header" :key="`header${index}`">
           <el-input class="headTitle" v-model="header.key" placeholder="请输入键"></el-input>
           <span class="headmid">:</span>
@@ -96,10 +96,12 @@
                v-if="ruleForm.match_header.length">
         </div>
       </div>
-      <el-button @click="addHeader" class="mb30">添加</el-button>
+      <div class="el-button-form-item">
+        <DYButton @click="addHeader">添加</DYButton>
+      </div>
     </el-form>
     <el-form :model="ruleForm" class="custom_width">
-      <el-form-item label="最大故障比例" class="middle-form-item">
+      <el-form-item label="最大故障比例">
         <ntSlider
           v-model="ruleForm.max_active_faults"
           show-input
@@ -124,27 +126,29 @@
       <el-form-item label="下游节点">
         <el-input v-model="ruleForm.downstream_nodes" placeholder="请输入内容"></el-input>
       </el-form-item>
-      <el-form-item class="mb-30" label="备注" prop="info">
+      <el-form-item label="备注" prop="info">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入内容"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
-      <el-form-item class="mb-10">
+      <div class="switch_form_item">
         <nt-switch
           :value="switchValue"
           :title="'激活故障注入规则'"
           @dyClick="switchChange"
         ></nt-switch>
-      </el-form-item>
+      </div>
       <!-- <div class="tips">说明文案说明文案说明文案说明文案说明文案说明文案说明文案说明文案</div> -->
       <div class="btns" v-permission="'serviceCenter_serviceDetail_faultInjectionRuleList_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存
-        </el-button>
-        <el-button @click="cancleForm('ruleForm')">取消</el-button>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -160,14 +164,12 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-          name: '', // 名称
-          code: '',
-          fault_type: 'delay',
-          match_header: []
-        }
-      }
+      default: () => ({
+        name: '', // 名称
+        code: '',
+        fault_type: 'delay',
+        match_header: []
+      })
     },
     meshCode: {
       type: String
@@ -316,16 +318,11 @@ export default {
       }
 
       .tilte {
-        font-family: @default-font;
-        font-size: @default-font-size;
-        color: @default-font-color;
-        font-weight: @default-font-weight;
-        line-height: @default-line-height;
         margin-bottom: 10px;
       }
 
       .headerList {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
 
         .header {
           margin-bottom: 4px;
@@ -361,10 +358,12 @@ export default {
       .format_width {
         width: 96%;
         float: left;
+        padding-left: 15px;
       }
 
       .demonstration {
         float: right;
+        line-height: 40px;
       }
     }
   }
@@ -374,5 +373,9 @@ export default {
     .el-slider__button-wrapper {
       z-index: 1 !important;
     }
+  }
+  .el-form-item__label {
+    text-align: left;
+    float: unset;
   }
 </style>

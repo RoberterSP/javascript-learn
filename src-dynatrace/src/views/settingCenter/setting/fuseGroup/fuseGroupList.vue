@@ -1,30 +1,41 @@
 <template>
-  <div class="wrapper p10">
-    <h2 class="mb30">熔断规则</h2>
-    <div class="addPanel mb30" v-if="createBox">
+  <div class="wrapper">
+    <DYHeader class="row-title" title="熔断规则" type="small" no-gap />
+    <div class="add-panel row-action" v-if="createBox">
       <addFuseGroupRule @cancelContent='cancelContent' @submitContent='submitContent'></addFuseGroupRule>
     </div>
 
-    <el-button class="create mb30" v-else type='primary' @click="openCreate" v-permission="'serviceCenter_fusingGroup_add'">添加规则</el-button>
+    <div v-else class="row-action">
+      <DYButton type='primary' @click="openCreate" v-permission="'serviceCenter_fusingGroup_add'">添加规则</DYButton>
+    </div>
 
-    <el-input class="search" suffix-icon="el-icon-search" v-model="select_name" placeholder="请输入熔断规则名称" clearable @change="readCircuitBreakerList()"></el-input>
-    <nt-table class="table-list" :tableData="circuit_breakers||[]" :tableSet="tableSet" :columns="columns" :componentsName="'addFuseGroupRule'" @changeSwitch="changeSwitch" @deleteOne="deleteOne" @componentSaveContent="submitContent"></nt-table>
+    <div class="search row-action">
+      <search-bar
+        v-model.trim="select_name"
+        @search="readCircuitBreakerList"
+        :placeholder="'请输入熔断规则名称'"
+      />
+    </div>
+    <nt-table class="row-content" :tableData="circuit_breakers||[]" :tableSet="tableSet" :columns="columns"
+              :componentsName="'addFuseGroupRule'" @changeSwitch="changeSwitch" @deleteOne="deleteOne"
+              @componentSaveContent="submitContent"></nt-table>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import {mapMutations} from 'vuex'
 import ntTable from 'components/ntTable/ntTable.vue'
+import searchBar from 'components/searchBar/searchBar.vue'
 import {
-  GET_DEFAULT_CIRCUIT_BREAKER_LIST,
-  GET_CIRCUIT_BREAKER_LIST,
-  UPLOAD_CIRCUIT_BREAKER,
-  UPDATE_CIRCUIT_BREAKER,
   DEL_CIRCUIT_BREAKER,
-  UPDATE_CIRCUIT_BREAKER_STATUS
+  GET_CIRCUIT_BREAKER_LIST,
+  GET_DEFAULT_CIRCUIT_BREAKER_LIST,
+  UPDATE_CIRCUIT_BREAKER,
+  UPDATE_CIRCUIT_BREAKER_STATUS,
+  UPLOAD_CIRCUIT_BREAKER
 } from '@/api'
 import bus from '@/assets/eventBus.js'
-import { PAGESIZE } from '@/common/util/common.js'
+import {PAGESIZE} from '@/common/util/common.js'
 import addFuseGroupRule from './addFuseGroupRule.vue'
 
 export default {
@@ -43,24 +54,24 @@ export default {
           name: '调用次数阈值', // 表头名字
           code: 'threshold', // 表身显示值
           type: 'text',
-          textAlign: 'center'
+          textAlign: 'right'
         }, {
           name: '错误比例阈值', // 表头名字
           code: 'err_percent', // 表身显示值
           type: 'text',
-          textAlign: 'center'
+          textAlign: 'right'
         }, {
           name: '时间粒度', // 表头名字
           code: 'granularity', // 表身显示值
           type: 'text',
           width: 90,
-          textAlign: 'center'
+          textAlign: 'right'
         }, {
           name: '窗口个数', // 表头名字
           code: 'rolling_window', // 表身显示值
           type: 'text',
           width: 90,
-          textAlign: 'center'
+          textAlign: 'right'
         }, {
           name: '启用/禁用', // 表头名字
           code: 'state', // 表身显示值
@@ -68,16 +79,16 @@ export default {
           sortAbled: false, // 是否显示排序
           sortOrder: 'none', // 排序
           width: 90,
-          disable: false
+          disable: false,
+          textAlign: 'right'
         }, {
           name: '删除', // 表头名字
           code: '', // 表身
           type: 'delete',
-          textAlign: 'right',
+          textAlign: 'center',
           showDel: true, // 删除
-          width: 50,
+          width: 60,
           disable: false
-          // width: 60
         }
       ],
       tableSet: {
@@ -115,7 +126,11 @@ export default {
           obj.name = '默认规则'
           obj.code = 'default'
           obj.type = 'default'
-          obj.state = true
+          obj.state = {
+            disabled: true,
+            value: true
+          }
+
           this.circuit_breakers.push(obj)
           this.SET_DEFAULT_FUSE_GROUP(obj)
           this.tableSet.paginationConfig.total = 1
@@ -136,8 +151,10 @@ export default {
       })
     },
     readFunc () {
-      UPLOAD_CIRCUIT_BREAKER({}).then(res => {})
-      UPDATE_CIRCUIT_BREAKER({}).then(res => {})
+      UPLOAD_CIRCUIT_BREAKER({}).then(res => {
+      })
+      UPDATE_CIRCUIT_BREAKER({}).then(res => {
+      })
     },
     openCreate () {
       this.createBox = true
@@ -170,33 +187,20 @@ export default {
       })
     }
   },
-  mounted () {},
+  mounted () {
+  },
   created () {
     this.readCircuitBreakerList()
   },
   components: {
     ntTable,
-    addFuseGroupRule
+    addFuseGroupRule,
+    searchBar
   }
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
-
-.wrapper {
-  background: rgba(255, 255, 255, 1);
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .create {
-    display: block;
-  }
   .search {
     width: 80%;
-    // margin: 32px 0 20px;
-    margin-bottom: 20px;
   }
-}
 </style>

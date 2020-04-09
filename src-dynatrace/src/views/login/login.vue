@@ -37,14 +37,13 @@
               </el-select>
             </el-form-item>
             <div class="btns" v-if="!isShowSelect">
-              <el-button @click="login" type="primary" :disabled="!ruleForm.userName || !ruleForm.passWord">登录
-              </el-button>
+              <DYButton theme="dark" type="primary" @click="login" :disabled="!ruleForm.userName || !ruleForm.passWord">登录</DYButton>
             </div>
             <div class="secondbtns" v-if="isShowSelect">
-              <el-button @click="isShowSelect=false" class="cancel">返回</el-button>
-              <el-button @click="chooseNamespace" type="primary" class="savesecond"
-                         :disabled="!this.ruleForm.namespaceCode">登录
-              </el-button>
+              <DYButtonGroup>
+                <DYButton theme="dark" @click="isShowSelect=false">返回</DYButton>
+                <DYButton theme="dark" type="primary" @click="chooseNamespace" :disabled="!this.ruleForm.namespaceCode">登录</DYButton>
+              </DYButtonGroup>
             </div>
             <div v-if="errorMsg" class="errorMsg">
               <span>{{errorMsg}}</span>
@@ -70,22 +69,23 @@
       </div>
     </div>
     <div class="logoBottom">
-      <img src="static/img/logo_bottom.svg">
-      <div class="text">Copyright © 2014 - 2020 www.nexttao.com</div>
+      <img src="static/img/logo_bottom_login.png">
+      <div class="text">
+        <p>互道信息技术（上海）有限公司</p>
+        <p>Copyright © 2020 <a href="https://www.nexttao.com/">NEXTTAO</a> </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
-  import './login.less'
+
   import {AUTH_NAMESPACE_GET, AUTH_RESOURCE_GET, LOGIN_POST} from '@/api'
   // import message from 'components/message/message.vue'
   import {setTimeout} from 'timers'
 
 import Cookies from '@/common/util/cookie.js'
-
-  // import { sendPiwik } from 'static/projectPiwik.js'
 
   export default {
     data () {
@@ -137,6 +137,13 @@ import Cookies from '@/common/util/cookie.js'
         AUTH_NAMESPACE_GET().then(res => {
           this.namespaces = res.data.namespaces
           window.localStorage.setItem('namespaces', JSON.stringify(this.namespaces))
+
+          // 如果只有一个命名空间， 就直接执行登陆动作
+          if (this.namespaces.length === 1) {
+            this.ruleForm.namespaceCode = this.namespaces[0].namespace_code
+
+            this.chooseNamespace()
+          }
         })
       },
       // 选择namespace的下拉框
@@ -158,7 +165,7 @@ import Cookies from '@/common/util/cookie.js'
         // Cookies.remove('NXDF_TOKEN')
         let that = this
         if (this.ruleForm.userName && this.ruleForm.passWord) {
-          var data = {
+          const data = {
             username: this.ruleForm.userName,
             password: this.ruleForm.passWord
           }
@@ -189,7 +196,7 @@ import Cookies from '@/common/util/cookie.js'
           this.canLogin = true
           if (res.code === 0) {
             // 设置权限信息
-            that.$store.commit('actionPrimissionData', res.data)
+            that.$store.commit('actionPermissionData', res.data)
             // // 默认跳转菜单的第一个
             // if (res.data.access_menus[0].children&&res.data.access_menus[0].children.length>0) {
             //   that.$router.push({ name: res.data.access_menus[0].children[0].name});
@@ -200,11 +207,10 @@ import Cookies from '@/common/util/cookie.js'
             window.localStorage.setItem('userId', this.userId)
             window.localStorage.setItem('userName', this.userName)
             window.localStorage.setItem('nameSpace', this.ruleForm.namespaceCode)
-            // let script = document.createElement('script')
-            // script.src = './static/projectPiwik.js'
-            // script.type = 'text/javascript'
-            // document.body.appendChild(script)
-            // sendPiwik()
+            let script = document.createElement('script')
+            script.src = './static/projectPiwik.js'
+            script.type = 'text/javascript'
+            document.body.appendChild(script)
             that.$router.push({name: 'index', path: 'index/index'})
           } else {
 
@@ -266,3 +272,7 @@ import Cookies from '@/common/util/cookie.js'
     }
   }
 </script>
+
+<style lang="less" scoped>
+  @import './login.less';
+</style>

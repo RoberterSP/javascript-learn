@@ -21,126 +21,105 @@
         </div>
       </div>
       <div class="oper mt12">
-        <el-button type="primary" @click="initApp()">注册应用</el-button>
+        <DYButton type="primary" @click="initApp()">注册应用</DYButton>
       </div>
     </div>
-    <div class="app-list flex" v-if="!first_load && app_list">
+    <div class="app-list flex" v-if="!first_load && app_list" :style="{minHeight: appHeight + 'px'}">
       <div class="app-left">
         <div class="nav">
-          <!-- &&this_page==='list' -->
-          <el-button :class="[this_page!=='list'?'no_cursor':'']" type="primary" @click="cutShowStyle('list')" v-if="show_style=='list'"><div class="box-center"><div class="iconfont iconlist"></div></div></el-button>
-          <el-button :class="[this_page!=='list'?'no_cursor':'']" @click="cutShowStyle('grid')" v-if="show_style=='list'"><div class="box-center"><div class="iconfont icongrid"></div></div></el-button>
-          <el-button :class="[this_page!=='list'?'no_cursor':'']" @click="cutShowStyle('list')" v-if="show_style=='grid'"><div class="box-center"><div class="iconfont iconlist"></div></div></el-button>
-          <el-button :class="[this_page!=='list'?'no_cursor':'']" type="primary" @click="cutShowStyle('grid')" v-if="show_style=='grid'"><div class="box-center"><div class="iconfont icongrid"></div></div></el-button>
-        </div>
-        <div class="filter">
-          <div class="filter-item" v-for="(filter, index) in filter_list" :key="index" :class="{select:filter.selected}" @click="tofilter(filter.code, filter)">
-            <div class="up">{{filter.name}}</div>
-            <div class="down">
-              <div>{{filter.select_name}}</div>
-              <div>编辑</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="app-right p10" :class="{'hide': this_page != 'classify'}">
-        <div class="p10">
-          <split-title class="title" :title="'分类'"></split-title>
-          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
-          <nt-redio class="category-list" :name="'classify'" :list="app_classify_list||[]" :keyValue="redioKeyValue" v-on:redioChecked="redioChecked"></nt-redio>
-          <div class="footer">
-            <div class="tag default-label">是否保存修改？</div>
-            <el-button class="btn-cancel" @click="cancelPage()">取消</el-button>
-            <el-button class="btn-save" type="primary" @click="savePage()" :disabled="isNeedSave">保存</el-button>
-          </div>
-        </div>
-      </div>
-      <div class="app-right p10" :class="{'hide': this_page != 'creator'}">
-        <div class="p10">
-          <split-title class="title" :title="'创建者'"></split-title>
-          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
-          <nt-redio class="category-list" :name="'creator'" :list="app_creator_list||[]" :keyValue="redioKeyValue" v-on:redioChecked="redioChecked"></nt-redio>
-          <div class="footer">
-            <div class="tag default-label">是否保存修改？</div>
-            <el-button class="btn-cancel" @click="cancelPage()">取消</el-button>
-            <el-button class="btn-save" type="primary" @click="savePage()" :disabled="isNeedSave">保存</el-button>
-          </div>
-        </div>
-      </div>
-      <div class="app-right p10" :class="{'hide': this_page != 'authType'}">
-        <div class="p10">
-          <split-title class="title" :title="'授权类型'"></split-title>
-          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
-          <nt-redio class="category-list" :name="'authType'" :list="app_auth_type_list||[]" :keyValue="redioKeyValue" v-on:redioChecked="redioChecked"></nt-redio>
-          <div class="footer">
-            <div class="tag default-label">是否保存修改？</div>
-            <el-button class="btn-cancel" @click="cancelPage()">取消</el-button>
-            <el-button class="btn-save" type="primary" @click="savePage()" :disabled="isNeedSave">保存</el-button>
-          </div>
-        </div>
-      </div>
-      <div class="app-right p10" :class="{'hide': this_page != 'health'}">
-        <div class="p10">
-          <split-title class="title" :title="'健康水平'"></split-title>
-          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
-          <nt-redio class="category-list" :name="'health'" :list="app_health_list||[]" :keyValue="redioKeyValue" v-on:redioChecked="redioChecked"></nt-redio>
-          <div class="footer">
-            <div class="tag default-label">是否保存修改？</div>
-            <el-button class="btn-cancel" @click="cancelPage()">取消</el-button>
-            <el-button class="btn-save" type="primary" @click="savePage()" :disabled="isNeedSave">保存</el-button>
-          </div>
-        </div>
-      </div>
-      <div class="app-right p10" :class="{'hide': this_page != 'list'}">
-        <div class="p10">
-          <div class="app-list-title flex-between">
-            <h2 class="head default-label">{{tableSet.paginationConfig.total}}个应用</h2>
 
-            <div class="flex">
-              <el-button class="btn-create" type="primary" @click="initApp()" v-permission= "'gatewayCenter_appList_add'">创建</el-button>
+          <DYButton
+            :type="show_style === 'list' ? 'primary' : 'default'"
+            :class="[this_page !== 'list' ? 'no-cursor' : '', show_style === 'list' ? 'active' : '']"
+            @click="cutShowStyle('list')">
+            <DYIcon type="list" size="16"></DYIcon>
+          </DYButton>
+          <DYButton
+            :type="show_style === 'list' ? 'default' : 'primary'"
+            :class="[this_page !== 'list' ? 'no-cursor' : '', show_style === 'grid' ? 'active' : '']"
+            @click="cutShowStyle('grid')">
+            <DYIcon type="grid" size="16"></DYIcon>
+          </DYButton>
 
-              <ntPopover :show.sync="showMorePopup" type="small" v-permission= "'gatewayCenter_appList_updateCache'">
-                <el-button slot="reference" class="ml10" @click="showMorePopup=true">
-                  <i class="el-icon-more"></i>
-                </el-button>
+        </div>
+        <left-filter :filter-list="filter_list" @click="tofilter"/>
+      </div>
 
-                <div class="pop-footer">
-                  <el-button type="primary" @click="updateCache();showMorePopup=false">更新缓存</el-button>
+      <DYCard>
+
+        <!--    在编辑的时候需要用到里面的元素，所以这里先用show    -->
+        <div v-show="this_page === 'list'">
+          <DYHeader
+            class="row-title"
+            no-gap
+            :title="tableSet.paginationConfig.total + '个应用'"
+          >
+
+            <DYButtonGroup slot="actions">
+              <DYButton type="primary"
+                        @click="initApp()"
+                        v-permission="'gatewayCenter_appList_add'">
+                创建
+              </DYButton>
+
+              <DYPopover :show.sync="showMorePopup" type="small"
+                         :width="showSecondSurePopup ? 140 :120"
+                         v-permission="'gatewayCenter_appList_updateCache'"
+                         @onClose="showSecondSurePopup = false"
+              >
+
+                <DYButton slot="reference" @click="showMorePopup=true">
+                  <DYIcon type="more" size="14" />
+                </DYButton>
+
+                <div v-if="!showSecondSurePopup">
+                  <DYButton theme="dark" @click="updateCache()">更新缓存</DYButton>
                 </div>
-              </ntPopover>
 
-              <!-- 二次确认popup -->
-              <ntPopover :show.sync="showSecondSurePopup" type="small" width="140">
-                <div class="contain">确认更新缓存?</div>
-                <div class="second_sure_footer">
-                  <el-button type="primary" @click="yesClick()">是</el-button>
-                  <el-button type="primary" @click="showSecondSurePopup = false">否</el-button>
+                <div v-else>
+                  <div class="text-center mb10 no-warp">确认更新缓存?</div>
+
+                  <div class="flex-between">
+                    <DYButton theme="dark" type="primary" @click="yesClick()">是</DYButton>
+                    <DYButton theme="dark" @click="showSecondSurePopup = false">否</DYButton>
+                  </div>
                 </div>
-              </ntPopover>
-            </div>
+
+              </DYPopover>
+            </DYButtonGroup>
+
+          </DYHeader>
+
+          <div class="row-action">
+            <DYFilter
+              class="input-filter"
+              :filtersModel="filtersModel"
+              :filterKeys="filterKeys"
+              :quickSearch="{label: '应用名称', key: 'name'}"
+              @returnFilterFunc="returnFilterFunc"
+            />
           </div>
-          <div style="margin: 20px 0;">
-            <tags-input ref="tagAppFilter"
-                        defaultKeyName="应用名称"
-                        :filterKeys="filterKeys" :keysValue="filterKeysValue" @returnFilterFunc="returnFilterFunc" :userInputQuery="true"></tags-input>
-          </div>
-          <div class="app-data-list">
-            <my-table
+
+          <div class="row-content app-data-list">
+            <nt-table
               :tableData="app_list"
               :tableSet="tableSet"
               :columns="columns"
+              @deleteOne="deleteOne"
               @readDetail="appReadDetail"
-              v-if="show_style == 'list'&&app_list.length"
-            ></my-table>
-            <div class="grid-list" v-if="show_style == 'grid'">
-              <div class="grid" v-for="(item, index) in app_list" :key="index" @click="appReadDetail(item)">
-                <div class="gg_up">
-                  <div class="ggu_left"><div class="iconfont iconApplication"></div></div>
-                  <div class="ggu_right">
-                    <div class="ggur_title default-label">{{item.name}}</div>
-                    <div class="ggur_appid">APP ID:{{item.app_id}}</div>
-                  </div>
-                </div>
+              @onFalsePageChange="onTablePageChange"
+              v-if="show_style === 'list' && app_list.length"
+            ></nt-table>
+            <div class="grid-list" v-if="show_style === 'grid'">
+              <DYMiniCard
+                enable-click
+                class="grid"
+                v-for="(item, index) in app_list"
+                :key="index" icon="Application"
+                :title="item.name"
+                :sub-title="`APP ID:${item.app_id}`"
+                @click="appReadDetail(item)"
+              >
                 <div class="gg_down">
                   <div class="ggd_left">
                     <div class="ggdl_value default-label">{{item.health_index}}</div>
@@ -149,29 +128,31 @@
                   <div class="ggd_right">
                     <div class="ggdr_up">
                       <div class="ggdru_box">
-                        <div class="iconfont iconevents"></div>
+                        <div class="iconfont icon_events"><DYIcon type="events"></DYIcon></div>
                         <div class="ggdru_item">
                           <div class="ggdru_value default-label">{{item.total_endpoint_num}}</div>
                           <div class="ggdru_name default-label">接口数</div>
                         </div>
                       </div>
                       <div class="ggdru_box">
-                        <div class="iconfont iconevents"></div>
+                        <div class="iconfont icon_events"><DYIcon type="events"></DYIcon></div>
                         <div class="ggdru_item">
                           <div class="ggdru_value default-label">{{item.total_event_num}}</div>
-                          <div class="ggdru_name default-label">订阅事件数</div>
+                          <div class="ggdru_name default-label">事件订阅数</div>
                         </div>
                       </div>
                     </div>
                     <div class="ggdr_down">
                       <div class="ggdrd_left">{{item.health_index_text}}</div>
                       <div class="ggdrd_right">
-                        <div class="ggdrd_progress" :class="{'green': item.health_index_text === '健康', 'yellow': item.health_index_text === '异常', 'red': item.health_index_text === '危险'}" :style="{width: item.health_index + '%'}"></div>
+                        <div class="ggdrd_progress"
+                             :class="{'green': item.health_index_text === '健康', 'yellow': item.health_index_text === '异常', 'red': item.health_index_text === '危险'}"
+                             :style="{width: item.health_index + '%'}"></div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </DYMiniCard>
             </div>
             <div class="no-grid" v-if="!app_list || app_list.length <= 0 ">
               <div class="ng_left">
@@ -186,34 +167,83 @@
             </div>
           </div>
         </div>
-      </div>
+
+        <div v-if="this_page === 'health'">
+          <DYHeader title="健康水平" class="row-title" type="small" no-gap />
+          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
+          <nt-radio class="category-edit-list" :name="'health'" :list="app_health_list||[]" :keyValue="radioKeyValue"
+                    @radioChecked="radioChecked" />
+        </div>
+
+        <div v-if="this_page === 'authType'">
+          <DYHeader class="row-title" title="授权类型" type="small" no-gap />
+          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
+          <nt-radio class="category-edit-list" :name="'authType'" :list="app_auth_type_list||[]" :keyValue="radioKeyValue"
+                    @radioChecked="radioChecked"></nt-radio>
+        </div>
+
+        <div v-if="this_page === 'creator'">
+          <DYHeader title="创建者" class="row-title" type="small" no-gap />
+          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
+
+          <nt-radio
+            class="category-edit-list"
+            :name="'creator'"
+            :list="app_creator_list||[]"
+            :keyValue="radioKeyValue"
+            @radioChecked="radioChecked"/>
+
+        </div>
+
+        <div v-if="this_page === 'classify'">
+          <DYHeader title="分类" class="row-title" type="small" no-gap />
+          <!-- <div class="desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
+          <nt-radio class="category-edit-list" :name="'classify'" :list="app_classify_list||[]" :keyValue="radioKeyValue"
+                    @radioChecked="radioChecked"></nt-radio>
+        </div>
+
+      </DYCard>
     </div>
+
+    <DYConfirmationDialog
+      :show="this_page !== 'list'"
+      message="是否保存修改？"
+      okText="保存"
+      :okDisabled="isNeedSave"
+      @onOk="savePage"
+      @onCancel="cancelPage"
+    />
+
   </div>
 </template>
 
 <script>
 import stepper from 'components/stepper/stepper.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import ntRedio from 'components/base/redio.vue'
-import ntPopover from 'components/base/popover.vue'
+import ntRadio from 'components/base/radio.vue'
 
-import myTable from 'components/ntTable/ntTable.vue'
-import tagsInput from '@/components/tagsInput/tagsInput.vue'
+import ntTable from 'components/ntTable/ntTable.vue'
+// import tagsInput from '@/components/tagsInput/tagsInput.vue'
 import {
-  APP_LIST_GET,
   APP_CATEGORY_LIST_GET,
+  APP_LIST_GET,
   APP_MONITOR_INFO_GET,
-  UPDATE_APP_CACHE,
-  NXDF_SETTING_HEALTH_INDEX_INFO_GET
+  NXDF_SETTING_HEALTH_INDEX_INFO_GET,
+  UPDATE_APP_CACHE
 } from '@/api/index.js'
-import { PAGESIZE } from 'common/util/common.js'
+import {PAGESIZE} from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
+import leftFilter from '@/components/leftFilter/leftFilter.vue'
+import {APP_DEL} from '@/api'
+import {clone, slice} from 'lodash'
+
 // import datePickVue from '../../../components/navigation/datePick.vue'
+
 const DEFAULT_NAME = '任意'
 
 export default {
   data () {
     return {
+      appHeight: '',
       first_load: true,
       secondSureType: '',
       show_style: 'list', // list：列模式 grid：块模式
@@ -228,7 +258,7 @@ export default {
           code: 'name', // 表身
           type: 'edit',
           showicon: 'iconfont',
-          icon_url: 'iconApplication',
+          icon_url: 'Application',
           hasSort: true // 排序
         }, {
           name: 'APP ID', // 表头名字
@@ -245,16 +275,26 @@ export default {
           type: 'text',
           sortAbled: true,
           sortOrder: 'none',
-          textAlign: 'center',
+          textAlign: 'right',
+          textAiignWithoutIcon: true, // 右对齐但是不希望和sort icon对齐仅和文字右对齐
           width: 80
         }, {
-          name: '订阅事件数', // 表头名字
+          name: '事件订阅数', // 表头名字
           code: 'total_event_num', // 表身显示值
           type: 'text',
           sortAbled: true,
           sortOrder: 'none',
-          textAlign: 'center',
-          width: 100
+          textAlign: 'right',
+          textAiignWithoutIcon: true, // 右对齐但是不希望和sort icon对齐仅和文字右对齐
+          width: 110
+        }, {
+          name: '删除', // 表头名字
+          code: '', // 表身
+          type: 'delete',
+          width: 60,
+          disable: false,
+          showDel: true, // 删除
+          textAlign: 'center' // 头部排序
         }
       ],
       stepper: [
@@ -270,8 +310,8 @@ export default {
       app_creator_list: [],
       app_health_list: [],
       app_auth_type_list: [],
-      redioKeyValue: ['code', 'name'],
-      redioInfo: {},
+      radioKeyValue: ['code', 'name'],
+      radioInfo: {},
       filterKeys: [
         {
           name: '分类',
@@ -310,7 +350,8 @@ export default {
       app_classify_list_copy: [],
       app_creator_list_copy: [],
       app_health_list_copy: [],
-      app_auth_type_list_copy: []
+      app_auth_type_list_copy: [],
+      appListOriginal: []
     }
   },
   computed: {},
@@ -334,19 +375,20 @@ export default {
       this.show_style = style
     },
     tofilter (code, filter) {
+      // 减去底部确定栏高度 56px 和stepper高度 30px
+      this.appHeight = document.documentElement.clientHeight - 86
       this.app_classify_list = JSON.parse(JSON.stringify(this.app_classify_list_copy))
       this.app_creator_list = JSON.parse(JSON.stringify(this.app_creator_list_copy))
       this.app_auth_type_list = JSON.parse(JSON.stringify(this.app_auth_type_list_copy))
       this.app_health_list = JSON.parse(JSON.stringify(this.app_health_list_copy))
-      var filterId = this.filter_list.findIndex(x => x.code === code)
+      let filterId = this.filter_list.findIndex(x => x.code === code)
       this.choosedFilter = JSON.parse(JSON.stringify(filter))
       this.isNeedSave = false
       if (!this.filter_list[filterId].selected) {
         if (filterId !== -1) {
           this.this_page = code
           this.filter_list.forEach(x => {
-            x.selected = false
-            if (x.code === code) x.selected = true
+            x.selected = x.code === code
           })
         } else {
           this.this_page = 'list'
@@ -398,15 +440,11 @@ export default {
       // 过滤条件增加选择
       this.filterKeys.forEach(x => {
         if (x.code === 'creator') {
-          let list = this.app_creator_list.map(x => {
-            return {label: x.name, value: x.code, default: x.default}
-          })
+          let list = this.app_creator_list.map(item => ({label: item.name, value: item.code, default: item.default}))
           this.$set(x, 'list', list)
         }
         if (x.code === 'authType') {
-          let list = this.app_auth_type_list.map(x => {
-            return {label: x.name, value: x.code, default: x.default}
-          })
+          let list = this.app_auth_type_list.map(item => ({label: item.name, value: item.code, default: item.default}))
           this.$set(x, 'list', list)
         }
       })
@@ -421,7 +459,7 @@ export default {
         page_size: PAGESIZE,
         page: 1
       }
-      if (nameObj && nameObj !== undefined) {
+      if (nameObj) {
         data.name = nameObj.value
       }
       this.filter_list.forEach(x => {
@@ -453,52 +491,75 @@ export default {
         if (!this.$_hasRoute('appDetail')) {
           this.$set(this.columns[0], 'type', 'text')
         }
-        let appList = res.data.app_list
-        let ishealth = this.filter_list.find(x => x.code === 'health' && x.selected_res && this.app_health_list.find(y => y.code === x.selected_res))
-        this.app_list = ishealth ? [] : appList
-        this.tableSet.paginationConfig.total = ishealth ? 0 : appList.length
-        // 第一次获取数据时，判断页面渲染内容，创建or列表
-        if (this.first_load && appList && appList.length <= 0) {
-          this.app_list = false
-        }
-        this.first_load = false
-        if (this.app_list) {
-          let healthAppList = []
-          appList.forEach((x, i) => {
-            let data = {
-              id: x.id
-            }
-            if (this.time_range.code) {
-              data.time_range = this.time_range.code
-            } else {
-              data.start_time = this.time_range.start_time
-              data.end_time = this.time_range.end_time
-            }
-            APP_MONITOR_INFO_GET(data).then(res => {
-              let appInfo = res.data.app_info
-              if (ishealth) {
-                let health = this.app_health_list.find(y => y.code === ishealth.selected_res)
-                if (health && health.min_value < appInfo.health_index && appInfo.health_index <= health.max_value) {
-                  x.health_index = appInfo.health_index
-                  x.health_index_text = appInfo.health_index_text
-                  x.total_event_num = appInfo.total_event_num
-                  x.total_endpoint_num = appInfo.total_endpoint_num
-                  healthAppList.push(x)
-                }
-              } else {
-                this.$set(x, 'health_index', appInfo.health_index)
-                this.$set(x, 'health_index_text', appInfo.health_index_text)
-                this.$set(x, 'total_event_num', appInfo.total_event_num)
-                this.$set(x, 'total_endpoint_num', appInfo.total_endpoint_num)
-              }
-            })
-          })
-          if (ishealth) {
-            this.app_list = healthAppList
-            this.tableSet.paginationConfig.total = healthAppList.length
-          }
-        }
+
+        this.appListOriginal = res.data.app_list
+
+        this.fetchAllDetail()
       })
+    },
+
+    // 获取每一条数据的详情
+    fetchAllDetail () {
+      const appList = this.appListOriginal
+      let ishealth = this.filter_list.find(x => x.code === 'health' && x.selected_res && this.app_health_list.find(y => y.code === x.selected_res))
+      this.app_list = ishealth ? [] : appList
+      this.tableSet.paginationConfig.total = ishealth ? 0 : appList.length
+      // 第一次获取数据时，判断页面渲染内容，创建or列表
+      if (this.first_load && appList && appList.length <= 0) {
+        this.app_list = false
+      }
+      this.first_load = false
+
+      if (this.app_list) {
+        const {currentPage, pageSize} = this.tableSet.paginationConfig
+
+        let healthAppList = []
+
+        let currentReadList = slice(clone(appList), (currentPage - 1) * pageSize, currentPage * pageSize)
+
+        currentReadList.forEach(async (x) => {
+          let data = {
+            id: x.id
+          }
+          if (this.time_range.code) {
+            data.time_range = this.time_range.code
+          } else {
+            data.start_time = this.time_range.start_time
+            data.end_time = this.time_range.end_time
+          }
+          await APP_MONITOR_INFO_GET(data).then(res1 => {
+            let appInfo = res1.data.app_info
+            if (ishealth) {
+              let health = this.app_health_list.find(y => y.code === ishealth.selected_res)
+              if (health && health.min_value < appInfo.health_index && appInfo.health_index <= health.max_value) {
+                x.health_index = appInfo.health_index
+                x.health_index_text = appInfo.health_index_text
+                x.total_event_num = appInfo.total_event_num
+                x.total_endpoint_num = appInfo.total_endpoint_num
+                healthAppList.push(x)
+              }
+            } else {
+              this.$set(x, 'health_index', appInfo.health_index)
+              this.$set(x, 'health_index_text', appInfo.health_index_text)
+              this.$set(x, 'total_event_num', appInfo.total_event_num)
+              this.$set(x, 'total_endpoint_num', appInfo.total_endpoint_num)
+            }
+          })
+        })
+
+        if (ishealth) {
+          this.app_list = healthAppList
+          this.tableSet.paginationConfig.total = healthAppList.length
+        }
+      }
+    },
+
+    // 当切换分页的时候
+    onTablePageChange (val) {
+      this.tableSet.paginationConfig.currentPage = val
+
+      // 请求对应的详情数据
+      this.fetchAllDetail()
     },
     // 获取应用分类列表
     readAppCategoryList () {
@@ -515,17 +576,15 @@ export default {
         // 过滤条件增加选择
         this.filterKeys.forEach(x => {
           if (x.code === 'classify') {
-            let list = this.app_classify_list.map(x => {
-              return {label: x.name, value: x.code, default: x.default}
-            })
+            let list = this.app_classify_list.map(item => ({label: item.name, value: item.code, default: item.default}))
             this.$set(x, 'list', list)
           }
         })
       })
     },
-    redioChecked (name, checked) {
+    radioChecked (name, checked) {
       this.isNeedSave = false
-      this.redioInfo = {
+      this.radioInfo = {
         key: name,
         value: checked
       }
@@ -590,56 +649,73 @@ export default {
       }
       this.$forceUpdate()
     },
+
+    // 删除一行
+    deleteOne (row) {
+      APP_DEL({
+        id: row.id
+      }).then(res => {
+        if (res.code === 0) {
+          bus.$emit('openMessage', {
+            message: '删除成功',
+            type: 'success'
+          })
+          this.readAppList()
+        }
+      })
+    },
+
     appReadDetail (row) {
-      this.$router.push({ name: 'appDetail', params: row })
+      this.$router.push({name: 'appDetail', params: row})
     },
     savePage () {
+      this.appHeight = document.documentElement.clientHeight - 30
       this.this_page = 'list'
       // 如果左侧未选中，不触发保存
-      var filter = this.filter_list.find(x => x.selected)
+      let filter = this.filter_list.find(x => x.selected)
       if (!filter) {
         return
       }
-      // 如果当前选中redio与左侧选中不匹配，赋予默认值
-      if (filter.code !== this.redioInfo.key) {
+      // 如果当前选中radio与左侧选中不匹配，赋予默认值
+      if (filter.code !== this.radioInfo.key) {
         switch (filter.code) {
           case 'classify':
-            this.$set(this.redioInfo, 'key', filter.code)
-            this.$set(this.redioInfo, 'value', this.app_classify_list ? this.app_classify_list[0].code : '')
+            this.$set(this.radioInfo, 'key', filter.code)
+            this.$set(this.radioInfo, 'value', this.app_classify_list ? this.app_classify_list[0].code : '')
             break
           case 'creator':
-            this.$set(this.redioInfo, 'key', filter.code)
-            this.$set(this.redioInfo, 'value', this.app_creator_list ? this.app_creator_list[0].code : '')
+            this.$set(this.radioInfo, 'key', filter.code)
+            this.$set(this.radioInfo, 'value', this.app_creator_list ? this.app_creator_list[0].code : '')
             break
           case 'authType':
-            this.$set(this.redioInfo, 'key', filter.code)
-            this.$set(this.redioInfo, 'value', this.app_auth_type_list ? this.app_auth_type_list[0].code : '')
+            this.$set(this.radioInfo, 'key', filter.code)
+            this.$set(this.radioInfo, 'value', this.app_auth_type_list ? this.app_auth_type_list[0].code : '')
             break
           case 'health':
-            this.$set(this.redioInfo, 'key', filter.code)
-            this.$set(this.redioInfo, 'value', this.app_health_list ? this.app_health_list[0].code : '')
+            this.$set(this.radioInfo, 'key', filter.code)
+            this.$set(this.radioInfo, 'value', this.app_health_list ? this.app_health_list[0].code : '')
             break
         }
       }
       // 根据当前选中的，将值赋给筛选器
-      var selectItem = false
-      switch (this.redioInfo.key) {
+      let selectItem = false
+      switch (this.radioInfo.key) {
         case 'classify':
-          selectItem = this.app_classify_list.find(x => x.code === this.redioInfo.value)
+          selectItem = this.app_classify_list.find(x => x.code === this.radioInfo.value)
           break
         case 'creator':
-          selectItem = this.app_creator_list.find(x => x.code === this.redioInfo.value)
+          selectItem = this.app_creator_list.find(x => x.code === this.radioInfo.value)
           break
         case 'authType':
-          selectItem = this.app_auth_type_list.find(x => x.code === this.redioInfo.value)
+          selectItem = this.app_auth_type_list.find(x => x.code === this.radioInfo.value)
           break
         case 'health':
-          selectItem = this.app_health_list.find(x => x.code === this.redioInfo.value)
+          selectItem = this.app_health_list.find(x => x.code === this.radioInfo.value)
           break
       }
 
-      let filterIdx = this.filtersModel.findIndex(y => y.code === this.redioInfo.key)
-      if (!this.redioInfo.value || this.redioInfo.value === 'all' || this.redioInfo.value === 'allth' || this.redioInfo.value === 'allor') {
+      let filterIdx = this.filtersModel.findIndex(y => y.code === this.radioInfo.key)
+      if (!this.radioInfo.value || this.radioInfo.value === 'all' || this.radioInfo.value === 'allth' || this.radioInfo.value === 'allor') {
         if (filterIdx !== -1) {
           this.filtersModel.splice(filterIdx, 1)
         }
@@ -657,7 +733,9 @@ export default {
         }
       }
       // this.filtersModel = this.filtersModel
-      this.$refs['tagAppFilter'].setModelValues(this.filtersModel)
+      // console.log(this.filtersModel)
+
+      // this.$refs.tagAppFilter.setModelValues(this.filtersModel)
 
       // 左侧显示当前选中的状态
       this.filter_list.forEach(x => {
@@ -676,21 +754,25 @@ export default {
       this.readAppList(nameObj)
     },
     cancelPage () {
+      this.appHeight = document.documentElement.clientHeight - 30
       this.this_page = 'list'
       this.filter_list.forEach(x => {
         x.selected = false
       })
-      this.filter_list = this.filter_list
+      // this.filter_list = this.filter_list
       this.app_classify_list = JSON.parse(JSON.stringify(this.app_classify_list_copy))
       this.app_creator_list = JSON.parse(JSON.stringify(this.app_creator_list_copy))
       this.app_auth_type_list = JSON.parse(JSON.stringify(this.app_auth_type_list_copy))
       this.app_health_list = JSON.parse(JSON.stringify(this.app_health_list_copy))
     },
     returnFilterFunc (data) {
+      console.log(data)
       this.filtersModel = data
 
-      let redioDefault = (list, value) => {
-        list.forEach(y => { y.default = false })
+      let radioDefault = (list, value) => {
+        list.forEach(y => {
+          y.default = false
+        })
         let itemIdx = list.findIndex(y => y.code === value)
         if (itemIdx !== -1) {
           list[itemIdx].default = true
@@ -709,21 +791,21 @@ export default {
           x.select_name = DEFAULT_NAME
           x.selected_res = ''
         }
-        // 回写左侧各个redio选中
+        // 回写左侧各个radio选中
         if (x.code === 'classify') {
-          this.app_classify_list = redioDefault(this.app_classify_list, x.selected_res)
+          this.app_classify_list = radioDefault(this.app_classify_list, x.selected_res)
         }
         if (x.code === 'creator') {
-          this.app_creator_list = redioDefault(this.app_creator_list, x.selected_res)
+          this.app_creator_list = radioDefault(this.app_creator_list, x.selected_res)
         }
         if (x.code === 'authType') {
-          this.app_auth_type_list = redioDefault(this.app_auth_type_list, x.selected_res)
+          this.app_auth_type_list = radioDefault(this.app_auth_type_list, x.selected_res)
         }
         if (x.code === 'health') {
-          this.app_health_list = redioDefault(this.app_health_list, x.selected_res)
+          this.app_health_list = radioDefault(this.app_health_list, x.selected_res)
         }
       })
-      this.filter_list = this.filter_list
+      // this.filter_list = this.filter_list
       const nameObj = this.filtersModel.find(x => x.code === 'name')
       this.app_classify_list_copy = JSON.parse(JSON.stringify(this.app_classify_list))
       this.app_creator_list_copy = JSON.parse(JSON.stringify(this.app_creator_list))
@@ -746,17 +828,16 @@ export default {
         // 过滤条件增加选择
         this.filterKeys.forEach(x => {
           if (x.code === 'health') {
-            let list = this.app_health_list.map(x => {
-              return {label: x.name, value: x.code, default: x.default}
-            })
+            let list = this.app_health_list.map(item => ({label: item.name, value: item.code, default: item.default}))
             this.$set(x, 'list', list)
           }
         })
       })
     },
     yesClick () {
-      let that = this
-      that.showSecondSurePopup = false
+      this.showSecondSurePopup = false
+      this.showMorePopup = false
+
       if (this.secondSureType === 'updateCache') {
         UPDATE_APP_CACHE().then(res => {
           bus.$emit('openMessage', {
@@ -767,8 +848,7 @@ export default {
       }
     },
     updateCache () {
-      let that = this
-      that.showSecondSurePopup = true
+      this.showSecondSurePopup = true
       this.secondSureType = 'updateCache'
     }
   },
@@ -776,6 +856,8 @@ export default {
     bus.$off('timeChanged')
   },
   mounted () {
+    // 减去steeper的高度30px
+    this.appHeight = document.documentElement.clientHeight - 30
     this.initFilterData()
     bus.$on('timeChanged', (data) => {
       this.time_range = {}
@@ -784,212 +866,131 @@ export default {
     })
     bus.$emit('resetTime')
   },
-  created () {},
+  created () {
+  },
   components: {
     stepper,
-    ntPopover,
-    ntRedio,
-    myTable,
-    splitTitle,
-    tagsInput
+    ntRadio,
+    ntTable,
+    // tagsInput,
+    leftFilter
   }
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
+  @import "~common/style/variable";
 
-.wrapper {
-  .iconApplication {
-    font-size: 36px;
-    color: #fff;
-  }
+  .wrapper {
 
-  .init-app {
-    padding-bottom: 28px;
-    display: flex;
-    flex-direction: column;
-    background: rgba(255, 255, 255, 1);
-    .title {
-      font-size: 28px;
-      font-weight: 500;
-      line-height: 40px;
-    }
-    .des {
-      line-height: 22px;
-    }
-    .init-step {
+    .init-app {
+      padding-bottom: 28px;
       display: flex;
-      align-items: center;
-      .step-item {
-        width: 31.5%;
-        height: auto;
-        .step-img {
-          width: 100%;
-          height: auto;
-        }
-        .step-text {
-          text-align: center;
-          span {
-            display: inline-block;
-            text-align: left;
-          }
-        }
-      }
-      .icon-step {
-        margin: 0 0.9%;
-        width: 1%;
-        height: auto;
-      }
-    }
-    .oper {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-    }
-  }
-  .app-list {
-    padding: 24px 24px 0 0;
-    .app-left {
-      width: 284px;
-      .nav {
-        // padding-top: 20px;
-        button {
-          width: 118px;
-          margin: 0 0 24px 6px;
-          &.no_cursor{
-            cursor: unset;
-          }
-          &:first-child {
-            margin-left: 25px;
-          }
-          .box-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          .iconlist, .icongrid {
-            width: 16px;
-            height: 16px;
-          }
-        }
-      }
-      .filter {
-        .filter-item {
-          width: 284px;
-          height: 71px;
-          &.select {
-            background: @theme-gray;
-          }
-          .up {
-            padding: 14px 0 0 16px;
-            font-size: 18px;
-            font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-            font-weight: 400;
-            color: @default-font-color;
-            line-height: 26px;
-          }
-          .down {
-            display: flex;
-            padding: 6px 16px;
-            font-size: 14px;
-            font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-            font-weight: 400;
-            color: @default-font-color;
-            line-height: 20px;
-            div:last-child {
-              margin-left: auto;
-              margin-right: 0;
-              color: @theme-color;
-            }
-          }
-        }
-      }
-    }
-    .app-right {
-      width: calc(100% - 284px);
+      flex-direction: column;
       background: rgba(255, 255, 255, 1);
-      &.hide {
-        display: none;
+
+      .title {
+        font-size: 28px;
+        font-weight: 500;
+        line-height: 40px;
       }
-      .app-list-title {
-        position: relative;
+
+      .des {
+        line-height: 22px;
+      }
+
+      .init-step {
+        display: flex;
         align-items: center;
 
-        .head {
-          font-size: 28px;
-          font-weight: 500;
-          line-height: 40px;
-        }
-        .btn-create {
-          margin-left: auto;
-        }
+        .step-item {
+          width: 31.5%;
+          height: auto;
 
-          .pop-footer {
-            button{
-              margin-left: 0;
-              width:87px;
-              height:32px;
-              & + button{
-                margin-top: 5px;
-              }
-            }
+          .step-img {
+            width: 100%;
+            height: auto;
           }
-          .contain{
-            width: 100px;
+
+          .step-text {
             text-align: center;
-            font-size:14px;
-            font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-            font-weight:400;
-            color:rgba(255,255,255,1);
-            line-height:20px;
-            padding: 11px 0;
-          }
-          .second_sure_footer{
-            display: flex;
-            justify-content: space-between;
-            .el-button{
-              padding: 8px 11px;
+
+            span {
+              display: inline-block;
+              text-align: left;
             }
           }
+        }
 
+        .icon-step {
+          margin: 0 0.9%;
+          width: 1%;
+          height: auto;
+        }
       }
-      .desc {
-        margin-top: 8px;
-        width: 50%;
-        font-size: 14px;
-        font-weight: 400;
-        color: @default-font-color;
-        line-height: 20px;
+
+      .oper {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
       }
-      .category-list {
-        margin: 27px 0 50px 5px;
-      }
-      .filter {
-        padding: 31px 0 20px;
+    }
+
+    .app-list {
+      padding: 24px 16px 0 0;
+
+      .app-left {
+        width: 284px;
+
+        .nav {
+          // padding-top: 20px;
+          color: @turq-06;
+
+          .active {
+            color: #fff;
+          }
+
+          button {
+            width: 118px;
+            margin: 0 0 24px 6px;
+
+            &.no-cursor {
+              cursor: unset;
+            }
+
+            &:first-child {
+              margin-left: 25px;
+            }
+          }
+        }
       }
 
       .no-grid {
         margin-top: 40px;
         display: flex;
         align-items: center;
+
         .ng_left {
           width: 130px;
           height: 130px;
+
           img {
             width: 130px;
             height: 130px;
           }
         }
+
         .ng_right {
           .ngr_title {
             font-size: 24px;
             line-height: 35px;
           }
+
           .ngr_one {
             margin-top: 17px;
             font-size: 14px;
             line-height: 14px;
           }
+
           .ngr_two {
             margin-top: 6px;
             font-size: 14px;
@@ -997,114 +998,93 @@ export default {
           }
         }
       }
+
       .app-data-list {
         .grid-list {
           margin-left: -20px;
           display: flex;
           align-items: center;
           flex-wrap: wrap;
+
           .grid {
             margin: 12px 0 0 24px;
             width: 405px;
             height: 151px;
-            border-radius: 3px;
-            border: 1px solid @theme-gray;
-            &:hover{
-              border: 2px solid @purple-12;
-            }
-            .gg_up {
-              width: 401px;
-              height: 52px;
-              background: #fcfcfc;
-              display: flex;
-              align-items: center;
-              border-bottom: 1px solid @theme-gray;
-              .ggu_left {
-                width: 56px;
-                height: 53px;
-                background: @purple-12;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                .iconplaceholder {
-                  font-size: 28px;
-                  color: #fff;
-                }
-              }
-              .ggu_right {
-                margin-left: 10px;
-                .ggur_title {
-                  margin-top: 0;
-                  font-size: 15px;
-                  font-weight: 500;
-                  line-height: 21px;
-                }
-                .ggur_appid {
-                  margin-top: 2px;
-                  font-size: 12px;
-                  font-family: @default-font;
-                  font-weight: 400;
-                  color: #6D6D6D;
-                  line-height: 17px;
-                }
-              }
-            }
+            // border-radius: 3px;
+            // border: 1px solid @gray-03;
+
+            // &:hover {
+            //   border: 2px solid @purple-06;
+            // }
+
             .gg_down {
               display: flex;
+
               .ggd_left {
                 width: 127px;
                 height: 99px;
                 padding: 8px 0 20px 15px;
+
                 .ggdl_value {
                   font-size: 24px;
                   line-height: 35px;
                 }
+
                 .ggdl_name {
                   margin-top: 7px;
                   line-height: 28px;
                 }
               }
+
               .ggd_right {
                 width: 100%;
+
                 .ggdr_up {
                   display: flex;
+
                   .ggdru_box {
                     display: flex;
                     height: 57px;
                     flex-grow: 1;
-                    .iconevents {
+
+                    .icon_events {
                       padding: 15px 6px 15px 0;
                       font-size: 14px;
                       color: @default-font-color;
                     }
+
                     .ggdru_item {
                       padding-top: 12px;
                       height: 57px;
+
                       .ggdru_value {
-                        line-height:20px;
+                        line-height: 20px;
                       }
+
                       .ggdru_name {
-                        color: #6D6D6D;
+                        color: @gray-07;
                         font-size: 10px;
                         line-height: 15px;
                       }
                     }
                   }
                 }
+
                 .ggdr_down {
                   display: flex;
                   align-items: center;
 
                   .ggdrd_left {
                     font-size: 10px;
-                    color:rgba(109,109,109,1);
+                    color: rgba(109, 109, 109, 1);
                     line-height: 15px;
                   }
+
                   .ggdrd_right {
                     margin-left: 8px;
                     width: 175px;
                     height: 6px;
-                    background-color: #E6E6E6;
+                    background-color: @gray-03;
 
                     .ggdrd_progress {
                       width: 80%;
@@ -1119,7 +1099,7 @@ export default {
                       }
 
                       &.red {
-                        background: #DC172A;
+                        background: @red-05;
                       }
                     }
                   }
@@ -1129,34 +1109,6 @@ export default {
           }
         }
       }
-      .iconmore::before {
-        font-size: 20px;
-        line-height: 15px;
-        height: 14px;
-        display: block;
-      }
-      .footer {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding-right: 20px;
-        height: 56px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        background: @default-font-color;
-        .tag {
-          color: #FFFFFF;
-          padding-right: 40px;
-        }
-        .btn-cancel {
-          color: #FFFFFF;
-          border: 1px solid rgba(255,255,255,1);
-          background: @default-font-color;
-        }
-      }
     }
   }
-}
 </style>

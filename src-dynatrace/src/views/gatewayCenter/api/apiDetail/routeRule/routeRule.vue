@@ -1,8 +1,8 @@
 <template>
-  <div class="wrapper p10">
-    <div class="p10">
-      <h2 class="mb30">路由规则</h2>
-      <div class="addPanel mb30" v-if="create_box">
+  <div class="wrapper">
+      <DYHeader class="row-title" title="路由规则" type="small" no-gap />
+
+    <div class="add-panel row-action" v-if="create_box">
         <add-route-rule
           :meshList="mesh_list||[]"
           @saveContent="createSaveContent"
@@ -10,9 +10,9 @@
         ></add-route-rule>
       </div>
 
-      <el-button type='primary' class="mb30" @click="showCreateBox" v-else>添加路由规则</el-button>
+      <DYButton type="primary" @click="showCreateBox" v-permission="'gatewayCenter_apiDetail_routeRule_add'" v-else>添加路由规则</DYButton>
 
-      <nt-table class="table-list"
+      <nt-table class="row-content"
         :tableData="route_rules||[]"
         :tableSet="tableSet"
         :columns="columns"
@@ -23,7 +23,6 @@
         @deleteOne="deleteOne"
       ></nt-table>
     </div>
-  </div>
 </template>
 
 <script>
@@ -50,7 +49,7 @@ export default {
           code: 'name', // 表身
           type: 'text',
           showicon: 'iconfont',
-          icon_url: 'iconroute',
+          icon_url: 'route',
           hasSort: true // 排序
         }, {
           name: '标识', // 表头名字
@@ -60,7 +59,8 @@ export default {
           name: '优先级', // 表头名字
           code: 'priority', // 表身显示值
           type: 'text',
-          width: 100
+          width: 100,
+          textAlign: 'right'
         }, {
           name: '启用/禁用', // 表头名字
           code: 'state', // 表身显示值
@@ -68,17 +68,18 @@ export default {
           disable: false,
           showDel: false, //
           sortAbled: false, // 是否显示排序
-          sortOrder: 'none' // 排序
+          sortOrder: 'none', // 排序
+          textAlign: 'right'
         }, {
           name: '删除', // 表头名字
           code: '', // 表身
           type: 'delete',
-          width: 50,
+          width: 60,
           disable: false,
           showDel: true, // 删除
           sortAbled: false, // 是否显示排序
           sortOrder: 'none', // 排序
-          textAlign: 'right' // 头部排序
+          textAlign: 'center' // 头部排序
         }
       ],
       tableSet: {
@@ -127,7 +128,7 @@ export default {
     },
     createSaveContent (form) {
       console.log(form)
-      var data = {
+      let data = {
         endpoint_id: this.detailData.id,
         name: form.name,
         code: form.code,
@@ -161,10 +162,11 @@ export default {
     },
     undateContent (form) {
       console.log(form)
-      var data = {
+      let data = {
         route_rule_id: form.id,
         name: form.name,
         code: form.code,
+        state: form.state,
         priority: Number(form.priority)
       }
       if (form.match_type === 'headers') {
@@ -231,25 +233,3 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-
-.wrapper {
-  background: rgba(255, 255, 255, 1);
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .create {
-    display: block;
-  }
-  .search {
-    width: 80%;
-    padding: 61px 0 40px 12px;
-  }
-  .table-list {
-    padding: 0 12px;
-  }
-}
-</style>

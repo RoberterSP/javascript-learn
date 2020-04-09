@@ -1,7 +1,7 @@
 <template>
   <div class="editRoles">
     <el-form class="default-width" :model="editRolesForm" :rules="rules" ref="editRolesForm" label-position="top">
-      <el-form-item class="mb-30" label="角色" prop="group_ids">
+      <el-form-item label="角色" prop="group_ids">
         <el-select v-model="editRolesForm.group_ids" placeholder="请选择角色" multiple>
           <el-option v-for="(item, index) in roleList" :key="index"
           :label="item.name"
@@ -11,8 +11,10 @@
         </el-select>
       </el-form-item>
       <div class="btns" v-permission="'settingCenter_userPermissions_edit'">
-        <el-button type="primary" @click="submitForm('editRolesForm')">保存</el-button>
-        <el-button @click="cancleForm('editRolesForm')">取消</el-button>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('editRolesForm')">保存</DYButton>
+          <DYButton @click="cancleForm('editRolesForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -25,10 +27,8 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-        }
-      }
+      default: () => ({
+      })
     }
   },
   data () {

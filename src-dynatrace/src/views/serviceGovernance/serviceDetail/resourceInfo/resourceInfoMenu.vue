@@ -1,18 +1,17 @@
 <template>
   <div>
-    <stepper :stepper="stepper" @goRouter="goRouter" :theme="theme"></stepper>
-    <div class="content p24l0 flex">
-      <leftmenu ref="leftmenu" class="left-content" :leftMenu="left_menu" v-on:currentPage="setCurrentPage"></leftmenu>
-      <div class="right-content p10">
+    <stepper :stepper="stepper" @goRouter="goRouter" :theme="theme" />
+    <div class="content pt24 pr24 pb24 flex">
+      <DYLeftMenuSecond ref="leftmenu" :leftMenu="left_menu" @currentPage="setCurrentPage" />
+      <DYCard class="overflow-x-hidden">
         <router-view :stepper.sync="stepper"></router-view>
-      </div>
+      </DYCard>
     </div>
   </div>
 </template>
 
 <script>
 import stepper from 'components/stepper/stepper.vue'
-import leftmenu from 'components/navigation/leftmenuSecond.vue'
 export default {
   data () {
     return {
@@ -26,7 +25,7 @@ export default {
         {
           name: '',
           routerTo: 'serviceDetail',
-          myCoutomRouter: true
+          myCustomRouter: true
         },
         {
           name: '',
@@ -50,7 +49,7 @@ export default {
                 name: '服务接口',
                 code: 'serviceApi'
               }, {
-                name: '订阅事件',
+                name: '事件订阅',
                 code: 'eventSubscribe'
               }
             ]
@@ -114,12 +113,12 @@ export default {
         this.$set(this.left_menu.menuList[0], 'open', true)
       }
       let accessRoutes = this.$store.getters.access_routes
-      let superuser = this.$store.getters.superuser
+      let superUser = this.$store.getters.superuser
       this.left_menu.menuList.forEach((item, pidx) => {
         if (item.children && item.children.length > 0) {
           item.children.forEach(items => {
             items.isHide = false
-            if (accessRoutes.indexOf(items.code) === -1 && !superuser) {
+            if (accessRoutes.indexOf(items.code) === -1 && !superUser) {
               items.isHide = true
             }
           })
@@ -155,15 +154,7 @@ export default {
   created () {
   },
   components: {
-    stepper,
-    leftmenu
+    stepper
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-.right-content {
-  width: calc(100% - 238px);
-  background:rgba(255,255,255,1);
-}
-</style>

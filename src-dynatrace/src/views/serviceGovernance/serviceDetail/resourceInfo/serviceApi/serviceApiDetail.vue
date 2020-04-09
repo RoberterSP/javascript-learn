@@ -1,162 +1,107 @@
 <template>
   <div class="wrapper" :class="['theme-' + theme]">
     <stepper v-if="!stepper.length" :stepper="myStepper" :theme="theme" @goRouter="goRouter"></stepper>
-    <div v-if="!isEditDetail" class="flex-column">
-      <div class="m10 p15 appdetail_left">
-        <div class="flex-between">
-          <div class="detail-title">
-            <i class="iconfont iconAPI icon-title"></i>
-            <div class="detail-tit_box">
-              <span class="title-top">{{detailApi.name}}</span>
-              <span class="title-bottom">{{detailApi.state_str}}</span>
+
+    <div :class="[$route.params.fromDeployGroupDetail ? 'deploy-group-detail' : '']">
+      <div v-if="!isEditDetail" class="flex-column">
+        <DYHeader
+          no-gap
+          icon="API"
+          :title="detailApi.name"
+          :sub-title="detailApi.state_str"
+        >
+          <DYButton slot="actions" type="primary" @click="editEndpointInfo"
+                    v-permission="'serviceCenter_serviceDetail_edit'">编辑
+          </DYButton>
+        </DYHeader>
+
+        <div class="mt10">
+          <DYSplitTitle
+            type="detail"
+            title="详情"
+            iconClickEnable
+            :icon="isShowDetail ? 'arrowup' : 'arrowdown'"
+            @onIconClick="isShowDetail = !isShowDetail"
+          />
+
+          <transition name="rollup">
+            <div class="mt24 ml20" v-if="isShowDetail">
+              <DYKeyValue
+                width="470"
+                v-for="item of tabList"
+                :key="`key-value-${item.key}`"
+                :text="item.text"
+                :value="detailApi[item.key] ? detailApi[item.key] : '-'"
+              />
             </div>
-            <el-button type="primary" @click="editEndpointInfo" v-permission="'serviceCenter_serviceDetail_edit'">编辑</el-button>
-          </div>
+          </transition>
+
+          <DYIndexBox
+            :theme="theme"
+            :cards="boxCards"
+            :mini-chart-data="miniChartData"
+          />
         </div>
-        <div>
-          <div class="detail-img flex-start" @click="isShowDetail=!isShowDetail">
-              <span>
-                <span class="column-icon iconfont"
-                      :class="{'iconarrowdown': !isShowDetail,'iconarrowup': isShowDetail}"></span>
-                <span>详情</span>
-              </span>
-            <span class="split"></span>
-          </div>
-          <div class="content" v-show="isShowDetail">
-            <div class="content-detail flex-start"
-                 v-for="item in tabList"
-                 :key="item.key">
-              <span class="head-left">{{item.text}}</span>
-              <span class="flex-start head-right ml8">
-                  <div class="dashBorder flex"></div>
-                  <span class="head-right-text">{{detailApi[item.key] ? detailApi[item.key] : '-'}}</span>
-                </span>
-            </div>
-          </div>
-          <div style="overflow: scroll">
-            <div class="flex-center btn-box scale-box">
-              <div class="dVl-Lc">
-                <div class="box health_index">
-                  <div class="num">{{endpointInfo.avg_qps}}</div>
-                  <div class="text">平均QPS</div>
-                </div>
-                <div class="box request_num">
-                  <div class="num">{{endpointInfo.total_request_num | filterCount}}</div>
-                  <div class="text">访问量</div>
-                </div>
-              </div>
-              <div class="dVl-Dc">
-                <img src="@/assets/image/icon-step-detail.svg" alt="" class="rotate180">
-              </div>
-              <div class="dVl-Fc">
-                <div class="dVl-Tc">
-                  <div class="dVl-Gc">
-                    <X-chart
-                      ref="xchart"
-                      :option="chartsOption"
-                    ></X-chart>
-                  </div>
-                  <div class="dVl-Sc">
-                    <span class="dVl-fd">{{endpointInfo.avg_qps}}</span>
-                    <span class="dVl-ed">/min</span>
-                    <div class="dVl-ed">平均QPS</div>
-                  </div>
-                </div>
-                <div @click="goMonitor" class="dVl-Xc">
-                  <div class="dVl-Jc">
-                    <div class="dVl-Jc-1"></div>
-                    <div class="dVl-Jc-2"></div>
-                    <div class="dVl-Jc-3"></div>
-                    <div class="dVl-Jc-4"></div>
-                  </div>
-                  <div class="dVl-Mc">
-                    <div class="gwt-HTML">
-                    </div>
-                    <span class="dVl-Yc"></span>
-                    <span class="dVl-Wc">接口监控</span>
-                  </div>
-                </div>
-              </div>
-              <div class="dVl-Dc flex-end">
-                <img src="@/assets/image/icon-step-detail.svg" alt="">
-              </div>
-              <div class="dVl-Lc">
-                <div class="box avg_response_time">
-                  <div class="num">{{endpointInfo.avg_response_time | currency('ms')}}</div>
-                  <div class="text">平均响应时间</div>
-                </div>
-                <div class="box traffic">
-                  <div class="num">{{endpointInfo.total_traffic | filterTraffic}}</div>
-                  <div class="text">流量</div>
-                </div>
-              </div>
-            </div>
-          </div>
+
+        <div class="mt30">
+          <DYHeader class="row-title" :title="`${list_count}个部署组`" type="small" no-gap/>
+          <nt-table class="row-content"
+                    :tableData="deploy_groups || []"
+                    :columns="columns"
+                    :tableSet="tableSet"
+                    :componentsName="'deployGroupsContent'"
+          ></nt-table>
         </div>
       </div>
-      <div class="m10 p15 appdetail_right appdetail_left">
-        <div class="flex-between">
-          <div class="detail-title">
-            <div class="detail-tit_box">
-              <span class="title-top">{{list_count}}个部署组</span>
-              <!-- <span class="title-bottom">文字描述</span> -->
-            </div>
+
+      <div v-else class="p20">
+        <el-form ref="form" label-position="top">
+          <el-form-item label="名称">
+            <p>{{detailApi.name}}</p>
+          </el-form-item>
+
+          <el-form-item label="URL">
+            <p>{{detailApi.endpoint}}</p>
+          </el-form-item>
+
+          <el-form-item label="熔断组">
+            <el-select v-model="detailApi.circuit_breaker_code" clearable style="width: 300px">
+              <el-option v-for="(item, index) in circuit_breakers||[]" :key="index" :label="item.name" :value="item.code">
+              </el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="健康规则">
+            <el-select v-model="detailApi.endpoint_health_code" clearable style="width: 300px">
+              <el-option v-for="(item, index) in endpoint_healths||[]" :key="index" :label="item.name" :value="item.code">
+              </el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="接口类型">
+            <el-select v-model="detailApi.endpoint_type" style="width: 300px">
+              <el-option v-for="(item, index) in endpoint_types||[]" :key="index" :label="item.name" :value="item.code">
+              </el-option>
+            </el-select>
+          </el-form-item>
+
+          <div class="btns" v-permission="'serviceCenter_serviceDetail_edit'">
+            <DYButtonGroup>
+              <DYButton type="primary" @click="saveEndpointInfo">保存</DYButton>
+              <DYButton @click="cancelShowEdit">取消</DYButton>
+            </DYButtonGroup>
           </div>
-        </div>
-        <nt-table class="table-list"
-                  :tableData="deploy_groups || []"
-                  :columns="columns"
-                  :tableSet="tableSet"
-                  :componentsName="'deployGroupsContent'"
-        ></nt-table>
+        </el-form>
       </div>
-    </div>
-
-    <div v-else class="p20">
-      <el-form ref="form" label-position="top">
-        <el-form-item label="名称">
-          <p>{{detailApi.name}}</p>
-        </el-form-item>
-
-        <el-form-item label="URL">
-          <p>{{detailApi.endpoint}}</p>
-        </el-form-item>
-
-        <el-form-item label="熔断组">
-          <el-select v-model="detailApi.circuit_breaker_code" clearable style="width: 300px">
-            <el-option v-for="(item, index) in circuit_breakers||[]" :key="index" :label="item.name" :value="item.code">
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="健康规则">
-          <el-select v-model="detailApi.endpoint_health_code" clearable style="width: 300px">
-            <el-option v-for="(item, index) in endpoint_healths||[]" :key="index" :label="item.name" :value="item.code">
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="接口类型">
-          <el-select v-model="detailApi.endpoint_type" style="width: 300px">
-            <el-option v-for="(item, index) in endpoint_types||[]" :key="index" :label="item.name" :value="item.code">
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <div class="footer" v-permission="'serviceCenter_serviceDetail_edit'">
-          <el-button type="primary" @click="saveEndpointInfo">保存</el-button>
-          <el-button @click="cancelShowEdit">取消</el-button>
-        </div>
-      </el-form>
     </div>
   </div>
 </template>
 
 <script>
 import XChart from 'components/charts/charts.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
 import stepper from 'components/stepper/stepper'
+import DYIndexBox from 'components/indexBox/DYIndexBox.vue'
 
 import {
   GET_CIRCUIT_BREAKER_LIST,
@@ -199,46 +144,8 @@ export default {
       ],
       isShowDetail: false,
       isEditDetail: false,
-      chartsOption: {
-        chart: {
-          type: 'column',
-          style: {
-            margin: 0,
-            padding: 0
-          },
-          height: 50,
-          width: 90
-        },
-        title: {
-          text: ''
-        },
-        xAxis: {
-          visible: false
-        },
-        legend: {
-          enabled: false
-        },
-        yAxis: {
-          visible: false
-        },
-        credits: {
-          enabled: false
-        },
-        plotOptions: {
-          column: {
-            enableMouseTracking: false
-          }
-        },
-        tooltip: {
-          enabled: false
-        },
-        series: [{
-          name: '',
-          color: '#4556d7',
-          colorByPoint: false,
-          data: []
-        }]
-      },
+      miniChartData: [],
+
       list_count: 0,
       deploy_groups: false,
       columns: [
@@ -270,7 +177,43 @@ export default {
       ]
     }
   },
-  computed: {},
+  computed: {
+    boxCards () {
+      return {
+        leftTop: {
+          value: this.endpointInfo.health_index,
+          text: '健康指数',
+          backgroundImage: 'health_index'
+        },
+        leftBottom: {
+          value: this.endpointInfo.total_request_num,
+          filter: 'filterCount',
+          text: '访问量',
+          backgroundImage: 'request_num'
+        },
+        center: {
+          value: this.endpointInfo.avg_qps,
+          unit: '/min',
+          text: '平均QPS',
+          label: '接口监控',
+          onClick: () => this.goMonitor()
+        },
+        rightTop: {
+          value: this.endpointInfo.avg_response_time,
+          filter: 'currency',
+          filterParams: ['ms'],
+          text: '平均响应时间',
+          backgroundImage: 'avg_response_time'
+        },
+        rightBottom: {
+          value: this.endpointInfo.total_traffic,
+          filter: 'filterTraffic',
+          text: '流量',
+          backgroundImage: 'traffic'
+        }
+      }
+    }
+  },
   beforeDestroy () {
     bus.$off('timeChanged')
   },
@@ -289,7 +232,7 @@ export default {
         }
       })
       const routerParam = {
-        path: this.detailApi.path,
+        endpoint: this.detailApi.path,
         code: this.detailData.code,
         stepperName: this.detailData.name
       }
@@ -325,15 +268,13 @@ export default {
         page: 1,
         page_size: PAGESIZE
       }).then(res => {
-        let circuitBreakers = res.data.circuit_breakers
-        this.circuit_breakers = circuitBreakers
+        this.circuit_breakers = res.data.circuit_breakers
       })
       GET_HEALTH_RULE_LIST({
         page: 1,
         page_size: PAGESIZE
       }).then(res => {
-        let endpointHealths = res.data.endpoint_healths
-        this.endpoint_healths = endpointHealths
+        this.endpoint_healths = res.data.endpoint_healths
       })
     },
     // 应用详情获取
@@ -341,12 +282,11 @@ export default {
       GET_MESH_ENDPOINT_INFO(postData).then(res => {
         if (res.code === 0) {
           this.endpointInfo = res.data
-          this.chartsOption.series[0].data = res.data.avg_qps_overview.series[0].data
-          if (this.chartsOption.series[0].data.length > 10) {
-            this.chartsOption.series[0].data = this.chartsOption.series[0].data.slice(this.chartsOption.series[0].data.length - 10, this.chartsOption.series[0].data.length)
+
+          this.miniChartData = this.endpointInfo.avg_qps_overview.series[0].data
+          if (this.miniChartData.length > 10) {
+            this.miniChartData = this.miniChartData.slice(this.miniChartData.length - 10, this.miniChartData.length)
           }
-          this.$refs['xchart'].drawChart(this.chartsOption)
-          this.$forceUpdate()
         }
       })
     },
@@ -430,13 +370,13 @@ export default {
           this.myStepper.push({
             name: this.detailApi.name,
             routerTo: 'deployGroupServiceApiDetail',
-            myCoutomRouter: true,
+            myCustomRouter: true,
             type: 'edit'
           })
         }
 
         // 设置部署组详情 step 跳转
-        this.$set(this.myStepper[1], 'myCoutomRouter', true)
+        this.$set(this.myStepper[1], 'myCustomRouter', true)
         this.$set(this.myStepper[1], 'goRouter', () => {
           this.$router.push({
             name: 'deployGroupDetail',
@@ -448,7 +388,7 @@ export default {
           this.myStepper.push({
             name: this.detailApi.name,
             routerTo: 'deployGroupServiceApiDetail',
-            myCoutomRouter: true,
+            myCustomRouter: true,
             type: 'edit'
           })
         }
@@ -456,12 +396,12 @@ export default {
         this.stepper.push({
           name: this.detailApi.name,
           routerTo: 'serviceApiDetail',
-          myCoutomRouter: true,
+          myCustomRouter: true,
           type: 'edit'
         })
 
         // 设置服务接口 step 跳转
-        this.$set(this.stepper[2], 'myCoutomRouter', true)
+        this.$set(this.stepper[2], 'myCustomRouter', true)
         this.$set(this.stepper[2], 'goRouter', () => {
           this.$router.push({
             name: 'serviceApi',
@@ -495,16 +435,14 @@ export default {
   },
   destroyed () {
     // 页面销毁时，step 删除本页面，和编辑页
-    const stepper = this.stepper.filter(step => {
-      return !['serviceApiDetail', 'serviceApi'].includes(step.routerTo) && step.code !== 'edit'
-    })
+    const stepper = this.stepper.filter(step => !['serviceApiDetail', 'serviceApi'].includes(step.routerTo) && step.code !== 'edit')
 
     this.$emit('update:stepper', stepper)
   },
   components: {
-    splitTitle,
     XChart,
     stepper,
+    DYIndexBox,
     ntTable
   }
 }
@@ -512,439 +450,14 @@ export default {
 <style scoped lang="less">
   @import "~common/style/variable";
 
-  @dark: @blue-14;
-  @light: @blue-6;
-
-  .theme-config() {
-    &.theme-blue {
-      .dVl-Mc {
-        background: @light !important;
-      }
-
-      .dVl-Xc {
-        background: @light !important;
-
-        &:hover {
-          background: @dark !important;
-
-          .dVl-Mc {
-            background: @dark !important;
-          }
-        }
-      }
-
-      .dVl-Lc .box {
-        background: @light !important;
-
-        &:hover {
-          background: @light !important;
-        }
-      }
-    }
-  }
-
   .wrapper {
     padding-bottom: 33px;
     /*min-width: 1570px !important;*/
     min-height: calc(100vh - 140px);
+  }
 
-    .column-icon {
-      color: #00A1B2;
-    }
-
-    .content {
-      padding-top: 23px;
-      padding-left: 27px;
-      font-size: 12px;
-      font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-      font-weight: 400;
-      color: rgba(69, 70, 70, 1);
-
-      .content-detail {
-        line-height: 20px;
-        width: 470px;
-
-        .head-left {
-          line-height: 25px;
-          white-space: nowrap;
-        }
-
-        .head-right {
-          line-height: 12px;
-          width: 100%;
-
-          .head-right-text {
-            white-space: nowrap
-          }
-
-          .dashBorder {
-            height: 12px;
-            width: 100%;
-            margin-right: 4px;
-            align-items: flex-end;
-            overflow: hidden;
-            position: relative;
-
-            &::after {
-              content: " ";
-              position: absolute;
-              left: 0;
-              bottom: 0;
-              width: 50000px;
-              border-bottom: 1px dotted #ccc;
-            }
-          }
-        }
-
-      }
-
-      .footer {
-        margin: 10px 0;
-      }
-
-      .detailTitle {
-        color: #898989;
-        margin-top: 22px;
-      }
-    }
-
-    .appdetail_right {
-      background: rgba(255, 255, 255, 1);
-      flex: 1;
-    }
-
-    .appdetail_left {
-      background: rgba(255, 255, 255, 1);
-      flex: 1;
-      /*min-width: 630px;*/
-      flex-shrink: 0;
-
-      .btn {
-        margin-right: 32px;
-      }
-
-      .detail-title {
-        display: flex;
-        align-items: center;
-        width: 100%;
-
-        .iconplaceholder {
-          display: flex;
-          font-size: 36px;
-        }
-
-        .detail-tit_box {
-          margin: 0 11px;
-
-          .title-top {
-            display: block;
-            font-size: 28px;
-            font-family: SourceHanSansSC-Medium, SourceHanSansSC;
-            font-weight: 500;
-            color: rgba(69, 70, 70, 1);
-            line-height: 28px;
-            padding-bottom: 5px;
-          }
-
-          .title-bottom {
-            display: block;
-            font-size: 14px;
-            font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-            font-weight: 400;
-            color: rgba(69, 70, 70, 1);
-            line-height: 16px;
-          }
-        }
-
-        .el-button--primary {
-          margin-left: auto;
-          height: 100%;
-        }
-      }
-
-      .btn-box {
-        padding-top: 30px;
-        padding-left: 37px;
-        padding-right: 37px;
-        margin-bottom: 43px;
-      }
-
-      .btn-other {
-        padding-top: 11px !important;
-        padding-left: 15px !important;
-      }
-
-      .dVl-Dc {
-        width: 50px;
-      }
-
-      .dVl-Fc {
-        -ms-flex-basis: 180px;
-        -webkit-flex-basis: 180px;
-        font-size: 14px;
-        position: relative;
-        align-self: flex-end;
-
-        .dVl-Xc {
-          &:hover {
-            background-color: #7C38A1;
-
-            .dVl-Mc {
-              background-color: #7C38A1;
-            }
-          }
-
-          .dVl-Jc {
-            div {
-              position: absolute;
-              border-radius: 30px;
-              background: #fff;
-              height: 3px;
-              width: 3px;
-              z-index: 10;
-
-              &:first-child {
-                top: 14px;
-                left: 8px;
-              }
-            }
-          }
-
-          .dVl-Jc-2 {
-            bottom: 14px;
-            left: 8px;
-          }
-
-          .dVl-Jc-3 {
-            top: 7px;
-            right: 8px;
-          }
-
-          .dVl-Jc-4 {
-            bottom: 7px;
-            right: 8px;
-          }
-
-          width: 206px;
-          height: 63px;
-          color: #fff;
-          background: @theme-purple-light;
-          display: flex;
-          align-items: baseline;
-          cursor: pointer;
-          box-sizing: border-box;
-          position: relative;
-          padding-left: 23px;
-          border-radius: 3px;
-
-          &::before {
-            position: absolute;
-            background: #fff;
-            width: 3px;
-            height: 63px;
-            top: 0px;
-            content: '';
-            left: 18px;
-          }
-
-          &::after {
-            position: absolute;
-            background: #fff;
-            width: 3px;
-            height: 63px;
-            top: 0px;
-            content: '';
-            right: 18px;
-          }
-
-          .dVl-Mc {
-            width: 206px;
-            height: 63px;
-            color: #fff;
-            background: @theme-purple-light;
-            display: flex;
-            align-items: baseline;
-            cursor: pointer;
-            box-sizing: border-box;
-            padding-top: 6px;
-            position: relative;
-            padding-left: 23px;
-            border-radius: 3px;
-
-            .dVl-Yc {
-              font-weight: 300;
-              font-size: 24px;
-              margin-right: 5px;
-            }
-
-            .dVl-Wc {
-              font-size: 24px;
-              line-height: 52px;
-              font-family: SourceHanSansSC-Medium, SourceHanSansSC;
-              font-weight: 500;
-              color: rgba(255, 255, 255, 1);
-            }
-          }
-        }
-
-        .dVl-Tc {
-          display: flex;
-          display: -webkit-flex;
-          display: -ms-flexbox;
-          margin-bottom: 18px;
-          position: relative;
-
-          .dVl-Sc {
-            flex-basis: 75px;
-            -ms-flex-basis: 75px;
-            -webkit-flex-basis: 75px;
-            white-space: nowrap;
-            color: @default-font-color;
-            font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-            font-weight: 400;
-            border: 1px solid transparent;
-            font-size: 14px;
-            padding: 2px 3px;
-            cursor: pointer;
-
-            .dVl-fd {
-              font-size: 24px;
-            }
-
-            .dVl-ed {
-              font-size: 14px;
-            }
-          }
-
-          .dVl-Gc {
-            width: 100px;
-            height: 42px;
-            padding-bottom: 10px;
-            box-sizing: border-box;
-            position: relative;
-            bottom: -12px;
-          }
-        }
-      }
-
-      .detail-img {
-        margin-top: 9px;
-        width: 100%;
-        height: 28px;
-        padding: 0 20px 0 15px;
-        font-size: 12px;
-        font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-        font-weight: 400;
-        color: rgba(137, 137, 137, 1);
-        line-height: 17px;
-
-        .split {
-          margin-left: 12px;
-          border: 0.5px solid #E6E6E6;
-          flex-grow: 1;
-        }
-      }
-
-      .dVl-Lc {
-        .box-app {
-          padding-left: 11px;
-
-          &.box-app:not(:last-child) {
-            margin-bottom: 33px;
-          }
-
-          img {
-            width: 102px;
-            height: 60px;
-            margin-right: 11px;
-          }
-
-          .api-text {
-            margin-left: 10px;
-
-            .look-detail {
-              margin-top: 20px;
-
-              .btn {
-                width: 89px;
-                height: 32px;
-                border: 1px solid #00A1B2;
-                border-radius: 3px;
-                font-size: 14px;
-                font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-                font-weight: 400;
-                color: rgba(0, 161, 178, 1);
-                cursor: pointer;
-              }
-            }
-
-            .text {
-              font-size: 14px;
-              font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-              font-weight: 400;
-              color: rgba(69, 70, 70, 1);
-              line-height: 20px;
-            }
-
-            .text-right {
-              font-size: 12px;
-              font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-              font-weight: 400;
-              color: rgba(137, 137, 137, 1);
-              line-height: 17px;
-            }
-          }
-        }
-
-        .box {
-          max-width: 204px;
-          min-width: 180px;
-          height: 92px;
-          background: @theme-purple-light;
-          border-radius: 4px;
-          padding: 18px 31px;
-          cursor: pointer;
-          margin-bottom: 34px;
-          position: relative;
-          // &::before {
-          //   background-image: url('./../../../assets/image/icon-application.svg');
-          //   background-repeat: no-repeat;
-          //   background-size: 66px 66px;
-          //   content: "";
-          //   position: absolute;
-          //   width: 66px;
-          //   height: 60px;
-          //   left: -22px;
-          //   bottom: -16px;
-          //   opacity: 0.4;
-          // }
-          &:hover {
-            background-color: #7C38A1;
-          }
-
-          &:last-child {
-            margin-bottom: 0
-          }
-
-          .num {
-            font-size: 18px;
-            font-family: SourceHanSansSC-Medium, SourceHanSansSC;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 1);
-            line-height: 26px;
-          }
-
-          .text {
-            font-size: 16px;
-            font-family: SourceHanSansSC-Medium, SourceHanSansSC;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 1);
-            line-height: 24px;
-          }
-        }
-      }
-    }
-
-    .theme-config;
+  .deploy-group-detail {
+    background-color: #fff;
+    padding: 20px;
   }
 </style>

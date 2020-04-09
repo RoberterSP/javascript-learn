@@ -1,62 +1,55 @@
 <template>
-  <div class="filterBox">
-    <split-title :title="'添加接口'"></split-title>
-    <div class="desc">已添加 {{tableData.data ? tableData.data.length : 0}} 个</div>
-    <div class="addBtn">
-      <div>
-        <div class="search-bar-box">
-          <search-bar
-            v-model.trim="queryAdd"
-            @search="searchAddScopeGroup"
-            :placeholder="'搜索接口'"
-          ></search-bar>
-        </div>
-        <div class="add-title">
-          <!-- 该应用添加的接口组 -->
-          <nt-table
-            :tableData="tableData.data"
-            :columns="tableData.columns"
-            :tableSet="tableData.tableSet"
-            @deleteOne="deleteOne"
-          ></nt-table>
-        </div>
+  <div>
+    <DYHeader type="small" no-gap :title="'添加接口'"/>
+
+    <div class="row-desc">已添加 {{tableData.data ? tableData.data.length : 0}} 个</div>
+
+    <div class="search-bar-box row-action">
+      <search-bar
+        v-model.trim="queryAdd"
+        @search="searchAddScopeGroup"
+        :placeholder="'搜索接口'"
+      ></search-bar>
+    </div>
+    <div class="add-title row-content">
+      <!-- 该应用添加的接口组 -->
+      <nt-table
+        :tableData="tableData.data"
+        :columns="tableData.columns"
+        :tableSet="tableData.tableSet"
+        @deleteOne="deleteOne"
+      ></nt-table>
+    </div>
+
+    <div>
+      <div class="search-bar-box row-action">
+        <search-bar
+          v-model.trim="query"
+          @search="searchAllScopeGroup"
+          :placeholder="'搜索接口'"
+        ></search-bar>
       </div>
-      <div>
-        <div class="search-bar-box">
-          <search-bar
-            v-model.trim="query"
-            @search="searchAllScopeGroup"
-            :placeholder="'搜索接口'"
-          ></search-bar>
-        </div>
-        <div class="add-title">
-          <!-- 所有的接口组 -->
-          <nt-table
-            :tableData="tableDataApi.data"
-            :columns="tableDataApi.columns"
-            :tableSet="tableDataApi.tableSet"
-            @addColumn="addColumn"
-          ></nt-table>
-        </div>
+      <div class="add-title row-content">
+        <!-- 所有的接口组 -->
+        <nt-table
+          :tableData="tableDataApi.data"
+          :columns="tableDataApi.columns"
+          :tableSet="tableDataApi.tableSet"
+          @addColumn="addColumn"
+        ></nt-table>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import dyButton from 'components/base/button.vue'
 import dySwitch from 'components/base/switch.vue'
-import ntTabs from 'components/base/tabs.vue'
 import searchBar from 'components/searchBar/searchBar.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
-import { PAGESIZE } from 'common/util/common.js'
+import {PAGESIZE} from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
-import {
-  SCOPE_API_GET,
-  API_LIST_GET,
-  SCOPE_API_UPDATE
-} from '@/api'
+import {API_LIST_GET, SCOPE_API_GET, SCOPE_API_UPDATE} from '@/api'
+import {clone} from 'lodash'
 
 export default {
   data () {
@@ -79,7 +72,7 @@ export default {
             code: 'endpoint', // 表身
             type: 'text',
             showicon: 'iconfont',
-            icon_url: 'iconAPI',
+            icon_url: 'API',
             sortAbled: false, // 排序
             showDel: false // 删除
           },
@@ -99,10 +92,11 @@ export default {
             name: '详情日志', // 表头名字
             code: 'log_enable', // 表身显示的值
             type: 'switch',
-            disable: false,
+            disable: true,
             showDel: false, //
             sortAbled: false, // 是否显示排序
-            sortOrder: 'none' // 排序
+            sortOrder: 'none', // 排序
+            textAlign: 'right'
           },
           {
             name: '发布', // 表头名字
@@ -116,7 +110,7 @@ export default {
             code: '', // 表身
             type: 'delete',
             disable: false,
-            textAlign: 'right',
+            textAlign: 'center',
             width: 50,
             showDel: true, // 删除
             hasSort: false
@@ -143,7 +137,7 @@ export default {
             code: 'endpoint', // 表身
             type: 'text',
             showicon: 'iconfont',
-            icon_url: 'iconAPI',
+            icon_url: 'API',
             sortAbled: false, // 排序
             showDel: false // 删除
           },
@@ -159,23 +153,25 @@ export default {
             code: 'mesh_code_list', // 表身
             type: 'tags'
             // showicon: 'iconfont',
-            // icon_url: 'iconplaceholder',
+            // icon_url: 'placeholder',
             // sortAbled: true, // 是否显示排序
             // sortOrder: 'none' // 排序方式
           },
           // {
           //   name: '公共接口', // 表头名字
           //   code: 'public_status', // 表身
-          //   icon_urls: ['iconpositive', 'iconnegative'],
+          //   icon_urls: ['positive', 'negative'],
           //   type: 'idxIcon'
           // },
           {
             name: '详情日志', // 表头名字
             code: 'log_enable', // 表身显示的值
+            disable: true,
             type: 'switch',
             showDel: false, //
             sortAbled: false, // 是否显示排序
-            sortOrder: 'none' // 排序
+            sortOrder: 'none', // 排序
+            textAlign: 'right'
           },
           {
             name: '发布', // 表头名字
@@ -192,7 +188,7 @@ export default {
             showDel: false, //
             sortAbled: false, // 是否显示排序
             sortOrder: 'none', // 排序
-            textAlign: 'right' // 头部排序
+            textAlign: 'center' // 头部排序
           }
         ],
         tableSet: {
@@ -207,33 +203,21 @@ export default {
           }
         },
         appScopeListCpoy: []
-      }
+      },
+      detailDataCopy: {}
     }
   },
   props: {
     detailData: {
       type: Object,
-      default: () => {
-        return {
-          name: '',
-          code: '',
-          id: ''
-        }
-      }
-    }
-  },
-  computed: {
-    scopeDetail: {
-      get: function () {
-        return this.detailData
-      },
-      set: function () {}
+      default: () => ({
+        name: '',
+        code: '',
+        id: ''
+      })
     }
   },
   methods: {
-    addApiFilter () {
-      console.log('添加接口滤')
-    },
     // input 框输入
     searchAddScopeGroup () {
       this.app_scope_list_get()
@@ -247,7 +231,7 @@ export default {
       this.appScopeListCpoy.forEach(item => arr.push(item.id))
       arr.push(row.id)
       let post = {
-        id: this.detailData.id,
+        id: this.detailDataCopy.id,
         items: arr
       }
       SCOPE_API_UPDATE(post).then(res => {
@@ -263,12 +247,12 @@ export default {
       })
     },
     // 删除
-    deleteOne (row, index) {
+    deleteOne (row) {
       let arr = []
       this.appScopeListCpoy.forEach(item => arr.push(item.id))
       arr.splice(arr.indexOf(row.id), 1)
       let post = {
-        id: this.detailData.id,
+        id: this.detailDataCopy.id,
         items: arr
       }
       SCOPE_API_UPDATE(post).then(res => {
@@ -287,7 +271,7 @@ export default {
     // 获取已经添加的scope信息
     async app_scope_list_get () {
       let post = {
-        id: this.scopeDetail.id,
+        id: this.detailDataCopy.id,
         page: 1,
         page_size: PAGESIZE
       }
@@ -301,7 +285,7 @@ export default {
         this.api_list_get()
         if (this.queryAdd) this.tableData.tableSet.paginationConfig.currentPage = 1
         this.tableData.tableSet.paginationConfig.total = res.data.total
-        this.tableData.data.map(item => {
+        this.tableData.data.forEach(item => {
           if (item.state === 'deployed') {
             item.stateStr = '已发布'
           } else {
@@ -342,7 +326,7 @@ export default {
         }
         this.tableDataApi.tableSet.paginationConfig.total = res.data.total - this.tableData.tableSet.paginationConfig.total
         if (this.query) this.tableDataApi.tableSet.paginationConfig.currentPage = 1
-        this.tableDataApi.data.map(item => {
+        this.tableDataApi.data.forEach(item => {
           if (item.state === 'deployed') {
             item.stateStr = '已发布'
           } else {
@@ -359,51 +343,31 @@ export default {
   },
   mounted () {
     if (this.$route.params && this.$route.params.detailData) {
-      this.detailData = this.$route.params.detailData
+      this.detailDataCopy = clone(this.$route.params.detailData)
+
       this.app_scope_list_get()
+    } else {
+      this.detailDataCopy = clone(this.detailData)
     }
   },
-  created () {},
+  created () {
+  },
   components: {
-    splitTitle,
-    dyButton,
     dySwitch,
-    ntTabs,
     searchBar,
     // slotTable,
     ntTable
   }
 }
 </script>
+
 <style scoped lang="less">
-@import "~common/style/variable";
-.filterBox {
-  padding: 20px;
-  .desc {
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(69,70,70,1);
-    line-height: 20px;
-    // margin-left: 20px;
-    margin-top: 8px;
+  @import "~common/style/variable";
+
+  .search-bar-box {
+    width: 80%;
+    margin-top: 32px;
+
   }
-  .addBtn {
-    // margin-top: 62px;
-    .search-bar-box {
-      width: 80%;
-      margin-top: 32px;
-    }
-    .add-title {
-      padding-top: 20px;
-      .splitTitle {
-        padding: initial !important;
-      }
-    }
-    .form {
-      .url-name {
-        padding: 14px;
-      }
-    }
-  }
-}
+
 </style>

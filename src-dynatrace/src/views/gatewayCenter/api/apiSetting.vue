@@ -7,9 +7,9 @@
           <div class="side-title">接口设置</div>
           <div class="side-nav-title" v-if="!item.isHide" v-for="(item,index) in sideList" :key="index" :class="{'side-nav-active': item.active, 'side-nav-disable': item.locked}" @click="clickSide(item)">{{item.name}}</div>
         </div>
-        <div class="right-content">
+        <DYCard class="overflow-x-hidden">
           <router-view></router-view>
-        </div>
+        </DYCard>
       </div>
     </div>
   </div>
@@ -30,7 +30,6 @@
           .side-title {
             padding: 20px 0 20px 24px;
             font-size: 28px;
-            font-family: PingFangSC-Medium, PingFang SC;
             font-weight: 500;
             color: @default-font-color;
           }
@@ -40,25 +39,19 @@
             padding-left: 24px;
             line-height: 60px;
             font-size: 15px;
-            font-family: SourceHanSansSC-Medium, SourceHanSansSC;
             font-weight: 500;
             &:hover {
-              background: @theme-gray;
-              color: @theme-color
+              background: @gray-03;
+              color: @turq-06
             }
           }
           .side-nav-active {
-            color: @theme-color;
-            background: @theme-gray !important;
+            color: @turq-06;
+            background: @gray-03 !important;
           }
           .side-nav-disable {
             color: rgba(204, 204, 204, 1);
           }
-        }
-        .right-content {
-          background: #ffffff;
-          display: inline-block;
-          width: calc(100% - 284px);
         }
       }
     }
@@ -92,7 +85,7 @@ export default {
         }, {
           name: '',
           routerTo: 'apiDetail',
-          myCoutomRouter: true
+          myCustomRouter: true
         }, {
           name: '设置',
           type: 'edit'
@@ -137,10 +130,10 @@ export default {
   mounted () {},
   created () {
     let accessRoutes = this.$store.getters.access_routes
-    let superuser = this.$store.getters.superuser
+    let superUser = this.$store.getters.superuser
     this.sideList.forEach(items => {
       items.isHide = false
-      if (accessRoutes.indexOf(items.code) === -1 && !superuser) {
+      if (accessRoutes.indexOf(items.code) === -1 && !superUser) {
         items.isHide = true
       }
     })

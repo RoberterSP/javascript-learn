@@ -1,6 +1,6 @@
 <template>
   <div class="p10">
-    <h2>Agent命令列表</h2>
+    <DYHeader title="Agent命令列表" type="small" no-gap />
     <nt-table
       class="table"
       ref="table"
@@ -52,7 +52,7 @@ export default {
     agent_template_list (data) {
       AGENT_TEMPLATE_LIST(data).then(res => {
         this.tableData = res.data.templates
-        this.tableData.map(item => {
+        this.tableData.forEach(item => {
           if (item.param_required_state) {
             item.state_label = '是'
           } else {

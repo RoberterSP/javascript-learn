@@ -1,9 +1,9 @@
 <template>
-  <div class="router-rule p10">
-     <h2 class="mb30">服务路由</h2>
+  <div class="router-rule">
+    <DYHeader class="row-title" title="服务路由" type="small" no-gap />
     <!-- <div class="desc default-label">这里是文字描述这里是文字描述这里是文字描述这里是文字描述这里是文字描述</div> -->
-    <div class="mb30">
-        <div v-if="isAdd" class="addPanel">
+    <div class="row-action">
+        <div v-if="isAdd" class="add-panel">
           <add-router-rules-form
             :isAdd="true"
             :meshCode="meshCode"
@@ -13,14 +13,14 @@
           </add-router-rules-form>
         </div>
 
-      <el-button
+      <DYButton
         v-else
         type="primary"
         v-permission="'serviceCenter_serviceDetail_routeRuleList_add'"
-        @click="isAdd = true">添加规则</el-button>
+        @click="isAdd = true">添加规则</DYButton>
 
     </div>
-    <div class="table-content">
+    <div class="row-content">
       <nt-table
         :tableData="tableList"
         :columns="columns"
@@ -69,7 +69,7 @@ export default {
           code: 'code', // 表身显示值
           type: 'text',
           showicon: 'iconfont',
-          icon_url: 'iconroute',
+          icon_url: 'route',
           textAlign: 'left'
         },
         {
@@ -88,22 +88,22 @@ export default {
           name: '优先级', // 表头名
           code: 'priority',
           type: 'text',
-          textAlign: 'left'
+          textAlign: 'right'
         },
         {
           name: '启用/禁用', // 表头名
           code: 'state',
           type: 'switch',
-          textAlign: 'left',
+          textAlign: 'right',
           disable: false
         },
         {
           name: '删除', // 表头名字
           code: '',
           type: 'delete',
-          textAlign: 'right',
+          textAlign: 'center',
           showDel: true, // 删除
-          width: 50,
+          width: 60,
           disable: false
         }
       ],
@@ -253,20 +253,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" scoped>
-@import "~common/style/variable";
-.router-rule {
-  .h3 {
-    height: 26px;
-    line-height: 26px;
-    margin-bottom: 9px;
-  }
-  .add-router-rule-container {
-    width: 40%;
-    min-width: 400px;
-    /*padding: 8px 8px 8px 6px;*/
-  }
-}
-
-</style>

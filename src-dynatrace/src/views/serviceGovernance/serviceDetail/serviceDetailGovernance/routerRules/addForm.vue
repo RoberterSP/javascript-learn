@@ -38,9 +38,9 @@
         </el-select>
       </el-form-item>
 
-      <div class="moreDiv" v-if="editRouterRuleData.match_tag_type" style="margin-bottom: 20px;">
+      <div class="moreDiv mb24" v-if="editRouterRuleData.match_tag_type">
         <div v-if="originPlaceObj[editRouterRuleData.match_tag_type] && !!editRouterRuleData.match_tag.length"
-             style="line-height:20px;">{{editRouterRuleData.match_tag_type.replace(/^\S/, s => s.toUpperCase())
+             class="mb8 mt8">{{editRouterRuleData.match_tag_type.replace(/^\S/, s => s.toUpperCase())
           }}
         </div>
         <div class="line-item" v-for="(item, index) in editRouterRuleData.match_tag" :key="index">
@@ -63,7 +63,7 @@
             </el-form-item>
           </div>
         </div>
-        <el-button type="primary" @click="addMatchTag">添加</el-button>
+        <DYButton type="primary" @click="addMatchTag">添加</DYButton>
       </div>
 
       <!--  -->
@@ -124,7 +124,7 @@
               <div>类别值</div>
               <div>权重</div>
             </div>
-            <div class="el-form-item" style="margin-top: -8px;margin-bottom: 20px;" v-if="weightErrorLabel">
+            <div class="el-form-item mb20 mt8" v-if="weightErrorLabel">
               <div class="el-form-item__content">
                 <div class="el-form-item__error">
                   {{weightErrorLabel}}
@@ -132,12 +132,13 @@
               </div>
             </div>
             <div class="weight_item" v-for="(item, index) in weights" :key="index">
-              <div class="move-box2">
-                <div class="left-box">{{item.route_value}}</div>
+              <div class="move-box2" style="padding-left: 0; align-items: flex-start">
+                <div class="left-box mt5">{{item.route_value}}</div>
                 <div class="progress-per">
                   <ntSlider
                     v-model="item.weight"
                     show-input
+                    in-form
                     :show-input-controls="false"
                     :marks="marks2"
                     :format-tooltip="formatTooltip2"
@@ -154,11 +155,12 @@
         </el-form-item>
       </div>
       <el-form-item label="超时时间" prop="timeout">
-        <div class="move-box2" style="min-height: 70px;">
+        <div class="move-box2">
           <div class="progress-per">
             <ntSlider
               v-model="editRouterRuleData.timeout"
               show-input
+              in-form
               :max="marks1.max"
               :show-input-controls="false"
               :marks="marks1"
@@ -173,10 +175,10 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="">
+      <div label="" class="switch_form_item">
         <nt-switch :title="'启用自动重试'" v-model="editRouterRuleData.retry_enable_status"
                    @dyClick="editRouterRuleData.retry_enable_status=!editRouterRuleData.retry_enable_status"></nt-switch>
-      </el-form-item>
+      </div>
       <div class="moreDiv" v-show="editRouterRuleData.retry_enable_status">
         <el-form-item label="重试依据" v-show="editRouterRuleData.retry_enable_status">
           <div class="dy-checkbox">
@@ -202,8 +204,9 @@
                     <span class="tag_item" v-for="(item, index) in editRouterRuleData.retriable_status_codes"
                           :key="index">
                       <span class="tag_val" v-if="item||item==0">{{item}}</span>
-                      <span class="tags_remove" v-if="item||item==0" @click="removeTag(index)"><i
-                        class="el-icon-close"></i></span>
+                      <span class="tags_remove" v-if="item||item==0" @click="removeTag(index)">
+                        <DYIcon type="delete" class="iconClose" size="14"></DYIcon>
+                      </span>
                     </span>
                       <div class="tagsinput_input">
                         <input ref="tags_input" class="tags_input" type="text" placeholder="请输入状态码回车结束" size="11"
@@ -217,11 +220,12 @@
           </div>
         </el-form-item>
         <el-form-item label="重试次数">
-          <div class="move-box2" style="min-height: 70px;">
+          <div class="move-box2">
             <div class="progress-per">
               <ntSlider
                 v-model="editRouterRuleData.retry_nums"
                 show-input
+                in-form
                 :max="marks3.max"
                 :show-input-controls="false"
                 :marks="marks3"
@@ -238,11 +242,12 @@
           </div>
         </el-form-item>
         <el-form-item label="单次超时时间">
-          <div class="move-box2" style="min-height: 70px;">
+          <div class="move-box2">
             <div class="progress-per">
               <ntSlider
                 v-model="editRouterRuleData.per_try_timeout"
                 show-input
+                in-form
                 :max="marks1.max"
                 :show-input-controls="false"
                 :marks="marks1"
@@ -259,75 +264,77 @@
         </el-form-item>
       </div>
 
-      <el-form-item label="">
+      <div label="" class="switch_form_item">
         <nt-switch :title="'启用流量镜像'" v-model="editRouterRuleData.mirror_enable_status"
                    @dyClick="editRouterRuleData.mirror_enable_status=!editRouterRuleData.mirror_enable_status"></nt-switch>
-      </el-form-item>
-      <el-form-item label="镜像目的地" v-if="editRouterRuleData.mirror_enable_status">
-        <div class="moreDiv" v-if="editRouterRuleData.mirror_enable_status">
-          <div class="line-item" style="align-items: flex-start;">
-            <div class="line_l" style="margin-right: 20px;">
-              <el-form-item label="" prop="mirror_cluster_type"
-                            :rules="[{ required: true, message: '请选择镜像目的地类型', trigger: 'change' }]">
-                <el-select v-model="editRouterRuleData.mirror_cluster_type" placeholder="请选择镜像目的地类型"
-                           @input="updateChangeChangeTagMirror">
-                  <el-option v-for="(item, index) in destination_deploy_group_code" :key="index" :label="item.name"
-                             :value="item.code"></el-option>
-                </el-select>
-              </el-form-item>
-            </div>
-            <div class="line_r" v-if="destination_deploy_group_code_tag_mirror === 'deploy_group_code'">
-              <el-form-item label="" prop="mirror_cluster_value" ref="deploy_group_code_cluster_value"
-                            :rules="[{ required: true, message: '请选择部署组', trigger: 'change' }]">
-                <el-select v-model="editRouterRuleData.mirror_cluster_value" placeholder="请选择部署组" clearable
-                           @input="updateChangeMirror">
+      </div>
+
+        <el-form-item label="镜像目的地" v-if="editRouterRuleData.mirror_enable_status">
+          <div class="moreDiv" v-if="editRouterRuleData.mirror_enable_status">
+            <div class="line-item" style="align-items: flex-start;">
+              <div class="line_l" style="margin-right: 20px;">
+                <el-form-item label="" prop="mirror_cluster_type"
+                              :rules="[{ required: true, message: '请选择镜像目的地类型', trigger: 'change' }]">
+                  <el-select v-model="editRouterRuleData.mirror_cluster_type" placeholder="请选择镜像目的地类型"
+                             @input="updateChangeChangeTagMirror">
+                    <el-option v-for="(item, index) in destination_deploy_group_code" :key="index" :label="item.name"
+                               :value="item.code"></el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="line_r" v-if="destination_deploy_group_code_tag_mirror === 'deploy_group_code'">
+                <el-form-item label="" prop="mirror_cluster_value" ref="deploy_group_code_cluster_value"
+                              :rules="[{ required: true, message: '请选择部署组', trigger: 'change' }]">
+                  <el-select v-model="editRouterRuleData.mirror_cluster_value" placeholder="请选择部署组" clearable
+                             @input="updateChangeMirror">
                   <span v-for="(item, index) in deploy_groups" :key="index">
                     <el-option :label="item.name" :value="item.code"
                                v-if="item.code !== editRouterRuleData.route_value"></el-option>
                   </span>
-                </el-select>
-              </el-form-item>
-            </div>
-            <div class="line_r" v-if="destination_deploy_group_code_tag_mirror === 'tag_code'">
-              <el-form-item label="" prop="mirror_cluster_value" ref="tag_code_cluster_value"
-                            :rules="[{ required: true, message: '请选择节点标签', trigger: 'change' }]">
-                <el-select v-model="editRouterRuleData.mirror_cluster_value" placeholder="请选择节点标签" clearable
-                           @input="updateChangeMirror">
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="line_r" v-if="destination_deploy_group_code_tag_mirror === 'tag_code'">
+                <el-form-item label="" prop="mirror_cluster_value" ref="tag_code_cluster_value"
+                              :rules="[{ required: true, message: '请选择节点标签', trigger: 'change' }]">
+                  <el-select v-model="editRouterRuleData.mirror_cluster_value" placeholder="请选择节点标签" clearable
+                             @input="updateChangeMirror">
                   <span v-for="(item, index) in node_tags" :key="index">
                     <el-option :label="item.name" :value="item.code"
                                v-if="item.code !== editRouterRuleData.route_value"></el-option>
                   </span>
-                </el-select>
-              </el-form-item>
+                  </el-select>
+                </el-form-item>
+              </div>
             </div>
           </div>
-        </div>
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item label="镜像百分比" prop="mirror_percentage" v-if="editRouterRuleData.mirror_enable_status">
-        <div class="move-box2" style="min-height: 70px;">
-          <div class="progress-per">
-            <ntSlider
-              v-model="editRouterRuleData.mirror_percentage"
-              show-input
-              :max="marks2.max"
-              :show-input-controls="false"
-              :marks="marks2"
-              :format-tooltip="formatTooltip2"
-              class="format_width"
-              start-tooltip="bottom"
-              :resident-tooltip="true"
-              :tooltip-class="'custom-tooltip'"
-              demonstration="%"
-            >
-            </ntSlider>
+        <el-form-item label="镜像百分比" prop="mirror_percentage" v-if="editRouterRuleData.mirror_enable_status">
+          <div class="move-box2">
+            <div class="progress-per">
+              <ntSlider
+                v-model="editRouterRuleData.mirror_percentage"
+                in-form
+                show-input
+                :max="marks2.max"
+                :show-input-controls="false"
+                :marks="marks2"
+                :format-tooltip="formatTooltip2"
+                class="format_width"
+                start-tooltip="bottom"
+                :resident-tooltip="true"
+                :tooltip-class="'custom-tooltip'"
+                demonstration="%"
+              >
+              </ntSlider>
+            </div>
           </div>
-        </div>
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item label="请求头添加规则">
+      <el-form-item label="请求头添加规则" class="">
         <div class="moreDiv">
-          <div class="line-item" v-for="(item, index) in editRouterRuleData.request_headers_to_add" :key="index">
+          <div class="line-item mb8" v-for="(item, index) in editRouterRuleData.request_headers_to_add" :key="index">
             <div class="line_l">
               <el-form-item label="">
                 <el-input v-model="item.key" placeholder="键"></el-input>
@@ -345,10 +352,10 @@
               <img src="@/assets/image/icon-delete.svg" alt="" @click="deleteLine(index, 'request_headers_to_add')">
             </div>
           </div>
-          <el-button type="primary" @click="addRequestHeaders">添加</el-button>
+          <div class="pt16"><DYButton type="primary" @click="addRequestHeaders">添加</DYButton></div>
         </div>
       </el-form-item>
-      <el-form-item label="返回头添加规则">
+      <el-form-item label="返回头添加规则" class="">
         <div class="moreDiv">
           <div class="line-item" v-for="(item, index) in editRouterRuleData.response_headers_to_add" :key="index">
             <div class="line_l">
@@ -368,22 +375,21 @@
               <img src="@/assets/image/icon-delete.svg" alt="" @click="deleteLine(index, 'response_headers_to_add')">
             </div>
           </div>
-          <el-button type="primary" @click="addResponseHeaders">添加</el-button>
+          <div class="pt16"><DYButton type="primary" @click="addResponseHeaders">添加</DYButton></div>
         </div>
       </el-form-item>
 
-      <el-form-item label="">
+      <div label="" class="switch_form_item">
         <nt-switch :title="'激活路由规则'" v-model="editRouterRuleData.state"
                    @dyClick="editRouterRuleData.state=!editRouterRuleData.state"></nt-switch>
         <!-- <div class="desc default-label">这里是说明文字说明文字文字说明文字说明文字说明文字说明文字说明文字说明文字说明文字</div> -->
-      </el-form-item>
-      <div v-permission="'serviceCenter_serviceDetail_routeRuleList_edit'">
+      </div>
+      <div class="btns" v-permission="'serviceCenter_serviceDetail_routeRuleList_edit'">
         <!--  :disabled="!clientDetails.name || !clientDetails.service_name || !clientDetails.domain_name" -->
-        <el-button
-          type="primary"
-          @click="saveForm('addForm')">保存
-        </el-button>
-        <el-button @click="cancelForm('addForm')">取消</el-button>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="saveForm('addForm')">保存</DYButton>
+          <DYButton @click="cancleForm('addForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -814,6 +820,7 @@ import ntSlider from 'components/base/slider/slider.vue'
             this.editRouterRuleData.route_type = 'weight'
             this.destination_deploy_group_code_tag = 'deploy_group_code'
             this.weights = []
+            this.editRouterRuleData.weightTags = []
 
             break
           case '1':
@@ -1072,7 +1079,7 @@ import ntSlider from 'components/base/slider/slider.vue'
 
   .line-minus {
     cursor: pointer;
-    color: @theme-color;
+    color: @turq-06;
   }
 
   .add-router-rule-container {

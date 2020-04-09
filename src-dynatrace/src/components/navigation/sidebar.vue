@@ -3,10 +3,10 @@
     <div class="dql-v">
       <div class="dql-m">
         <span class="dql-a dql-l dql-n" @click.stop="show_menu()">
-          <img src="~@/assets/image/dynatrace/icon_menu_show.svg" alt="" />
+          <img src="~@/assets/image/dynatrace/icon_menu_show.svg" alt=""/>
         </span>
-        <a @click="goDashboard" class="dql-a dql-l dql-n" >
-          <img src="~@/assets/image/board_icon_func.svg" title="" />
+        <a @click="goDashboard" class="dql-a dql-l dql-n">
+          <img src="~@/assets/image/board_icon_func.svg" title=""/>
         </a>
         <!-- <div class="dql-q">
           <span class="dql-a dql-l dql-r dql-t">
@@ -36,13 +36,19 @@
           <div class="check_name_space">
             <el-form ref="ruleForm" :model="form" label-position="top" class="formNavStyle">
               <el-form-item :label="$t('sidebar.nameSpace')" prop="namespaceCode">
-                <div class="space_name" v-if="!showSelectBox"><span class="name">{{spaceName}}</span><span class="replace_name" @click="replaceNameSpace">切换</span></div>
-                <el-select class="select_name" v-model="form.namespaceCode" placeholder="$t('sidebar.pleaseSelectArea')" @visible-change="changeNamespace" v-if="showSelectBox">
-                  <el-option v-for="(item ,index) in namespaces" :key="index" :label="item.name" :value="item.namespace_code"></el-option>
+                <div class="space_name" v-if="!showSelectBox"><span class="name">{{spaceName}}</span><span
+                  class="replace_name" @click="replaceNameSpace">切换</span></div>
+                <el-select class="select_name mt12" v-model="form.namespaceCode"
+                           placeholder="$t('sidebar.pleaseSelectArea')" @visible-change="changeNamespace"
+                           v-if="showSelectBox">
+                  <el-option v-for="(item ,index) in namespaces" :key="index" :label="item.name"
+                             :value="item.namespace_code"></el-option>
                 </el-select>
                 <div v-if="showSelectBox" class="pt10">
-                  <el-button type="primary" @click="onSure">确认</el-button>
-                  <el-button @click="onCancle">取消</el-button>
+                  <DYButtonGroup>
+                    <DYButton type="primary" theme="dark" @click="onSure">确认</DYButton>
+                    <DYButton theme="dark" @click="onCancle">取消</DYButton>
+                  </DYButtonGroup>
                 </div>
                 <div @click="handleCommand()" class="logo_out pt10">
                   {{$t('sidebar.logout')}}
@@ -57,9 +63,9 @@
 </template>
 
 <script>
-import Cookies from '@/common/util/cookie.js'
 import datePick from '@/components/navigation/datePick.vue'
 import './index.less'
+import {AUTH_RESOURCE_GET} from '@/api'
 
 export default {
   data () {
@@ -121,7 +127,7 @@ export default {
     mouseleaveout () {
       if (!this.showBox) this.loginOut = false
     },
-    switchTab: function (_router) {
+    switchTab (_router) {
       switch (_router) {
         case 'configure':
           this.isBiTag = 5
@@ -151,26 +157,22 @@ export default {
           break
       }
     },
-    goChildPage (name) {
-      var loc = window.location.href.substring(
-        0,
-        window.location.href.indexOf('views')
-      )
-      window.location.href = loc + name
-    },
     handleCommand () {
       // Cookies.remove('NXDF_TOKEN')
-      let url = window.location.protocol + '//' + window.location.host
-      window.location = url
+      window.location = window.location.protocol + '//' + window.location.host
     },
     replaceNameSpace () {
       this.showSelectBox = true
     },
-    onSure () {
+    async onSure () {
       this.showSelectBox = false
       if (this.namespaceCode === this.form.namespaceCode) return
       this.getSpaceName()
       // this.$router.push({name: 'index', path: 'index/index'})
+
+      // 重新请求菜单和权限
+      await this.getPermissionData()
+
       this.reloadRouterAlive()
     },
     onCancle () {
@@ -183,12 +185,22 @@ export default {
         this.namespaceCode = name.namespace_code
         window.localStorage.setItem('namespace_code', this.namespaceCode)
       }
+    },
+
+    // 请求权限信息
+    getPermissionData () {
+      return AUTH_RESOURCE_GET({}).then((res) => {
+        if (res.code === 0) {
+          // 设置权限信息
+          this.$store.commit('actionPermissionData', res.data)
+        }
+      })
     }
   },
   mounted () {
     this.getSpaceName()
   },
-  created: function () {
+  created () {
     try {
       this.namespaces = JSON.parse(window.localStorage.getItem('namespaces'))
     } catch (err) {
@@ -213,5 +225,5 @@ export default {
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
+  @import "~common/style/variable";
 </style>

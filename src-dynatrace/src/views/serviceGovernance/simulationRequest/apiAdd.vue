@@ -1,20 +1,19 @@
 <template>
   <div class="message_container">
     <stepper :stepper="stepper"></stepper>
-    <div class="plr20 pt19 message_container">
-      <div class="flex-between">
-        <h2>添加接口</h2>
-        <div class="empower_btn mr15">
-          <el-button @click="cancel">取消</el-button>
-          <el-button @click="save" type="primary">确认</el-button>
+    <div class="pl20 pr20 pt20 message_container">
+      <DYHeader no-gap title="添加接口" type="small">
+        <div slot="actions">
+          <DYButton @click="cancel">取消</DYButton>
+          <DYButton @click="save" type="primary">确认</DYButton>
         </div>
-      </div>
+      </DYHeader>
       <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div>
       <div class="search">
         <el-input
           placeholder="请输入名称"
           v-model.trim="query" @change="searchData">
-          <i slot="suffix" class="el-input__icon el-icon-search" @click="searchData"></i>
+          <i slot="suffix" class="el-input__icon" @click="searchData"><DYIcon type="search"></DYIcon></i>
         </el-input>
       </div>
       <div class="user_list pb20">
@@ -121,7 +120,7 @@ export default {
         detailData: this.detailData,
         editData: this.editData
       }
-      this.$router.push({name: 'simulationRequest', params: { detailData: detailData }})
+      this.$router.push({name: 'simulationRequest', params: { detailData }})
     },
     // 资源分配
     save () {
@@ -130,7 +129,7 @@ export default {
         detailData: this.detailData,
         editData: this.editData
       }
-      this.$router.push({name: 'simulationRequest', params: { detailData: detailData }})
+      this.$router.push({name: 'simulationRequest', params: { detailData }})
     },
     searchData () {
       this.readMeshEndpointList()

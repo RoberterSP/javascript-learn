@@ -21,7 +21,7 @@
         </el-select>
       </el-form-item>
       <div v-if="ruleForm.config_type === 'key_value'">
-        <p class="tilte">配置内容</p>
+        <p class="el-form-item__label">配置内容</p>
         <div class="headerList">
           <div class="flex-start header" v-for="(header, index) in ruleForm.configContent" :key="`header${index}`">
             <el-input class="headTitle" v-model="header.key" placeholder="请输入key值"></el-input>
@@ -30,7 +30,9 @@
             <img @click="deleteContent(index)" src="@/assets/image/icon-delete.svg" alt="">
           </div>
         </div>
-        <el-button @click="addContent">添加配置内容</el-button>
+        <div class="el-button-form-item">
+          <DYButton @click="addContent">添加配置内容</DYButton>
+        </div>
       </div>
     </el-form>
     <div v-if="ruleForm.config_type === 'file'">
@@ -46,14 +48,15 @@
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入内容"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
-       <el-button class="again_btn" @click="againCheck('ruleForm')" v-if="selectedTemplate">重选模版</el-button>
-      <div class="btns">
-        <el-button @click="submitForm('ruleForm')" type="primary" :disabled="!ruleForm.name || !ruleForm.code">保存</el-button>
-        <el-button @click="cancleForm('ruleForm')">取消</el-button>
-      </div>
+      <DYButton @click="againCheck('ruleForm')" v-if="selectedTemplate">重选模版</DYButton>
+      <DYButtonGroup>
+        <DYButton type="primary" :disabled="!ruleForm.name || !ruleForm.code" @click="submitForm('ruleForm')">保存</DYButton>
+        <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+      </DYButtonGroup>
     </el-form>
   </div>
 </template>
@@ -68,21 +71,17 @@ export default {
     },
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-          name: '',
-          code: '',
-          config_type: 'key_value',
-          configContent: [{key: '', value: ''}],
-          content: ''
-        }
-      }
+      default: () => ({
+        name: '',
+        code: '',
+        config_type: 'key_value',
+        configContent: [{key: '', value: ''}],
+        content: ''
+      })
     },
     groupId: {
       type: Number,
-      default: () => {
-        return 1
-      }
+      default: () => 1
     }
   },
   data () {
@@ -233,11 +232,6 @@ export default {
       margin-left: 16px;
     }
     .tilte {
-      font-family: @default-font;
-      font-size: @default-font-size;
-      color: @default-font-color;
-      font-weight: @default-font-weight;
-      line-height: @default-line-height;
       margin-bottom: 10px;
     }
     .headerList {

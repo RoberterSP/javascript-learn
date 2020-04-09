@@ -9,11 +9,17 @@
           <el-input v-model="clientDetails.code" :disabled="!isAdd" placeholder="例如：order_gp"></el-input>
         </el-form-item>
 
-        <div v-permission="'settingCenter_tagList_edit'">
-          <el-button
-            type="primary"
-            @click="saveForm">保存</el-button>
-          <el-button @click="cancelForm">取消</el-button>
+        <div class="btns" v-permission="'settingCenter_tagList_edit'" v-if="!isAdd">
+          <DYButtonGroup>
+            <DYButton type="primary" @click="saveForm">保存</DYButton>
+            <DYButton @click="cancelForm">取消</DYButton>
+          </DYButtonGroup>
+        </div>
+        <div class="btns" v-permission="'settingCenter_tagList_add'" v-else>
+          <DYButtonGroup>
+            <DYButton type="primary" @click="saveForm">保存</DYButton>
+            <DYButton @click="cancelForm">取消</DYButton>
+          </DYButtonGroup>
         </div>
       </el-form>
     </div>
@@ -32,13 +38,11 @@ export default {
     clientDetails: {
       required: true,
       type: Object,
-      default: () => {
-        return {
-          name: '',
-          service_name: '',
-          domain_name: ''
-        }
-      }
+      default: () => ({
+        name: '',
+        service_name: '',
+        domain_name: ''
+      })
     }
   },
   data () {

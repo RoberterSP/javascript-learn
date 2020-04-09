@@ -1132,6 +1132,9 @@ const asyncRouterMaps = [
       component: setting
     }, {
       path: '/settingCenter/other',
+      redirect: {
+        name: 'agent'
+      },
       name: 'other',
       meta: {
         settingCenter: [],
@@ -1217,4 +1220,7 @@ const asyncRouterMaps = [
     }]
   }
 ]
+
+// check_flag_begin
 export default asyncRouterMaps
+// check_flag_end

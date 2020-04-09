@@ -6,11 +6,13 @@
       <div class="p10">
         <div class="flex head-title">
           <h2 class="h2-title">{{'APP' + '分发'}}</h2>
-          <el-button class="head-btn" type="primary" @click="showPopup">分发</el-button>
+          <DYButton type="primary" @click="showPopup">分发</DYButton>
           <div class="popup" v-if="showCheckPopup">
             <div class="popup-title default-label">确认分发</div>
-            <el-button type="primary" @click="sureDistribute()">确认</el-button>
-            <el-button @click="cancelDistribute()">取消</el-button>
+            <DYButtonGroup>
+              <DYButton type="primary" @click="sureDistribute()">确认</DYButton>
+              <DYButton @click="cancelDistribute()">取消</DYButton>
+            </DYButtonGroup>
           </div>
         </div>
         <div class="default-lable desc">文字描述文字描述文字描述文字描述文字描述文字描述文字描述文字描述文字描述</div>
@@ -56,7 +58,6 @@
 
 <script>
 import stepper from 'components/stepper/stepper.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
 import { PAGESIZE } from 'common/util/common.js'
 import {
@@ -253,7 +254,7 @@ export default {
   },
   created () {},
   components: {
-    splitTitle,
+
     stepper,
     ntTable
   }

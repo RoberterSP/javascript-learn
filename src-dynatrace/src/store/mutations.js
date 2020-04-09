@@ -1,13 +1,12 @@
 /* eslint-disable */
 import * as types from './mutation-types'
-import Cookies from '@/common/util/cookie.js'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
  * @param roles
  * @param route
  */
-function hasPermission(roles, route) {
+function hasPermission (roles, route) {
   if (route.code) {
     return roles.includes(route.code)
     // return roles.some(role => route.meta.roles.indexOf(role) >= 0)
@@ -18,13 +17,13 @@ function hasPermission(roles, route) {
 
 /**
  * 递归过滤异步路由表，返回符合用户角色权限的路由表
- * @param asyncRouterMaps
- * @param roles
+ * @param asyncRouterMapsCopy
+ * @param rolesview
  */
-function filterAsyncRouter(asyncRouterMaps, rolesview) {
+function filterAsyncRouter (asyncRouterMapsCopy, rolesview) {
   const res = []
-  asyncRouterMaps.forEach(route => {
-    const tmp = { ...route }
+  asyncRouterMapsCopy.forEach(route => {
+    const tmp = {...route}
     tmp.isShow = false
     //console.log(tmp)
     if (hasPermission(rolesview, tmp)) {
@@ -53,14 +52,14 @@ const matutaions = {
    */
   initPageRouter (state, routes) {
     const pool = []
-    const push = function (routes) {
-      routes.forEach(route => {
+    const push = function (routesNew) {
+      routesNew.forEach(route => {
         if (route.children) {
           push(route.children)
         } else {
           if (!route.hidden) {
-            const { meta, name, path } = route
-            pool.push({ meta, name, path })
+            const {meta, name, path} = route
+            pool.push({meta, name, path})
           }
         }
       })
@@ -74,7 +73,7 @@ const matutaions = {
    * @param {Object} state vuex state
    * @param {Object} data data
    */
-  actionPrimissionData (state, data) {
+  actionPermissionData (state, data) {
     state.access_routes = data.access_routes
     state.access_permissions = data.access_permissions
     state.access_menus = data.access_menus
@@ -86,8 +85,8 @@ const matutaions = {
   SET_MENU_STATE (state, data) {
     state.openMenu = data
   },
-  // actionPrimission (state, list) {
-  //   state.primission = list
+  // actionPermission (state, list) {
+  //   state.permission = list
   // },
   // // 是否是超级管理员
   // Superuser (state, data) {
@@ -98,8 +97,8 @@ const matutaions = {
     state.routers = data
   },
   // 动态更改左侧的菜单栏
-  SET_LEFT_MENUS(state, data) {
-    console.log("左侧栏数据", filterAsyncRouter(state.menuList, data))
+  SET_LEFT_MENUS (state, data) {
+    console.log('左侧栏数据', filterAsyncRouter(state.menuList, data))
     state.menuList = filterAsyncRouter(state.menuList, data)
   },
   // 应用列表的状态管理

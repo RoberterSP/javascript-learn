@@ -46,7 +46,6 @@ export default {
     border-bottom: 1px solid rgba(69,70,70,1);
     .val{
       font-size: 11px;
-      font-family: SourceHanSansSC-Medium,SourceHanSansSC;
       font-weight: 500;
       color:rgba(255,255,255,1);
       line-height: 16px;
@@ -57,8 +56,6 @@ export default {
     }
     .unit_title{
       font-size: 11px;
-      font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-      font-weight: 400;
       color:rgba(137,137,137,1);
       margin: 8px 0 3px 0;
       line-height: 16px;

@@ -10,7 +10,7 @@
   font-weight: 400;
 }
 
-.popper__arrow {
+.el-select-dropdown .popper__arrow {
   display: none !important;
 }
 
@@ -21,30 +21,34 @@
 }
 
 .el-select .el-input .el-select__caret {
-  color: @theme-color;
+  color: @turq-06;
+}
+
+.el-form-item {
+  margin-bottom: 24px;
 }
 
 .el-form-item__label:before {
   display: none;
 }
 .el-form--label-top .el-form-item__label {
-  line-height: 14px !important;
+  line-height: 19px !important;
 }
 
 .el-form-item.is-error .el-input__inner, .el-form-item.is-error .el-input__inner:focus, .el-form-item.is-error .el-textarea__inner, .el-form-item.is-error .el-textarea__inner:focus, .el-message-box__input input.invalid, .el-message-box__input input.invalid:focus {
-  border-color: #CCCCCC !important;
+  border-color: @gray-04 !important;
 }
 
 .el-form-item__error {
   width: 100% !important;
-  color: #DC172A !important;
+  color: @red-05 !important;
   line-height: 33px !important;
   height: 33px !important;
   padding: 0 13px !important;
-  border: 1px solid #CCCCCC !important;
+  border: 1px solid @gray-04 !important;
   border-top: 2px solid #DC172A !important;
   top: 88% !important;
-  background: #F8F8F8;
+  background: @gray-01;
 }
 .el-form-item.is-error {
   margin-bottom: 37px;
@@ -54,66 +58,84 @@
   width: 100%;
 }
 
-.el-button.el-button--primary {
-  background: #00A1B2;
+.el-tag {
+  margin-right: 10px;
 }
-.el-button.el-button--primary.is-plain {
-  color: #00A1B2;
-  background: #e6f6f7;
-  border-color: #99d9e0;
-}
-.el-button.el-button--primary:hover {
-  background: #00848E;
-  border-color: #00848E;
-}
-.el-button.el-button--primary:active {
-  background: #006D75;
-  border-color: #006D75;
-}
-.el-button.el-button--primary:focus {
-  background: #00A1B2;
-  border-color: #00A1B2;
-  color: #ffffff;
-}
-.el-button.el-button--primary.is-disabled {
-  background-color: #CCCCCC;
-  border-color: #CCCCCC;
-}
-.el-button.el-button--default.el-button {
-  background: 0 0;
-  //border-color: #fff;
-  //color: #fff;
-}
-.el-button.el-button--default:hover {
-  border-color: #00848E;
-  color: #006D75;
-  background: #f8f8f8;
-}
-.el-button.el-button--default.btn-cancel {
-  color: #FFFFFF;
-  border: 1px solid rgba(255,255,255,1);
-  background: 0 0;
-  &:hover, &:focus{
-    background:rgba(255,255,255,0.2);
-    border:1px solid rgba(255,255,255,1);
+
+// select 里面的 tags
+.el-tag--info {
+  display: inline-flex !important;
+  align-items: center  !important;
+  background: @gray-02  !important;
+  color: @default-font-color  !important;
+  padding: 5px 8px  !important;
+  border-radius: 3px  !important;
+  height: 22px !important;
+  font-size: 12px !important;
+  line-height: 22px !important;
+
+  .el-tag__close {
+    .fontFace();
+
+    background: none !important;
+    font-size: 16px !important;
+    color: @turq-06 !important;
+    top: 2px !important;
+
+    &:hover {
+      color: @turq-07 !important;
+    }
+
+    &:before {
+      content: "\e6d7" !important;
+    }
   }
 }
 
-.el-button.el-button--default:active, .el-button.el-button--default:focus {
-  border-color: #006D75;
-  color: #00A1B2;
-  background: #f8f8f8;
-}
-.el-button.el-button--default.is-disabled {
-  border-color: #CCCCCC;
-  color: #CCCCCC;
-  background: #f8f8f8;
-}
-.el-button.el-button--primary.is-disabled:hover {
-  background-color: #CCCCCC;
-  border-color: #CCCCCC;
+
+// icon 替换
+.fontFace() {
+  font-family: 'iconfont', serif !important;
+  src: url('../../assets/iconfont/iconfont.eot'),
+  url('../../assets/iconfont/iconfont.woff2') format('woff2'),
+  url('../../assets/iconfont/iconfont.woff') format('woff'),
+  url('../../assets/iconfont/iconfont.ttf') format('truetype');
 }
 
-.el-tag {
-  margin-right: 10px;
+.el-icon-arrow-up {
+  .fontFace();
+
+  &:before {
+    content: "\e662" !important;
+  }
+}
+
+.el-icon-circle-close {
+  .fontFace();
+
+  &:before {
+    content: "\e6d7" !important;
+  }
+}
+
+// checkbox
+.el-checkbox__input {
+  .el-checkbox__inner {
+    width: 16px;
+    height: 16px;
+    border-radius: 0;
+    border-width: 2px;
+  }
+
+  &.is-checked {
+    .el-checkbox__inner {
+      background: #fff;
+
+      &::after {
+        border-color: @turq-06;
+        border-width: 1.8px;
+        top: 0;
+      }
+    }
+  }
 }

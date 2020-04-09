@@ -1,3 +1,5 @@
+@import "~common/style/variable";
+
 .add-user-container {
   .el-form{
     max-width: 400px;
@@ -14,24 +16,16 @@
       margin-bottom: 32px;
       input.el-input__inner{
         &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-          font-weight: 400;
-          font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-          color:#CCCCCC;
+          color:@gray-04;
         }
         &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-          font-weight: 400;
-          font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-          color:#CCCCCC;
+          color:@gray-04;
         }
         &::-moz-placeholder { /* Mozilla Firefox 19+ */
-          font-weight: 400;
-          font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-          color:#CCCCCC;
+          color:@gray-04;
         }
         &:-ms-input-placeholder { /* Internet Explorer 10-11 */
-          font-weight: 400;
-          font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-          color:#CCCCCC;
+          color:@gray-04;
         }
       }
     }

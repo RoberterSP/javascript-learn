@@ -80,9 +80,6 @@ export default {
       padding-right: 28px;
       color:rgba(137,137,137,1);
       line-height:20px;
-      font-size:14px;
-      font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-      font-weight:400;
       border-radius: 4px;
     }
     img {

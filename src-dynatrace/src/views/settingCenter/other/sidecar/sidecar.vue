@@ -1,6 +1,6 @@
 <template>
   <div class="p10">
-    <h2>Sidecar配置调试</h2>
+    <DYHeader title="Sidecar配置调试" type="small" no-gap />
     <div class="flex-between mid">
       <div>
         <span class="server">配置类型:</span>
@@ -12,7 +12,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-button @click="update" type="primary" style="margin-left: 10px;">刷新全部</el-button>
+        <DYButton @click="update" type="primary" class="ml10">刷新全部</DYButton>
       </div>
       <div>
         <span class="server">服务:</span>
@@ -24,7 +24,7 @@
             :value="item.code">
           </el-option>
         </el-select>
-        <el-button @click="save" class="save" type="primary" :disabled="saveBtnDisabled">保存</el-button>
+        <DYButton @click="save" class="mr10" type="primary" :disabled="saveBtnDisabled">保存</DYButton>
       </div>
     </div>
     <div class="sideContain">
@@ -32,7 +32,7 @@
         <!-- <el-form-item style="width: 425px;" label="配置版本: " prop="version" :rules="[{ required: true, message: '配置版本不能为空'}]">
           <el-input v-model="envoy_config.version" @input="saveBtnDisabled = false"></el-input>
         </el-form-item> -->
-        <el-form-item label="配置详情: " style="min-height: 300px;max-height:600px;overflow-y:scroll;margin-top:40px;" :rules="[{ required: true, message: '配置详情不能为空'}]">
+        <el-form-item label="配置详情: " style="min-height: 300px;max-height:600px;overflow-y:auto;" :rules="[{ required: true, message: '配置详情不能为空'}]">
           <div class="editor-container" style="width: 100%;">
             <json-editor ref="jsonEditor" v-model="envoy_config.config"  @changed="onJsonCodeChange"/>
           </div>
@@ -136,7 +136,7 @@ export default {
       ENVOY_CONFIG_EDIT(data).then(res => {
         // this.$message({ message: '成功!' })
         bus.$emit('openMessage', {
-          message: '成功！',
+          message: res.data.result,
           type: 'success'
         })
       })
@@ -145,7 +145,7 @@ export default {
       ENVOY_CONFIG_UPDATE(data).then(res => {
         // this.$message({ message: '成功!' })
         bus.$emit('openMessage', {
-          message: '成功！',
+          message: res.data.result,
           type: 'success'
         })
       })
@@ -171,7 +171,7 @@ export default {
   .server {
     margin-right: 10px;
   }
-  .time, .save {
+  .time {
     margin-right: 10px;
   }
 }

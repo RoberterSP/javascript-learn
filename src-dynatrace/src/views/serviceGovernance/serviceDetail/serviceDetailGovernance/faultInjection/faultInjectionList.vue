@@ -1,15 +1,13 @@
 <template>
-  <div class="role_container p10">
-    <h2 class="mb30">故障注入</h2>
-    <!-- <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div> -->
+  <div>
+    <DYHeader class="row-title" title="故障注入" type="small" no-gap />
 
-    <div v-if="!isShowBtn" class="addPanel">
+    <div v-if="!isShowBtn" class="add-panel row-action">
       <add-fault-injection @addHandle="addHandle" @cancelContent="cancleHandle" :meshCode="meshCode"></add-fault-injection>
     </div>
 
-    <el-button v-else type="primary" class="mb30" @click="addFault"  v-permission="'serviceCenter_serviceDetail_faultInjectionRuleList_add'">添加规则</el-button>
-
-    <div class="user_list">
+    <DYButton v-else type="primary" class="row-action" @click="addFault" v-permission="'serviceCenter_serviceDetail_faultInjectionRuleList_add'">添加规则</DYButton>
+    <div class="row-content">
       <nt-table :tableData="faultList" :columns="columns" :tableSet="tableSet" :componentsName="'addFaultInjection'" @deleteOne="deleteOne" @changeSwitch="changeSwitch" @componentSaveContent="saveContent"></nt-table>
     </div>
   </div>
@@ -41,21 +39,23 @@ export default {
         {
           name: '最大故障比例', // 表头名
           code: 'max_active_faults_bak',
-          type: 'text'
+          type: 'text',
+          textAlign: 'right'
         },
         {
           name: '启用/禁用', // 表头名
           code: 'state',
           type: 'switch',
-          disable: false
+          disable: false,
+          textAlign: 'right'
         },
         {
           name: '删除', // 表头名
           code: '',
           type: 'delete',
           disable: false,
-          width: 50,
-          textAlign: 'right'
+          width: 60,
+          textAlign: 'center'
         }],
       faultList: [], // 角色列表
       page: 1, // 第几页
@@ -159,36 +159,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
-.role_container {
-  position: relative;
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .empower_btn{
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
-
-  // .user_list{
-  //   margin-top: 22px;
-  // }
-  .source_name{
-    display: flex;
-    align-items: center;
-    .name{
-      width: 68px;
-    }
-    .line{
-      flex: 1;
-      background-color: #E6E6E6;
-      height: 1px;
-    }
-  }
-}
-</style>

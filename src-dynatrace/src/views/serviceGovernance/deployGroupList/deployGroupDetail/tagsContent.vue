@@ -1,16 +1,16 @@
 <template>
   <div class="editPanel">
     <p class="default-label mb10">添加标签</p>
-    <div  v-permission= "'serviceCenter_deployGroupDetail_nodeDetail_tagAdd'">
-    <el-select @change="change" v-model="tags" multiple placeholder="请选择">
-      <el-option
-        v-for="item in tagList"
-        :key="'taglist' + item.id"
-        :label="item.name"
-        :value="item.id">
-      </el-option>
-    </el-select>
-    <el-button @click="add" type="primary">添加</el-button>
+    <div v-permission="'serviceCenter_deployGroupDetail_nodeDetail_tagAdd'">
+      <el-select @change="change" v-model="tags" multiple placeholder="请选择">
+        <el-option
+          v-for="item in tagList"
+          :key="'taglist' + item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+      </el-select>
+      <DYButton type="primary" @click="add">添加</DYButton>
     </div>
     <p class="default-label mt20">已添加标签</p>
     <div class="mt10">
@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import { NXMC_SETTING_TAG_LIST_GET, NODE_TAG_POST } from '@/api'
-import { PAGESIZE } from 'common/util/common.js'
+import {NODE_TAG_POST, NXMC_SETTING_TAG_LIST_GET} from '@/api'
+import {PAGESIZE} from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
 
 export default {
@@ -44,16 +44,16 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     change (item) {
       this.choosed = []
-      item.map(id => {
-        this.tagList.map(tag => {
+      item.forEach(id => {
+        this.tagList.forEach(tag => {
           if (tag.id === id) {
             this.choosed.push(tag)
           }
@@ -66,9 +66,7 @@ export default {
         node_id: this.clientDetails.id,
         deploy_group_code: this.$route.params.code
       }
-      this.addedTags.map(item => {
-        data.tags.push(item.id)
-      })
+      data.tags = this.addedTags.map(item => item.id)
       data.tags = [...data.tags, ...this.tags]
       this.node_tag_post(data)
     },
@@ -84,9 +82,9 @@ export default {
     },
     dealTags () {
       this.tagList = []
-      this.wholeList.map(resTag => {
+      this.wholeList.forEach(resTag => {
         let shouldPush = true
-        this.addedTags.map(item => {
+        this.addedTags.forEach(item => {
           if (item.id === resTag.id) shouldPush = false
         })
         if (shouldPush) {
@@ -108,88 +106,88 @@ export default {
       })
     }
   },
-  mounted () {},
+  mounted () {
+  },
   created () {
     this.addedTags = this.clientDetails.tags
     this.tag_list_get()
   },
-  components: {
-  }
+  components: {}
 }
 </script>
 
 <style scoped lang="less">
-@import "~common/style/variable";
+  @import "~common/style/variable";
 
-@default-width: 425px;
-.default-width {
-  width: @default-width;
-}
-
-.mt-23 {
-  margin-top: 23px;
-}
-.mt-47 {
-  margin-top: 47px;
-}
-.mb-37 {
-  margin-bottom: 37px;
-}
-.mb-30 {
-  margin-bottom: 30px;
-}
-
-.editPanel {
-  .tilte {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
-    margin-bottom: 10px;
-  }
-  .eventTitle {
-    font-family: @default-font;
-    font-size: 20px;
-    color: @default-font-color;
-    font-weight: 500;
-    line-height: 29px;
-    margin-bottom: 26px;
-  }
-  .eventSubTitle {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
-    margin-bottom: 28px;
-  }
-  .headerList {
-    margin-bottom: 42px;
-    .header {
-      margin-bottom: 4px;
-      .headTitle {
-        width: 107px;
-      }
-      .headmid {
-        width: 14px;
-        margin-left: 17px;
-        margin-right: 9px;
-      }
-      .headBody {
-        width: 238px;
-      }
-      img {
-        width: 12px;
-        height: 12px;
-        margin-left: 14px;
-        cursor: pointer;
-      }
-    }
-  }
-  .select {
-    margin-bottom: 30px;
+  @default-width: 425px;
+  .default-width {
     width: @default-width;
   }
-}
+
+  .mt-23 {
+    margin-top: 23px;
+  }
+
+  .mt-47 {
+    margin-top: 47px;
+  }
+
+  .mb-37 {
+    margin-bottom: 37px;
+  }
+
+  .mb-30 {
+    margin-bottom: 30px;
+  }
+
+  .editPanel {
+    .tilte {
+      margin-bottom: 10px;
+    }
+
+    .eventTitle {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 29px;
+      margin-bottom: 26px;
+    }
+
+    .eventSubTitle {
+      margin-bottom: 28px;
+    }
+
+    .headerList {
+      margin-bottom: 42px;
+
+      .header {
+        margin-bottom: 4px;
+
+        .headTitle {
+          width: 107px;
+        }
+
+        .headmid {
+          width: 14px;
+          margin-left: 17px;
+          margin-right: 9px;
+        }
+
+        .headBody {
+          width: 238px;
+        }
+
+        img {
+          width: 12px;
+          height: 12px;
+          margin-left: 14px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .select {
+      margin-bottom: 30px;
+      width: @default-width;
+    }
+  }
 </style>

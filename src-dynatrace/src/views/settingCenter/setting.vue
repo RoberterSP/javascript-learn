@@ -1,18 +1,27 @@
 <template>
   <div>
     <stepper :stepper="stepper" @goRouter="goRouter" theme="gray"></stepper>
-    <div class="content p24l0 flex">
-      <leftmenu class="left-content" :leftMenu="left_menu" v-on:currentPage="setCurrentPage"></leftmenu>
+    <!-- <div class="content p24l0 flex">
+      <DYLeftMenuSecond class="left-content" :leftMenu="left_menu" v-on:currentPage="setCurrentPage"></DYLeftMenuSecond>
       <div class="right-content p10">
         <router-view></router-view>
       </div>
-    </div>
+    </div> -->
+    <DYLayout class="pt24 pr24 pb24">
+      <template slot="left">
+        <DYLeftMenuSecond class="left-content" :leftMenu="left_menu" v-on:currentPage="setCurrentPage"></DYLeftMenuSecond>
+      </template>
+      <template slot="content">
+        <DYCard class="overflow-x-hidden">
+          <router-view></router-view>
+        </DYCard>
+      </template>
+    </DYLayout>
   </div>
 </template>
 
 <script>
 import stepper from 'components/stepper/stepper.vue'
-import leftmenu from 'components/navigation/leftmenuSecond.vue'
 import bus from '@/assets/eventBus.js'
 export default {
   data () {
@@ -37,15 +46,15 @@ export default {
             children: [
               {
                 name: '角色列表',
-                primission: 'roleList',
+                permission: 'roleList',
                 code: 'roleList'
               }, {
                 code: 'singleSignOn',
-                primission: 'singleSignOn',
+                permission: 'singleSignOn',
                 name: '单点登录'
               }, {
                 code: 'userPermissions',
-                primission: 'userPermissions',
+                permission: 'userPermissions',
                 name: '用户权限'
               }
             ]
@@ -55,15 +64,15 @@ export default {
             children: [
               {
                 name: '日志设置',
-                primission: 'logSetting',
+                permission: 'logSetting',
                 code: 'logSetting'
               }, {
                 name: '预警策略',
-                primission: 'warningStrategy',
+                permission: 'warningStrategy',
                 code: 'warningStrategy'
               }, {
                 code: 'healthIndex',
-                primission: 'healthIndex',
+                permission: 'healthIndex',
                 name: '健康水平'
               }
             ]
@@ -73,19 +82,19 @@ export default {
             children: [
               {
                 name: '熔断规则',
-                primission: 'fuseGroup',
+                permission: 'fuseGroup',
                 code: 'fuseGroup'
               }, {
                 name: '健康规则',
-                primission: 'healthRule',
+                permission: 'healthRule',
                 code: 'healthRule'
               }, {
                 code: 'tag',
-                primission: 'tag',
+                permission: 'tag',
                 name: '标签'
               }, {
                 name: '配置模板',
-                primission: 'configTemplate',
+                permission: 'configTemplate',
                 code: 'configTemplate'
               }
             ]
@@ -95,19 +104,19 @@ export default {
             children: [
               {
                 code: 'nameSpace',
-                primission: 'namespaceList',
+                permission: 'namespaceList',
                 name: '命名空间'
               }, {
                 name: '服务供应商',
-                primission: 'serviceProvider',
+                permission: 'serviceProvider',
                 code: 'serviceProvider'
               }, {
                 name: '资源列表',
-                primission: 'sourceList',
+                permission: 'sourceList',
                 code: 'sourceList'
               }, {
                 name: '用户列表',
-                primission: 'userList',
+                permission: 'userList',
                 code: 'userList'
               }
             ]
@@ -130,32 +139,34 @@ export default {
     },
     falt (code) {
       let accessRoutes = this.$store.getters.access_routes
-      let superuser = this.$store.getters.superuser
+      let superUser = this.$store.getters.superuser
       this.left_menu.menuList.forEach(item => {
         let arr = []
         if (item.children && item.children.length > 0) {
           item.children.forEach(items => {
-            items.isHide = false
-            if (accessRoutes.indexOf(items.primission) === -1 && !superuser) {
-              items.isHide = true
-            }
+            items.isHide = accessRoutes.indexOf(items.permission) === -1 && !superUser
+
             if (!items.isHide) arr.push(items)
           })
 
           if (item.children.find(itemCode => !itemCode.isHide) === undefined) item.isHide = true
+
           let obj
+
           try {
             if (code) {
               obj = item.children.find(itemCode => itemCode.code === code)
               if (obj.isHide && arr.length > 0) {
-                obj = arr[0]
+                ({obj} = arr)
               }
             }
           } catch (err) { console.log('err', err) }
+
           if (obj && obj.name) {
             this.$set(this.stepper[1], 'name', item.name)
             this.$set(this.stepper[2], 'name', obj.name)
             this.$set(this.stepper[2], 'routerTo', obj.code)
+
             // 添加点击角色列表后的回调
             this.$set(this.stepper[2], 'callBack', this.resetStepper)
             this.$router.push({name: obj.code})
@@ -189,15 +200,7 @@ export default {
     bus.$off('addRouter')
   },
   components: {
-    stepper,
-    leftmenu
+    stepper
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-.right-content {
-  width: calc(100% - 238px);
-  background:rgba(255,255,255,1);
-}
-</style>

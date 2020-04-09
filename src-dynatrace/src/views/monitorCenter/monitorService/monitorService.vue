@@ -1,46 +1,51 @@
 <template>
   <div class="wrapper">
     <stepper :stepper="stepper" theme="royalblue" @goRouter="goRouter"></stepper>
-    <div class="monitorApplication" >
-      <div class="headTitle flex-between p20">
-        <div class="head_title_l">
-<!--          <img src="~@/assets/image/icon_header_title.svg" title="" />-->
-          <icon type="Service" size="36" class="mr10"></icon>
-          <span>{{detailData.name}}</span>
-        </div>
-      </div>
+    <div class="monitorApplication">
+      <DYPageHeader theme="royalblue" icon="Service" :title="detailData.name" />
       <div class="filter_div m20">
         <!-- <input type="text" placeholder="过滤条件"/> -->
-        <tags-input ref="tagsInput" :filterKeys="filterKeys" :keysValue="keysValue" @returnFilterFunc="returnFilterFunc"></tags-input>
+<!--        <tags-input ref="tagsInput" :filterKeys="filterKeys" :keysValue="keysValue"-->
+<!--                    @returnFilterFunc="returnFilterFunc"></tags-input>-->
+
+        <DYFilter
+          class="input-filter"
+          :filters-model="filterModelValues"
+          :filterKeys="filterKeys"
+          :quickSearch="false"
+          @returnFilterFunc="returnFilterFunc"
+        />
       </div>
-      <div class="health mlr20">
+      <div class="health ml20 mr20">
         <div class="tit p16">健康指数</div>
         <div class="circleDiv">
           <div class="fx">
             <div class="pie_chart">
-              <charts :ref="pieChartOptions[0].id" :chartId="pieChartOptions[0].id" :option="pieChartOptions[0].option"></charts>
+              <charts :ref="pieChartOptions[0].id" :chartId="pieChartOptions[0].id"
+                      :option="pieChartOptions[0].option"></charts>
               <div class="data_view">
                 <div class="val">{{healthTotal}}</div>
-                <div >{{headthEvaluate}}</div>
+                <div>{{headthEvaluate}}</div>
               </div>
             </div>
           </div>
           <div class="fx">
             <div class="pie_chart">
-              <charts :ref="pieChartOptions[1].id" :chartId="pieChartOptions[1].id" :option="pieChartOptions[1].option"></charts>
+              <charts :ref="pieChartOptions[1].id" :chartId="pieChartOptions[1].id"
+                      :option="pieChartOptions[1].option"></charts>
               <div class="data_view">
                 <div class="view_item">
                   <div class="flex">
                     <span>{{pieChartOptions[1].option.series[0].data[0].y}}%</span>
-                    <i class="iconfont iconmanyi green"></i>
+                    <DYIcon type="manyi" class="iconfont green"></DYIcon>
                   </div>
                   <div class="flex">
                     <span>{{pieChartOptions[1].option.series[0].data[1].y}}%</span>
-                    <i class="iconfont iconyiban yellow"></i>
+                    <DYIcon type="yiban" class="iconfont yellow"></DYIcon>
                   </div>
                   <div class="flex">
                     <span>{{pieChartOptions[1].option.series[0].data[2].y}}%</span>
-                    <i class="iconfont iconshiwang red"></i>
+                    <DYIcon type="shiwang" class="iconfont red"></DYIcon>
                   </div>
                 </div>
               </div>
@@ -52,26 +57,31 @@
         </div>
       </div>
       <div class="section m20">
-        <div class="tabDiv flex-center p16">
-          <div class="tab_item flex-center" v-for="(item, index) in tabList" :key="index" @click="tabClick(item, index)" :class="[tab_active_index===index?'is_active':'']">{{item.title}}</div>
-        </div>
+
+        <DYTabs
+          :tabList="tabList"
+          theme="royalblue"
+          @onClick="tabClick"
+        />
         <div class="column_chart p16">
           <charts ref="columnChart" :chartId="columnLineChartOption.id" :option="columnLineChartOption.option"></charts>
           <div class="sf_chart_legend">
             <div class="legend_item" v-for="(item, index) in legends" :key="index">
               <div class="legend_item_icon">
-                <img src="~@/assets/image/dynatrace/blue_chart_line.svg" alt="" v-if="item.chartType === 'line'" />
-                <img src="~@/assets/image/dynatrace/purple_chart_column.svg" alt="" v-if="item.chartType === 'column' && item.title!=='Failed Requests'" />
-                <img src="~@/assets/image/dynatrace/red_chart_column.svg" alt="" v-if="item.chartType === 'column' && item.title==='Failed Requests'" />
+                <img src="~@/assets/image/dynatrace/blue_chart_line.svg" alt="" v-if="item.chartType === 'line'"/>
+                <img src="~@/assets/image/dynatrace/purple_chart_column.svg" alt=""
+                     v-if="item.chartType === 'column' && item.title!=='Failed Requests'"/>
+                <img src="~@/assets/image/dynatrace/red_chart_column.svg" alt=""
+                     v-if="item.chartType === 'column' && item.title==='Failed Requests'"/>
               </div>
               <span class="legent_item_tit">{{item.title}}</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="table_view mlr20 pb20 pt20">
-        <div class="tit plr16">{{tabList[tab_active_index].subTit}}</div>
-        <div class="search-bar-box plr30 pt30" style="width: 80%;">
+      <div class="table_view ml20 mr20 pb20 pt20">
+        <div class="tit pl16 pr16">{{tabList[tab_active_index].subTit}}</div>
+        <div class="search-bar-box pl30 pr30 pt30" style="width: 80%;">
           <search-bar
             v-model.trim="query"
             @search="searchBarFunc"
@@ -83,110 +93,126 @@
             <table cellspacing="0" cellpadding="0" border="0" style="width: 99.99%;">
               <!-- 表头信息 -->
               <thead>
-                <tr>
-                  <th v-for="(column, index) in columns"
-                  :key="index"
-                  :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
-                    <div class="cell">
-                      <div class="flex header-style">
-                        <div class="split" v-if="column.textAlign==='right'"></div>
-                        <div class="title">
-                          {{column.name}}
-                          <span class="caret-wrapper" @click.stop="changeOrder(column, column.code)" v-if="!!column.sortAbled">
+              <tr>
+                <th v-for="(column, index) in columns"
+                    :key="index"
+                    :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
+                  <div class="cell">
+                    <div class="flex header-style">
+                      <div class="split" v-if="column.textAlign==='right'"></div>
+                      <div class="title">
+                        {{column.name}}
+                        <span class="caret-wrapper" @click.stop="changeOrder(column, column.code)"
+                              v-if="!!column.sortAbled">
                             <!-- <i class="sort-caret ascending"
                               :style="{'border-bottom-color': column.sortOrder === 'asc' ? 'rgb(82, 82, 82)' : '#c0c4cc'}"
                             ></i>
                             <i class="sort-caret descending"
                               :style="{'border-top-color': column.sortOrder === 'desc' ? 'rgb(82, 82, 82)' : '#c0c4cc'}"
                             ></i> -->
-                            <img class="sort_icon" src="~@/assets/image/icon_rank.svg" title="" v-if="column.sortOrder === 'none'||!column.sortOrder"/>
-                            <img class="sort_icon" src="~@/assets/image/icon_rank_up.svg" title="" v-if="column.sortOrder === 'asc'" />
-                            <img class="sort_icon" src="~@/assets/image/icon_rank_down.svg" title="" v-if="column.sortOrder === 'desc'"/>
+                            <img class="sort_icon" src="~@/assets/image/icon_rank.svg" title=""
+                                 v-if="column.sortOrder === 'none'||!column.sortOrder"/>
+                            <img class="sort_icon" src="~@/assets/image/icon_rank_up.svg" title=""
+                                 v-if="column.sortOrder === 'asc'"/>
+                            <img class="sort_icon" src="~@/assets/image/icon_rank_down.svg" title=""
+                                 v-if="column.sortOrder === 'desc'"/>
                           </span>
-                        </div>
-                        <div class="split" v-if="!column.textAlign || column.textAlign==='left'"></div>
                       </div>
+                      <div class="split" v-if="!column.textAlign || column.textAlign==='left'"></div>
                     </div>
-                  </th>
-                  <th>
-                    <div class="cell">
-                      <div class="flex header-style">
-                        <div class="split"></div>
-                        <div class="title">
-                          操作
-                        </div>
-                      </div>
+                  </div>
+                </th>
+                <th>
+                  <div class="cell">
+                    <div class="flex header-style">
+                      <div class="split"></div>
+                      <div class="title">操作</div>
+                      <div class="split"></div>
                     </div>
-                  </th>
-                </tr>
+                  </div>
+                </th>
+              </tr>
               </thead>
               <!-- 表身信息 -->
               <tbody>
-                <tr v-for="(trItem, trIndex) in tableData" :key="trIndex" class="self-table__row"
-                @mouseenter.prevent="mouseEnterTr($event, trIndex)"
-                @mouseleave.prevent="mouseLeaveTr($event, trIndex)">
-                  <td v-for="(column, tdIndex) in columns"
-                  :key="tdIndex"
-                  :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
-                    <div class="cell">
-                      <!-- text link_label -->
-                      <div v-if="column.type === 'link_label'">
-                        <div class="flex header-style" :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
-                          <div class="title highlight_label" @click="linkLabelClick(trItem)">{{trItem[column.code]}}</div>
-                        </div>
-                      </div>
-                      <!-- text -->
-                      <div v-if="column.type === 'text'">
-                        <div class="flex header-style" :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
-                          <div class="title" v-if="column.unit">{{trItem[column.code] | currency(column.unit)}}</div>
-                          <div class="title" v-else>{{trItem[column.code]}}</div>
-                        </div>
-                      </div>
-                      <!-- 长条 -->
-                      <div v-if="column.type === 'sliver'">
-                        <div class="flex header-style" :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
-                          <div class="title" >
-                            <!-- :style="{'width': }" -->
-                            <div v-if="tab_active_index===0" class="slip" :style="{'width': (trItem[column.code]/avg_totalSum*100).toFixed(2)+'%'}" style="color:#fff"></div>
-                            <div v-if="tab_active_index===1"  class="slip" :style="{'width': (trItem[column.code]/error_totalSum*100).toFixed(2)+'%'}" style="color:#fff"></div>
-                          </div>
-                        </div>
+              <tr v-for="(trItem, trIndex) in tableData" :key="trIndex" class="self-table__row"
+                  @mouseenter.prevent="mouseEnterTr($event, trIndex)"
+                  @mouseleave.prevent="mouseLeaveTr($event, trIndex)">
+                <td v-for="(column, tdIndex) in columns"
+                    :key="tdIndex"
+                    :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
+                  <div class="cell">
+                    <!-- text link_label -->
+                    <div v-if="column.type === 'link_label'">
+                      <div class="flex header-style"
+                           :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
+                        <div class="title highlight_label" @click="linkLabelClick(trItem)">{{trItem[column.code]}}</div>
                       </div>
                     </div>
-                  </td>
-                  <td>
-                    <div class="cell opt_cell">
-                      <div class="flex header-style flex-end">
+                    <!-- text -->
+                    <div v-if="column.type === 'text'">
+                      <div class="flex header-style"
+                           :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left', 'align-width-word': column.textAiignWithoutIcon}">
+                        <div class="title" v-if="column.unit">{{trItem[column.code] | currency(column.unit)}}</div>
+                        <div class="title" v-else>{{trItem[column.code]}}</div>
+                      </div>
+                    </div>
+                    <!-- 长条 -->
+                    <div v-if="column.type === 'sliver'">
+                      <div class="flex header-style"
+                           :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
                         <div class="title">
-                          <a class="tb_filter" :class="[trItem.show_click_pop?'':'no_click_pop']" @click.stop="tbFilterClick(trItem)">
-                            <div class="column-icon iconfont iconfilter"></div>
-                            <div class="hover_pop">筛选</div>
-                          </a>
-                          <a class="tb_more" :class="[trItem.show_click_pop?'':'no_click_pop']" @click.stop="tbMoreClick($event, trItem)">
-                            <i class="el-icon-more"></i>
-                            <div class="hover_pop">更多</div>
-                          </a>
+                          <!-- :style="{'width': }" -->
+                          <div v-if="tab_active_index===0" class="slip"
+                               :style="{'width': (trItem[column.code]/avg_totalSum*100).toFixed(2)+'%'}"
+                               style="color:#fff"></div>
+                          <div v-if="tab_active_index===1" class="slip"
+                               :style="{'width': (trItem[column.code]/error_totalSum*100).toFixed(2)+'%'}"
+                               style="color:#fff"></div>
                         </div>
                       </div>
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                </td>
+                <td>
+                  <div class="cell opt_cell">
+                    <div class="flex header-style flex-center">
+                      <div class="title">
+                        <a class="tb_filter" :class="[trItem.show_click_pop?'':'no_click_pop']"
+                           @click.stop="tbFilterClick(trItem)">
+                          <div class="column-icon iconfont iconfilter"></div>
+                          <div class="hover_pop">筛选</div>
+                        </a>
+                        <a class="tb_more" :class="[trItem.show_click_pop?'':'no_click_pop']"
+                           @click.stop="tbMoreClick($event, trItem)">
+                          <DYIcon type="more" size="14"></DYIcon>
+                          <div class="hover_pop">更多</div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
               </tbody>
             </table>
             <div class="flex-center empty" v-if="!tableData.length">
-              <img src="~@/assets/image/icon-nodata-default.svg" alt="">
+              <DYIcon type="records" size="80" class="mt30"></DYIcon>
               <span>暂无数据</span>
             </div>
           </div>
           <!-- 更多popup -->
-          <div class="click_pop" v-show="currentClickItem && currentClickItem.show_click_pop" :style="{'left': click_pop_position.x+'px', 'top': click_pop_position.y+'px'}">
+          <div class="click_pop" v-show="currentClickItem && currentClickItem.show_click_pop"
+               :style="{'left': click_pop_position.x+'px', 'top': click_pop_position.y+'px'}">
             <div class="head">分析</div>
             <div class="line" @click.stop="skipPage('logQuery', currentClickItem)">日志详情</div>
             <div class="line" @click.stop="skipPage('apiTracing', currentClickItem)">调用跟踪</div>
-            <span @click.stop="closeClickPop(currentClickItem)"><i class="el-icon-close"></i></span>
+            <span @click.stop="closeClickPop(currentClickItem)">
+              <DYIcon type="delete" size="12"></DYIcon>
+            </span>
           </div>
           <!-- table 行的 hover popup -->
-          <div class="sf_popup" :style="{'left': clientX+'px', 'top': clientY+'px'}" ref="sf_popup" v-show="currentHoverItem">
+          <div class="sf_popup" :style="{'left': clientX+'px', 'top': clientY+'px'}" ref="sf_popup"
+               v-show="currentHoverItem">
             <div class="name">{{currentHoverItem.endpoint}}</div>
             <div class="explain">Values are calculated over whole timefram.</div>
             <div class="sec">
@@ -207,17 +233,17 @@
               <div class="line">
                 <p>平均响应时间</p>
                 <div class="dot"></div>
-                <div class="val" >{{currentHoverItem.avg_res_time | currency('ms')}}</div>
+                <div class="val">{{currentHoverItem.avg_res_time | currency('ms')}}</div>
               </div>
               <div class="line">
                 <p>平均响应时间</p>
                 <div class="dot"></div>
-                <div class="val" >{{currentHoverItem.avg_res_time | currency('ms')}}</div>
+                <div class="val">{{currentHoverItem.avg_res_time | currency('ms')}}</div>
               </div>
               <div class="line">
                 <p>调用次数</p>
                 <div class="dot"></div>
-                <div class="val" >{{currentHoverItem.call_count | currency('次')}}</div>
+                <div class="val">{{currentHoverItem.call_count | currency('次')}}</div>
               </div>
             </div>
             <div class="sec">
@@ -239,9 +265,8 @@ import HighCharts from 'highcharts'
 import bus from '@/assets/eventBus.js'
 import '@/components/ntTable/index.less'
 import stepper from 'components/stepper/stepper.vue'
-import icon from 'components/base/icon.vue'
 import charts from '@/components/charts/charts.vue'
-import tagsInput from '@/components/tagsInput/tagsInput.vue'
+// import tagsInput from '@/components/tagsInput/tagsInput.vue'
 import searchBar from 'components/searchBar/searchBar.vue'
 import '@/directives/currency.js'
 /* eslint-disable-next-line */
@@ -280,7 +305,7 @@ export default {
         {
           name: '服务title',
           routerTo: 'serviceDetail',
-          myCoutomRouter: true
+          myCustomRouter: true
         },
         {
           name: '服务监控',
@@ -478,7 +503,7 @@ export default {
             useHTML: true,
             headerFormat: '<small>{point.key}</small><table>',
             pointFormat: '<table><tr><td style="color: {series.userOptions.fontColor};line-height:20px;"><span style="color:{point.color}">\u25A0 </span> {series.name}: &nbsp;</td>' +
-            '<td style="text-align: right"><b>{point.y} {series.userOptions.unit}</b></td></tr>',
+                '<td style="text-align: right"><b>{point.y} {series.userOptions.unit}</b></td></tr>',
             footerFormat: '</table>',
             // valueDecimals: 2,
             dateTimeLabelFormats: {
@@ -509,8 +534,7 @@ export default {
               marker: {
                 enabled: false
               },
-              dataLabels: {
-              }
+              dataLabels: {}
             },
             series: {
               states: {
@@ -601,7 +625,8 @@ export default {
           unit: 'ms',
           type: 'text',
           sortOrder: 'none',
-          sortAbled: true
+          sortAbled: true,
+          textAiignWithoutIcon: true
         }]
       }, {
         title: '失败率',
@@ -635,11 +660,12 @@ export default {
         }, {
           columnWidth: '300px',
           name: '失败次数',
-          textAlign: 'left',
+          textAlign: 'right',
           code: 'error_count',
           type: 'sliver',
           sortOrder: 'none',
-          sortAbled: true
+          sortAbled: true,
+          textAiignWithoutIcon: true
         }, {
           columnWidth: '',
           name: '失败率',
@@ -648,7 +674,8 @@ export default {
           unit: '%',
           type: 'text',
           sortOrder: 'none',
-          sortAbled: true
+          sortAbled: true,
+          textAiignWithoutIcon: true
         }]
       }, {
         title: '吞吐量',
@@ -683,7 +710,8 @@ export default {
           type: 'text',
           unit: '次',
           sortOrder: 'none',
-          sortAbled: true
+          sortAbled: true,
+          textAiignWithoutIcon: true
         }]
       }],
       tab_active_index: 0,
@@ -740,19 +768,19 @@ export default {
     }
   },
   computed: {
-    menuState: function () {
+    menuState () {
       return this.$store.state.openMenu
     }
   },
   watch: {
-    menuState: function (newVal) {
+    menuState (newVal) {
       // console.log('左菜单伸缩state变化')
       // 菜单变化  echart图表自适应
       this.$nextTick(() => {
-        this.$refs['pie_chart001'].drawChart(this.pieChartOptions[0].option)
-        this.$refs['pie_chart002'].drawChart(this.pieChartOptions[1].option)
-        this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
-        this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+        this.$refs.pie_chart001.drawChart(this.pieChartOptions[0].option)
+        this.$refs.pie_chart002.drawChart(this.pieChartOptions[1].option)
+        this.$refs.healthlineChart.drawChart(this.healthChartOption.option)
+        this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
       })
     }
   },
@@ -810,7 +838,7 @@ export default {
       switch (type) {
         case 'asc':
           // 从小到大
-          var min
+          let min
           for (let i = 0; i < arr.length; i++) {
             for (let j = i; j < arr.length; j++) {
               if (arr[i][key] > arr[j][key]) {
@@ -861,7 +889,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_app_avg_res_time_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
         case 'req_error_rate':
           this.tableData.forEach(DATA => {
@@ -877,7 +905,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_app_error_rate_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
         case 'throughput':
           this.columnLineChartOption.option.yAxis[0].labels.format = '{value} /s'
@@ -890,7 +918,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_app_throughput_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
       }
       this.tableDataTypeFunc()
@@ -926,7 +954,7 @@ export default {
         })
         this.query = ''
       }
-      this.$refs['tagsInput'].setModelValues(this.filterModelValues)
+      // this.$refs.tagsInput.setModelValues(this.filterModelValues)
       this.nxmc_app_health_index_get()
       this.tabClick(this.tabList[this.tab_active_index], this.tab_active_index)
     },
@@ -972,6 +1000,12 @@ export default {
               code: 'name',
               value: currentClickItem.path,
               value_label: currentClickItem.path
+            },
+            {
+              key: '上游服务',
+              code: 'sr_service_code',
+              value: this.detailData.code,
+              value_label: this.detailData.name
             }
           ]
         }
@@ -1048,11 +1082,11 @@ export default {
         data: dateLabelFormats
       }
       this[type].option.xAxis.labels = {
-        formatter: function () {
-          var labelVal = HighCharts.dateFormat(dateLabelFormats, this.value)
-          var reallyVal = ''
+        formatter () {
+          let labelVal = HighCharts.dateFormat(dateLabelFormats, this.value)
+          let reallyVal = ''
           if (labelVal) {
-            var arr = labelVal.split(' ')
+            let arr = labelVal.split(' ')
             if (labelVal.length <= 5) {
               reallyVal = arr[0]
             } else {
@@ -1084,13 +1118,13 @@ export default {
           }
           this.pieChartOptions[0].option.series[0].data[0].y = res.data.total
           this.pieChartOptions[0].option.series[0].data[1].y = 100 - res.data.total
-          this.$refs['pie_chart001'].drawChart(this.pieChartOptions[0].option)
+          this.$refs.pie_chart001.drawChart(this.pieChartOptions[0].option)
           // 右上 环形
           if (res.data.health_level) {
             res.data.health_level.data.forEach((data, index) => {
               this.pieChartOptions[1].option.series[0].data[index].y = data
             })
-            this.$refs['pie_chart002'].drawChart(this.pieChartOptions[1].option)
+            this.$refs.pie_chart002.drawChart(this.pieChartOptions[1].option)
           }
           // 健康指数图
           let handleData = []
@@ -1122,7 +1156,7 @@ export default {
             this.healthChartOption.option.series[3].data = [[min + 3600000, -1]]
           }
           console.log('this.healthChartOption.option', this.healthChartOption.option)
-          this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
+          this.$refs.healthlineChart.drawChart(this.healthChartOption.option)
         }
       })
     },
@@ -1145,8 +1179,8 @@ export default {
               it.value = arr[index + 1]
             })
             this.healthChartOption.option.yAxis[1].labels = {
-              formatter: function () {
-                var result = _this.healthObj
+              formatter () {
+                let result = _this.healthObj
                 return result[this.value]
               },
               style: {
@@ -1157,7 +1191,8 @@ export default {
             }
           })
           // this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
-          this.nxmc_app_health_index_get()
+          // 健康接口重复调用注释
+          // this.nxmc_app_health_index_get()
         }
       })
     },
@@ -1186,15 +1221,15 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Response time') {
-                  handelData['response_time'].push(itemData)
+                  handelData.response_time.push(itemData)
                 } else if (el1.code === 'Reuqests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[2].data = handelData['response_time']
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
+          this.columnLineChartOption.option.series[2].data = handelData.response_time
+          this.columnLineChartOption.option.series[0].data = handelData.requests
         }
       })
     },
@@ -1224,18 +1259,18 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Failure rate') {
-                  handelData['failure_rate'].push(itemData)
+                  handelData.failure_rate.push(itemData)
                 } else if (el1.code === 'Requests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 } else if (el1.code === 'Failure requests') {
-                  handelData['failure_requests'].push(itemData)
+                  handelData.failure_requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
-          this.columnLineChartOption.option.series[1].data = handelData['failure_requests']
-          this.columnLineChartOption.option.series[2].data = handelData['failure_rate']
+          this.columnLineChartOption.option.series[0].data = handelData.requests
+          this.columnLineChartOption.option.series[1].data = handelData.failure_requests
+          this.columnLineChartOption.option.series[2].data = handelData.failure_rate
         }
       })
     },
@@ -1264,15 +1299,15 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Throughput') {
-                  handelData['throughput'].push(itemData)
+                  handelData.throughput.push(itemData)
                 } else if (el1.code === 'Requests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[2].data = handelData['throughput']
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
+          this.columnLineChartOption.option.series[2].data = handelData.throughput
+          this.columnLineChartOption.option.series[0].data = handelData.requests
         }
       })
     },
@@ -1377,19 +1412,18 @@ export default {
       if (this.detailData.standard && this.detailData.code !== 'nxgw') this.fcExt = true
       if (this.detailData.standard || (!this.detailData.standard && !this.detailData.component)) this.serGo = true
     } else {
-      this.$router.push({ name: 'serviceList' })
+      this.$router.push({name: 'serviceList'})
     }
   },
   components: {
     stepper,
     charts,
-    icon,
-    tagsInput,
+    // tagsInput,
     searchBar
   }
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
-@import './monitorService.less';
+  @import "~common/style/variable";
+  @import './monitorService.less';
 </style>

@@ -7,7 +7,7 @@
       @expand-change="expandChange"
       @row-click="rowClick"
       :cell-style="cellStyle"
-      style="width: 100%">
+      style="width: 100%; min-height: inherit; display: flex; flex-direction: column">
       <el-table-column
         v-for="(column, index) in tableColumns"
         :key="index"
@@ -38,41 +38,28 @@
             </div>
           </div>
 
-           <!-- 删除 -->
+          <!-- 删除 -->
           <div v-if="column.type === 'delete'" class="flex header-style">
-            <div class="flex header-style" v-if="column.textAlign && column.textAlign ==='right'">
-              <div class="split align_right"></div>
+            <div class="flex header-style">
+              <div class="split" v-if="column.textAlign && (column.textAlign ==='right' || column.textAlign ==='center')"></div>
               <div class="title">{{column.name}}</div>
-            </div>
-            <div class="flex header-style" v-else>
-              <div class="title">{{column.name}}</div>
-              <div class="split"></div>
+              <div class="split" v-if="column.textAlign !=='right'"></div>
             </div>
           </div>
 
           <!-- text -->
           <div v-if="column.type === 'text' || column.type === 'html'" class="flex header-style">
-            <div class="flex header-style" v-if="column.textAlign && column.textAlign ==='right'">
-              <div class="split align_right"></div>
+            <div class="flex header-style">
+              <div class="split" v-if="column.textAlign && (column.textAlign ==='right' || column.textAlign ==='center')"></div>
               <div class="title">
-                {{column.name}}
+                <span>{{column.name}}</span>
                 <span class="caret-wrapper" @click.stop="changeOrder(column)" v-if="!!column.sortAbled">
                   <img class="sort_icon" src="~@/assets/image/icon_rank.svg" title="" v-if="column.sortOrder === 'none'||!column.sortOrder"/>
                   <img class="sort_icon" src="~@/assets/image/icon_rank_up.svg" title="" v-if="column.sortOrder === 'asc'" />
                   <img class="sort_icon" src="~@/assets/image/icon_rank_down.svg" title="" v-if="column.sortOrder === 'desc'"/>
                 </span>
               </div>
-            </div>
-            <div class="flex header-style" v-else>
-              <div class="title">
-                {{column.name}}
-                <span class="caret-wrapper" @click.stop="changeOrder(column)" v-if="!!column.sortAbled">
-                  <img class="sort_icon" src="~@/assets/image/icon_rank.svg" title="" v-if="column.sortOrder === 'none'||!column.sortOrder"/>
-                  <img class="sort_icon" src="~@/assets/image/icon_rank_up.svg" title="" v-if="column.sortOrder === 'asc'" />
-                  <img class="sort_icon" src="~@/assets/image/icon_rank_down.svg" title="" v-if="column.sortOrder === 'desc'"/>
-                </span>
-              </div>
-              <div class="split"></div>
+              <div class="split" v-if="column.textAlign !=='right'"></div>
             </div>
           </div>
 
@@ -94,13 +81,10 @@
 
           <!-- edit || add -->
           <div v-if="column.type === 'edit' || column.type === 'add' || column.type === 'icon' || column.type === 'idxIcon' || column.type === 'switch' || column.type === 'select' || column.type === 'handInput'" class="flex header-style">
-            <div class="flex header-style" v-if="column.textAlign && column.textAlign ==='right'">
-              <div class="split align_right"></div>
+            <div class="flex header-style">
+              <div class="split" v-if="column.textAlign && (column.textAlign ==='right' || column.textAlign ==='center')"></div>
               <div class="title">{{column.name}}</div>
-            </div>
-            <div class="flex header-style" v-else>
-              <div class="title">{{column.name}}</div>
-              <div class="split"></div>
+              <div class="split" v-if="column.textAlign !=='right'"></div>
             </div>
           </div>
         </template>
@@ -108,49 +92,57 @@
         <!-- 表身信息 -->
         <template slot-scope="scope">
           <!-- 添加 -->
-          <div class="flex header-style" :class="{'flex-end': column.textAlign === 'right'}" v-if="column.type === 'add'">
-            <div class="title">
-              <div class="iconfont iconadd theme-icon deleteType" v-if="!column.disable" @click="addColumn(scope.row)"></div>
-              <div class="iconfont iconadd theme-icon deleteType disableColor" v-else></div>
+          <div v-if="column.type === 'add'">
+            <div :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center'}" class="flex header-style" >
+              <div class="title">
+                <div class="iconfont theme-icon" v-if="!column.disable" @click="addColumn(scope.row)"><DYIcon type="add"></DYIcon></div>
+                <div class="iconfont theme-icon disableColor" v-else><DYIcon type="add" /></div>
+              </div>
             </div>
           </div>
           <!-- 删除 -->
-          <div class="flex header-style" v-if="column.type === 'delete'" :class="{'flex-end': column.textAlign === 'right'}">
-            <div class="title deleteBox">
-              <img src="@/assets/image/icon-delete.svg" class="deleteType" alt="" @click="deleteShow(scope.row, column)" v-show="!!!scope.row.deleteShow && scope.row.type !== 'default' && !column.disable">
-              <img src="@/assets/image/Icon-delete-desable.svg" class="deleteType" alt="" v-show="!!!scope.row.deleteShow && scope.row.type !== 'default' && column.disable">
-              <div class="title flex-end deleteText" v-show="!!scope.row.deleteShow">
-                <div class="alert-text">确定删除?</div>
-                <el-button type="primary" size="mini" @click="deleteOne(scope.row, scope.$index, column)">是</el-button>
-                <el-button size="mini" @click="deleteCancel(scope.row, column)">否</el-button>
+          <div v-if="column.type === 'delete'">
+            <div :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center'}" class="flex header-style" >
+              <div class="title deleteBox" v-if="scope.row.type !== 'default'">
+                <DYIcon type="delete" actions class="delete-icon" @click="deleteShow(scope.row, column)" :disabled="column.disable" />
+                <DYMiniConfirmationDialog
+                  class="delete-background"
+                  message="确定删除？"
+                  :show="!!scope.row.deleteShow"
+                  @onOk="deleteOne(scope.row, scope.$index, column)"
+                  @onCancel="deleteCancel(scope.row, column)"
+                />
+              </div>
+              <div class="title"  v-show="scope.row.type === 'default'" >
+                <DYIcon type="delete" disabled class="delete-icon mr8" />
               </div>
             </div>
-            <div class="title"  v-show="!!!scope.row.deleteShow && scope.row.type === 'default'" >
-              <img src="@/assets/image/Icon-delete-desable.svg" class="deleteType" alt="">
-            </div>
           </div>
-
           <!-- 查看 -->
           <div :class="{'flex-end': column.textAlign === 'right'}" class="flex header-style"  v-if="column.type === 'edit'">
             <div class="title">
-              <i class="column-icon iconfont" :class="setClass('icon' + (scope.row.lang || column.default_icon))" v-if="column.icon_url==='bylang'"></i>
-              <i class="column-icon iconfont" :class="setClass(column.icon_url)" v-else></i>
-              <a @click="readDetail(scope.row)" class="link_label cursor_pointer">{{scope.row[column.code]}}</a>
+              <div class="column-icon iconfont" v-if="column.icon_url==='bylang'"><DYIcon :type="scope.row.lang || column.default_icon"></DYIcon></div>
+              <div class="column-icon iconfont" v-else ><DYIcon :type="column.icon_url" :actions="!!column.icon_action"></DYIcon></div>
+              <a @click="readDetail(scope.row)" class="no-decoration cursor-pointer">{{scope.row[column.code]}}</a>
             </div>
-            <!-- <el-button @click="readDetail(scope.row)" type="text" size="small">{{scope.row.name}}</el-button> -->
           </div>
 
           <!-- switch -->
           <div class="flex header-style" :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center',}" v-if="column.type === 'switch'">
-            <div class="title" v-if="!column.disable"  @click="changeSwitch(column.code, scope.row, scope.row[column.code])"><dy-switch :value="scope.row[column.code]"></dy-switch></div>
-            <div class="title" v-else><dy-switch :value="scope.row[column.code]"></dy-switch></div>
+            <div class="title" v-if="!column.disable">
+              <dy-switch @dyClick="changeSwitch(column.code, scope.row, isObject(scope.row[column.code]) ? scope.row[column.code].value : scope.row[column.code])" :value="isObject(scope.row[column.code]) ? scope.row[column.code].value : scope.row[column.code]" :disabled="!!scope.row[column.code].disabled" />
+            </div>
+            <div class="title" v-else>
+              <!-- 如果 scope.row[column.code] 是一个对象， 那么就取对象里的 value -->
+              <dy-switch :disabled="column.disable" :value="isObject(scope.row[column.code]) ? scope.row[column.code].value : scope.row[column.code]" />
+            </div>
           </div>
 
           <!-- text -->
           <div v-if="column.type === 'text'">
-            <div :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center',}" class="flex header-style" >
+            <div :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center','align-width-word': column.textAiignWithoutIcon}" class="flex header-style" >
               <div class="title">
-                <i class="column-icon iconfont" :class="setClass(column.icon_url)" v-if="column.icon_url" @click="readDetail(scope)"></i>
+                <div class="column-icon iconfont" @click="readDetail(scope)" v-if="column.icon_url"><DYIcon :type="column.icon_url" :actions="!!column.icon_action"></DYIcon></div>
                 <p style="white-space: pre-wrap;" v-if="scope.row[column.code] === '' || scope.row[column.code] === null">-</p>
                 <p style="white-space: pre-wrap;" v-else>{{scope.row[column.code]}}</p>
               </div>
@@ -159,13 +151,13 @@
 
           <!-- icon -->
           <div v-if="column.type === 'icon'">
-            <div class="flex header-style" >
+            <div :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center'}" class="flex header-style" >
               <div class="title" v-if="!column.disable">
-                <div class="column-icon iconfont" :class="setClass(column.icon_url)" v-if="column.icon_url" @click="iconClick(scope.row)"></div>
+                <div class="column-icon iconfont" v-if="column.icon_url" @click="iconClick(scope.row)"><DYIcon :type="column.icon_url" :actions="!!column.icon_action"></DYIcon></div>
                 <img v-else :src="column.src" alt="" class="img_icon" @click="iconClick(scope.row)">
               </div>
               <div class="title" v-else>
-                <div class="column-icon iconfont disableColor" :class="setClass(column.icon_url)" v-if="column.icon_url"></div>
+                <div class="column-icon iconfont disableColor" v-if="column.icon_url"><DYIcon :type="column.icon_url" :actions="!!column.icon_action"></DYIcon></div>
                 <img v-else :src="column.src" alt="" class="img_icon">
               </div>
             </div>
@@ -174,10 +166,13 @@
           <!-- tags -->
           <div v-if="column.type === 'tags'">
             <div class="tag-box">
-              <div class="tag-item" v-if="scope.row[column.code] && scope.row[column.code].length > 0" v-for="(tag, index) in scope.row[column.code]" :key="index">
-                <div class="default-label tag-name">{{tag[column.tag_name] || tag}}</div>
-              </div>
-              <div v-else class="flex-center">-</div>
+              <template v-if="scope.row[column.code] && scope.row[column.code].length > 0">
+                <DYTag
+                  v-for="(tag, index) in scope.row[column.code]" :key="index"
+                >{{tag[column.tag_name] || tag}}</DYTag>
+              </template>
+
+                <div v-else style="padding: 0 4px">-</div>
             </div>
           </div>
 
@@ -194,7 +189,7 @@
           <div v-if="column.type === 'idxIcon'">
             <div class="flex header-style" :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center',}">
               <div class="title">
-                <div class="column-icon iconfont" :class="setClass(column.icon_urls[scope.row.idxIcon])" v-if="column.icon_urls"></div>
+                <div class="column-icon iconfont" v-if="column.icon_urls"><DYIcon :type="column.icon_urls[scope.row.idxIcon]"></DYIcon></div>
                 <img v-else :src="column.src" alt="">
               </div>
             </div>
@@ -222,7 +217,7 @@
           <div v-if="column.type === 'html'">
             <div :class="{'flex-end': column.textAlign === 'right','flex-center': column.textAlign === 'center',}" class="flex header-style" >
               <div class="title">
-                <div class="column-icon iconfont" :class="setClass(column.icon_url)" v-if="column.icon_url" @click="readDetail(scope)"></div>
+                <div class="column-icon iconfont" v-if="column.icon_url" @click="readDetail(scope)"><DYIcon :type="column.icon_url" :actions="!!column.icon_action"></DYIcon></div>
                 <p style="overflow: hidden; text-overflow:ellipsis; white-space: nowrap;"
                    v-html="(scope.row[column.code] === '' || scope.row[column.code] === null || scope.row[column.code] === undefined) ? '-' : scope.row[column.code]"
                 ></p>
@@ -251,7 +246,7 @@
       <template slot="empty">
         <div class="flex-center empty">
           <div class="column-icon iconfont records ">
-            <icon type="records"></icon>
+            <DYIcon type="records"></DYIcon>
           </div>
           <span>暂无数据</span>
         </div>
@@ -308,29 +303,31 @@ import tagsContent from '@/views/serviceGovernance/deployGroupList/deployGroupDe
 import addConfigList from '@/views/serviceGovernance/serviceConfigure/addConfigList.vue'
 import logDetail from '@/views/analysisWarning/logQuery/logDetail.vue'
 import editVersion from '@/views/serviceGovernance/serviceConfigure/appDistribute/editVersion.vue'
-import icon from '@/components/base/icon'
+
+import {isObject} from 'lodash'
 
 export default {
   data () {
-    return {}
+    return {
+      isObject
+    }
   },
   computed: {
     tableSource: {
-      get: function () {
+      get () {
         if (this.tableSet.paginationConfig && !this.tableSet.truePage) {
           let pageSize = this.tableSet.paginationConfig.pageSize ? this.tableSet.paginationConfig.pageSize : 10
           return this.tableData.slice(this.tableSet.paginationConfig.currentPage * pageSize - pageSize, this.tableSet.paginationConfig.currentPage * pageSize)
-        } else {
-          return this.tableData
         }
+        return this.tableData
       },
-      set: function () {}
+      set () {}
     },
     tableColumns: {
-      get: function () {
+      get () {
         return this.columns
       },
-      set: function () {}
+      set () {}
     }
   },
   watch: {
@@ -338,33 +335,27 @@ export default {
   props: {
     tableData: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => []
     },
     columns: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => []
     },
     tableSet: {
       type: Object,
-      default: () => {
-        return {
-          showPagination: false,
-          showOpenInfo: false,
-          paginationConfig: {
-            defaultPage: 10,
-            layout: 'prev, pager, next',
-            currentPage: 1,
-            pageSize: 10,
-            total: 5000
-          },
-          allCheck: false,
-          data: []
-        }
-      }
+      default: () => ({
+        showPagination: false,
+        showOpenInfo: false,
+        paginationConfig: {
+          defaultPage: 10,
+          layout: 'prev, pager, next',
+          currentPage: 1,
+          pageSize: 10,
+          total: 5000
+        },
+        allCheck: false,
+        data: []
+      })
     },
     componentsName: {
       type: String,
@@ -380,12 +371,11 @@ export default {
     },
     tableRowClassName ({row, rowIndex}) {
       if (rowIndex === 0) {
-        return ''
+        return 'first-row'
       } else if (rowIndex % 2 === 1) {
         return 'second-row'
-      } else {
-        return 'first-row'
       }
+      return 'first-row'
     },
     cellStyle (data) {
     },
@@ -406,18 +396,20 @@ export default {
       let destOrder = column.sortOrder === 'none' ? 'asc' : column.sortOrder === 'asc' ? 'desc' : column.sortOrder === 'desc' ? 'asc' : 'none'
       this.tableSource = arraySortByName(this.tableData, [column.code], destOrder)
       // eslint-disable-next-line no-return-assign
-      this.columns.forEach(column => column.sortOrder = 'none')
+      this.columns.forEach(item => item.sortOrder = 'none')
       column.sortOrder = destOrder
     },
     // 点击下一页
     handleCurrentPageChange (val) {
       this.tableSet.paginationConfig.currentPage = val
-      let total = this.tableSet.paginationConfig.total
+      let {total} = this.tableSet.paginationConfig
       let size = this.tableSet.paginationConfig.pageSize
       let listTotal = this.tableData.length
       if (listTotal < total && val * size > listTotal) {
         this.$emit('getMoreData')
       }
+
+      this.$emit('onFalsePageChange', val)
     },
     truePageChange (val) {
       this.tableSet.paginationConfig.currentPage = val
@@ -440,6 +432,7 @@ export default {
       // this.$refs.refTable.toggleRowExpansion(row)
     },
     changeSwitch (code, row, val) {
+      // console.log(code, row, val)
       this.$emit('changeSwitch', code, row, val)
     },
     readDetail (row) {
@@ -476,13 +469,12 @@ export default {
       return obj
     },
     checkAll () {
-      let _this = this
       this.tableSet.allCheck = !this.tableSet.allCheck
-      this.tableData.map(function (item) {
-        item.check = _this.tableSet.allCheck
+      this.tableData.forEach(item => {
+        item.check = this.tableSet.allCheck
       })
-      this.tableSource.map(function (item) {
-        item.check = _this.tableSet.allCheck
+      this.tableSource.forEach(item => {
+        item.check = this.tableSet.allCheck
       })
       this.tableSource = JSON.parse(JSON.stringify(this.tableSource))
       this.$forceUpdate()
@@ -490,20 +482,20 @@ export default {
       this.$emit('checkAll', list)
     },
     checkOne (index) {
-      let _this = this
       // 本地记录 check 了哪一行
       let size = this.tableSet.paginationConfig.pageSize
-      let currentPage = this.tableSet.paginationConfig.currentPage
+      let {currentPage} = this.tableSet.paginationConfig
       let tag = (currentPage - 1) * size + index
-      let bol = !_this.tableData[tag].check
-      _this.tableData[tag].check = bol
-      _this.tableSource[index].check = bol
+      let bol = !this.tableData[tag].check
+      this.tableData[tag].check = bol
+      this.tableSource[index].check = bol
       // 强制刷新 dom
-      _this.$forceUpdate()
+      this.$forceUpdate()
       // 判断是不是把全部都勾选上了，并且区分出选中和未选中的
       let list = []
       let notList = []
-      this.tableData.map(function (item) {
+
+      this.tableData.forEach(item => {
         if (item.check) {
           list.push(item)
         } else {
@@ -521,7 +513,6 @@ export default {
     }
   },
   components: {
-    icon,
     dySwitch,
     apiFilterContent,
     eventSubscribeContent,
@@ -567,45 +558,21 @@ export default {
 <style scoped lang="less">
 @import "~common/style/variable";
 .theme-icon {
-  color: @theme-color;
+  color: @turq-06;
   cursor: pointer;
 }
 .deleteBox {
   width: 20px;
   height: auto;
-  .deleteText {
-    position: absolute;
-    right: 0;
-    height: 50px;
-    width: 200px;
-  }
 }
 .tag-box {
   margin-left: 5px;
   margin-right: 5px;
-  overflow: scroll;
-  .tag-item {
-    display: inline-block;
-    display: inline-flex;
-    align-items: center;
-    min-width: 30px;
-    max-width: 350px;
-    margin: 1px 2px;
-    padding: 2px 8px;
-    height: 24px;
-    line-height: 24px;
-    text-decoration: none;
-    outline: 0;
-    border: 1px solid #f2f2f2;
-    background-color: #f2f2f2;
-    border-radius: 12px;
-    .tag-name {
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
+  overflow: auto;
+}
+
+.delete-icon {
+  font-size: 22px;
 }
 
 </style>
@@ -616,17 +583,16 @@ export default {
   .isHighlight{
     background-color: #FFEE7C;
   }
+}
 
-  // tag 12px
-  .tag-item .tag-name {
-    font-size: 12px;
-  }
-}
-.deleteType {
-  padding-right: 8px;
-}
 .table_height{
   min-height: 530px;
+  /deep/ .el-table__body-wrapper {
+    flex: 1;
+    .el-table__empty-block {
+      position: absolute;
+    }
+  }
 }
 .table_height_5 {
   min-height: 230px;

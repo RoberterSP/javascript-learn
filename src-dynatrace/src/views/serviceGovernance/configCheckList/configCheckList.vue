@@ -1,25 +1,23 @@
 <template>
   <div>
     <stepper :stepper="stepper" theme="blue"></stepper>
-    <div class="banner">
-      <div class="head_title_l">
-        <div class="bannericon iconfont iconApplicationhealth"></div>
-        <div class="title">配置检查</div>
+    <DYPageHeader title="配置检查" icon="Applicationhealth" theme="blue">
+      <DYButton slot="actions" type="primary" @click="startConfigCheck" v-permission="'serviceCenter_configCheckList_startConfigCheck'">开始检查</DYButton>
+    </DYPageHeader>
+
+    <div class="down p20">
+      <div style="width: 80%" class="mb20">
+        <search-bar
+          v-model.trim="query"
+          @search="queryTable"
+          :placeholder="'请输入内容'"
+        />
       </div>
-      <el-button class="btn" type="primary" @click="startConfigCheck" v-permission="'serviceCenter_configCheckList_startConfigCheck'">开始检查</el-button>
-    </div>
-    <div class="down plr20 pt19">
-      <el-input
-        style="width: 80%"
-        @change="queryTable"
-        placeholder="请输入内容"
-        suffix-icon="el-icon-search"
-        v-model="query">
-      </el-input>
-      <div class="content p15">
-        <h2>{{total}}次配置检查</h2>
+
+      <DYCard>
+        <DYHeader class="row-title" :title="`${total}次配置检查`" type="small" no-gap />
         <nt-table
-          class="scopeTable"
+          class="row-content"
           ref="table"
           :tableData="tableData"
           :columns="columns"
@@ -27,7 +25,7 @@
           @deleteOne="deleteOne"
           @readDetail="readDetail"
         ></nt-table>
-      </div>
+      </DYCard>
     </div>
   </div>
 </template>
@@ -35,9 +33,11 @@
 <script>
 import stepper from 'components/stepper/stepper.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
+import searchBar from 'components/searchBar/searchBar.vue'
 import { CONFIG_CHECK_LIST_POST, CONFIG_CHECK_DELETE_POST, CONFIG_PATCH_CHECK_POST } from '@/api'
 import { PAGESIZE } from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
+import {debounce} from 'lodash'
 
 export default {
   data () {
@@ -61,7 +61,7 @@ export default {
           code: 'create_username', // 表身
           type: 'edit',
           showicon: 'iconfont',
-          icon_url: 'iconApplicationhealth'
+          icon_url: 'Applicationhealth'
         },
         {
           name: '标识', // 表头名字
@@ -70,46 +70,49 @@ export default {
           width: 320
         },
         {
+          name: '检查时间', // 表头名字
+          code: 'created_at', // 表身显示值
+          type: 'text'
+        },
+        {
           name: '检查节点数量', // 表头名字
           code: 'total_node_num', // 表身显示值
           type: 'text',
           sortAbled: true,
-          textAlign: 'center',
+          textAlign: 'right',
           width: 120,
-          sortOrder: 'none'
-        },
-        {
-          name: '检查时间', // 表头名字
-          code: 'created_at', // 表身显示值
-          type: 'text'
+          sortOrder: 'none',
+          textAiignWithoutIcon: true
         },
         {
           name: '删除',
           code: '',
           type: 'delete',
           disable: false,
-          textAlign: 'right',
-          width: 50,
+          textAlign: 'center',
+          width: 60,
           showDel: true
         }
-      ]
+      ],
+      queryTable: debounce(this.queryTableHandle, 300)
     }
   },
   computed: {},
   methods: {
-    queryTable (val) {
+    queryTableHandle () {
       let data = {
         page: 1,
         page_size: PAGESIZE,
-        name: val
+        name: this.query
       }
       this.check_history_list_get(data)
     },
+
     startConfigCheck () {
       let params = {}
       CONFIG_PATCH_CHECK_POST(params).then(res => {
         bus.$emit('openMessage', {
-          message: '配置检查提交成功',
+          message: res.data.result,
           type: 'success'
         })
         let data = {
@@ -170,54 +173,8 @@ export default {
   },
   components: {
     stepper,
-    ntTable
+    ntTable,
+    searchBar
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-
-.banner {
-  position: relative;
-  padding: 18px 32px 19px 16px;
-  width: 100%;
-  height: 73px;
-  background: rgba(255,255,255,1);
-  border-bottom: 1px solid @blue-14;
-  .head_title_l {
-    display: flex;
-    align-items: center;
-    height: 40px;
-    .bannericon {
-      width: 36px;
-      height: 40px;
-      font-size: 36px;
-      line-height: 40px;
-    }
-    .title {
-      margin-left: 11px;
-      height: 40px;
-      font-size: 28px;
-      line-height: 40px;
-      font-weight: 500;
-    }
-  }
-  .btn {
-    position: absolute;
-    top: 16px;
-    right: 32px;
-  }
-}
-
-.down {
-  background-color: @default-gray;
-  // .scopeTable {
-  //   margin-top: 27px;
-  // }
-  .content {
-    width: 100%;
-    background-color: #fff;
-    margin-top: 20px;
-  }
-}
-</style>

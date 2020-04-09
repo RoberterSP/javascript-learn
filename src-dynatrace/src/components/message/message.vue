@@ -9,9 +9,9 @@
       id="message_container"
       :class="{'warning-message': type === 'warning', 'error-message': type === 'error', 'success-message': type === 'success'}">
       <span :class="{'message-content': messageHeight > 40 && !showMore, 'develop-content' : showMore}">{{message}}
-        <el-button type="text" class="text-btn" @click="showMoreMessage" v-if="messageHeight > 40 && showMore">收起</el-button>
+        <DYButton type="link" class="ml8" @click="showMoreMessage" v-if="messageHeight > 40 && showMore">收起</DYButton>
       </span>
-      <el-button type="text" class="text-btn" @click="showMoreMessage" v-if="messageHeight > 40 && !showMore">更多</el-button>
+      <DYButton type="link" class="ml8" @click="showMoreMessage" v-if="messageHeight > 40 && !showMore">更多</DYButton>
       <span v-if="showClose && type !== 'success'" @click="onClose" class="message-icon">
         <img src="@/assets/image/icon-message-close.svg" alt="关闭">
       </span>
@@ -39,7 +39,7 @@ export default {
     }
   },
   computed: {
-    menuState: function () {
+    menuState () {
       return this.$store.state.openMenu
     }
   },
@@ -107,9 +107,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
-#message {
+  @import "~common/style/variable";
+
+  #message {
   width: 100%;
   min-height: 40px;
+
   .message-container {
     font-size: 14px;
     // height: 40px;
@@ -126,16 +129,16 @@ export default {
     }
   }
   .warning-message {
-    background: #f5d30f;
+    background: @warning-color;
     color: #454646;
   }
   .error-message {
-    background: #dc172a;
-    color: #ffffff;
+    background: @red-05;
+    color: @gray-00;
   }
   .success-message {
     background: #7dc540;
-    color: #ffffff;
+    color: @gray-00;
   }
   .message-content {
     overflow: hidden;
@@ -159,7 +162,7 @@ export default {
   }
 }
 .transition-message {
-  transition: translate 500ms cubic-bezier(0.25, 0.1, 0.25, 1)
+  transition: translate 500ms @default-bezier;
 }
 .menu_width{
   width: calc(100% - 236px) !important;

@@ -6,7 +6,7 @@ const cookies = {}
  * @description 存储 cookie 值
  * @param {String} name cookie name
  * @param {String} value cookie value
- * @param {Object} setting cookie setting
+ * @param cookieSetting
  */
 cookies.set = function (name = 'default', value = '', cookieSetting = {}) {
   let currentCookieSetting = {
@@ -39,4 +39,6 @@ cookies.remove = function (name = 'default') {
   return Cookies.remove(`${name}`)
 }
 
+// check_flag_begin
 export default cookies
+// check_flag_end

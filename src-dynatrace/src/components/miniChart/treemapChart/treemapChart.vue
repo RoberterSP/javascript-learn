@@ -40,7 +40,7 @@ export default {
         },
         plotOptions: {
           series: {
-            enableMouseTracking: false,
+            // enableMouseTracking: false,
             borderWidth: 2,
             borderColor: 'black',
             dataLabels: {
@@ -55,7 +55,12 @@ export default {
                 fontWeight: 400,
                 color: 'rgba(255,255,255,1)',
                 lineHeight: '16px',
-                textOutline: "none"
+                textOutline: 'none'
+              }
+            },
+            tooltip: {
+              pointFormatter () {
+                return this.name
               }
             }
           }

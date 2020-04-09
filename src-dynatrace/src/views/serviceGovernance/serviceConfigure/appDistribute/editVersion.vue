@@ -9,8 +9,10 @@
         </el-select>
       </el-form-item>
       <div class="footer">
-        <el-button type="primary" @click="submitApp('ruleForm')">保存</el-button>
-        <el-button @click="cancelApp('ruleForm')">取消</el-button>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitApp('ruleForm')">保存</DYButton>
+          <DYButton @click="cancelApp('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>

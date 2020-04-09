@@ -262,7 +262,7 @@ export default {
     width: 16px;
     height: 16px;
     border: 2px solid #fff;
-    background-color: @theme-color;
+    background-color: @turq-06;
     position: relative;
 
     &:hover {

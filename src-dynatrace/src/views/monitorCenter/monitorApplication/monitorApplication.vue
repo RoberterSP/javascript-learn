@@ -2,110 +2,116 @@
   <div class="wrapper">
     <stepper :stepper="stepper" @goRouter="goRouter"></stepper>
     <div class="monitorApplication">
-      <div class="headTitle flex-between p20">
-        <div class="head_title_l">
-          <icon type="Application" size="36" class="mr10"></icon>
-          <span>{{detailData.name}}</span>
+      <DYPageHeader theme="purple" icon="Application" :title="detailData.name"/>
+
+      <div class="p20">
+        <div class="mb20">
+          <!--          <tags-input ref="tagsInput" :filterKeys="filterKeys" :keysValue="keysValue"-->
+          <!--                      @returnFilterFunc="returnFilterFunc"/>-->
+
+          <DYFilter
+            class="input-filter"
+            :filters-model="filterModelValues"
+            :filterKeys="filterKeys"
+            :quickSearch="false"
+            @returnFilterFunc="returnFilterFunc"
+          />
         </div>
-      </div>
-      <div class="filter_div m20">
-        <!-- <input type="text" placeholder="过滤条件"/> -->
-        <tags-input ref="tagsInput" :filterKeys="filterKeys" :keysValue="keysValue"
-                    @returnFilterFunc="returnFilterFunc"></tags-input>
-      </div>
-      <div class="health mlr20">
-        <div class="tit p16">健康指数</div>
-        <div class="circleDiv">
-          <div class="fx">
-            <div class="pie_chart">
-              <charts :ref="pieChartOptions[0].id" :chartId="pieChartOptions[0].id"
-                      :option="pieChartOptions[0].option"></charts>
-              <div class="data_view">
-                <div class="val">{{healthTotal}}</div>
-                <div>{{headthEvaluate}}</div>
+
+        <DYCard class="margin-card">
+          <DYHeader title="健康指数" type="small"/>
+          <div class="circleDiv">
+            <div class="fx">
+              <div class="pie_chart">
+                <charts :ref="pieChartOptions[0].id" :chartId="pieChartOptions[0].id"
+                        :option="pieChartOptions[0].option"></charts>
+                <div class="data_view">
+                  <div class="val">{{healthTotal}}</div>
+                  <div>{{headthEvaluate}}</div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="fx">
-            <div class="pie_chart">
-              <charts :ref="pieChartOptions[1].id" :chartId="pieChartOptions[1].id"
-                      :option="pieChartOptions[1].option"></charts>
-              <div class="data_view">
-                <div class="view_item">
-                  <div class="flex">
-                    <span>{{pieChartOptions[1].option.series[0].data[0].y}}%</span>
-                    <i class="iconfont iconmanyi green"></i>
-                  </div>
-                  <div class="flex">
-                    <span>{{pieChartOptions[1].option.series[0].data[1].y}}%</span>
-                    <i class="iconfont iconyiban yellow"></i>
-                  </div>
-                  <div class="flex">
-                    <span>{{pieChartOptions[1].option.series[0].data[2].y}}%</span>
-                    <i class="iconfont iconshiwang red"></i>
+            <div class="fx">
+              <div class="pie_chart">
+                <charts :ref="pieChartOptions[1].id" :chartId="pieChartOptions[1].id"
+                        :option="pieChartOptions[1].option"></charts>
+                <div class="data_view">
+                  <div class="view_item">
+                    <div class="flex">
+                      <span>{{pieChartOptions[1].option.series[0].data[0].y}}%</span>
+                      <DYIcon type="manyi" class="iconfont green"></DYIcon>
+                    </div>
+                    <div class="flex">
+                      <span>{{pieChartOptions[1].option.series[0].data[1].y}}%</span>
+                      <DYIcon type="yiban" class="iconfont yellow"></DYIcon>
+                    </div>
+                    <div class="flex">
+                      <span>{{pieChartOptions[1].option.series[0].data[2].y}}%</span>
+                      <DYIcon type="shiwang" class="iconfont red"></DYIcon>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="line_chart">
-          <charts ref="healthlineChart" :chartId="healthChartOption.id" :option="healthChartOption.option"></charts>
-        </div>
-      </div>
-      <div class="section m20">
-        <div class="tabDiv flex-center p16">
-          <div class="tab_item flex-center" v-for="(item, index) in tabList" :key="index" @click="tabClick(item, index)"
-               :class="[tab_active_index===index?'is_active':'']">{{item.title}}
+          <div class="line_chart">
+            <charts ref="healthlineChart" :chartId="healthChartOption.id" :option="healthChartOption.option"></charts>
           </div>
-        </div>
-        <div class="column_chart p16">
-          <charts ref="columnChart" :chartId="columnLineChartOption.id" :option="columnLineChartOption.option"></charts>
-          <div class="sf_chart_legend">
-            <div class="legend_item" v-for="(item, index) in legends" :key="index">
-              <div class="legend_item_icon">
-                <img src="~@/assets/image/dynatrace/blue_chart_line.svg" alt="" v-if="item.chartType === 'line'"/>
-                <img src="~@/assets/image/dynatrace/purple_chart_column.svg" alt=""
-                     v-if="item.chartType === 'column' && item.title!=='Failed Requests'"/>
-                <img src="~@/assets/image/dynatrace/red_chart_column.svg" alt=""
-                     v-if="item.chartType === 'column' && item.title==='Failed Requests'"/>
-                <!-- <svg v-if="item.chartType === 'line'">
-                  <path fill="none" d="M 0 11 L 16 11" class="highcharts-graph" :stroke="item.color" stroke-width="2"></path>
-                </svg>
-                <svg v-if="item.chartType === 'column'">
-                  <path fill="none" d="M 1.6 16 L 1.6 10 L 2.4000000000000004 10 L 2.4000000000000004 16 M 5.6000000000000005 16 L 5.6000000000000005 4 L 6.4 4 L 6.4 16 M 9.600000000000001 16 L 9.600000000000001 12 L 10.4 12 L 10.4 16 M 13.600000000000001 16 L 13.600000000000001 8 L 14.4 8 L 14.4 16" :stroke="item.color" stroke-width="1" stroke-opacity="1"></path>
-                </svg> -->
+        </DYCard>
+
+        <DYCard class="margin-card">
+          <DYTabs :tabList="tabList" theme="purple" @onClick="tabClick"/>
+
+          <div class="column_chart p16">
+            <charts ref="columnChart" :chartId="columnLineChartOption.id"
+                    :option="columnLineChartOption.option"></charts>
+            <div class="sf_chart_legend">
+              <div class="legend_item" v-for="(item, index) in legends" :key="index">
+                <div class="legend_item_icon">
+                  <img src="~@/assets/image/dynatrace/blue_chart_line.svg" alt="" v-if="item.chartType === 'line'"/>
+                  <img src="~@/assets/image/dynatrace/purple_chart_column.svg" alt=""
+                       v-if="item.chartType === 'column' && item.title!=='Failed Requests'"/>
+                  <img src="~@/assets/image/dynatrace/red_chart_column.svg" alt=""
+                       v-if="item.chartType === 'column' && item.title==='Failed Requests'"/>
+                  <!-- <svg v-if="item.chartType === 'line'">
+                    <path fill="none" d="M 0 11 L 16 11" class="highcharts-graph" :stroke="item.color" stroke-width="2"></path>
+                  </svg>
+                  <svg v-if="item.chartType === 'column'">
+                    <path fill="none" d="M 1.6 16 L 1.6 10 L 2.4000000000000004 10 L 2.4000000000000004 16 M 5.6000000000000005 16 L 5.6000000000000005 4 L 6.4 4 L 6.4 16 M 9.600000000000001 16 L 9.600000000000001 12 L 10.4 12 L 10.4 16 M 13.600000000000001 16 L 13.600000000000001 8 L 14.4 8 L 14.4 16" :stroke="item.color" stroke-width="1" stroke-opacity="1"></path>
+                  </svg> -->
+                </div>
+                <span class="legent_item_tit">{{item.title}}</span>
               </div>
-              <span class="legent_item_tit">{{item.title}}</span>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="table_view mlr20 pb20 pt20">
-        <div class="tit plr16">{{tabList[tab_active_index].subTit}}</div>
-        <div class="search-bar-box plr30 pt30" style="width: 80%;">
-          <search-bar
-            v-model.trim="query"
-            @search="searchBarFunc"
-            :placeholder="'搜索关键字'"
-          ></search-bar>
-        </div>
-        <div class="my-table p16" ref="table" v-if="!isChange">
-          <div class="el-table" style="width: 100%;">
-            <table cellspacing="0" cellpadding="0" border="0" style="width: 99.99%;">
-              <!-- 表头信息 -->
-              <thead>
-              <tr>
-                <th v-for="(column, index) in columns"
-                    :key="index"
-                    :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
-                  <div class="cell">
-                    <div class="flex header-style">
-                      <div class="split" v-if="column.textAlign==='right'"></div>
-                      <div class="title">
-                        {{column.name}}
-                        <span class="caret-wrapper" @click.stop="changeOrder(column, column.code)"
-                              v-if="!!column.sortAbled">
+        </DYCard>
+
+        <DYCard class="margin-card">
+          <DYHeader no-gap class="row-title" :title="tabList[tab_active_index].subTit" type="small"/>
+          <div class="row-action" style="width: 80%;">
+            <search-bar
+              v-model.trim="query"
+              @search="searchBarFunc"
+              :placeholder="'搜索关键字'"
+            ></search-bar>
+          </div>
+
+          <div class="my-table row-content" ref="table" v-if="!isChange">
+            <div class="el-table" style="width: 100%;">
+              <table cellspacing="0" cellpadding="0" border="0" style="width: 99.99%;">
+                <!-- 表头信息 -->
+                <thead>
+                <tr>
+                  <th v-for="(column, index) in columns"
+                      :key="index"
+                      :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
+                    <div class="cell">
+                      <div class="flex header-style">
+                        <div class="split" v-if="column.textAlign==='right'"></div>
+                        <div class="title">
+                          {{column.name}}
+                          <span class="caret-wrapper" @click.stop="changeOrder(column, column.code)"
+                                v-if="!!column.sortAbled">
                             <!-- <i class="sort-caret ascending"
                               :style="{'border-bottom-color': column.sortOrder === 'asc' ? 'rgb(82, 82, 82)' : '#c0c4cc'}"
                             ></i>
@@ -119,143 +125,146 @@
                             <img class="sort_icon" src="~@/assets/image/icon_rank_down.svg" title=""
                                  v-if="column.sortOrder === 'desc'"/>
                           </span>
-                      </div>
-                      <div class="split" v-if="!column.textAlign || column.textAlign==='left'"></div>
-                    </div>
-                  </div>
-                </th>
-                <th>
-                  <div class="cell">
-                    <div class="flex header-style">
-                      <div class="split"></div>
-                      <div class="title">
-                        操作
+                        </div>
+                        <div class="split" v-if="!column.textAlign || column.textAlign==='left'"></div>
                       </div>
                     </div>
-                  </div>
-                </th>
-              </tr>
-              </thead>
-              <!-- 表身信息 -->
-              <tbody>
-              <tr v-for="(trItem, trIndex) in tableData" :key="trIndex" class="self-table__row"
-                  @mouseenter.prevent="mouseEnterTr($event, trIndex)"
-                  @mouseleave.prevent="mouseLeaveTr($event, trIndex)">
-                <td v-for="(column, tdIndex) in columns"
-                    :key="tdIndex"
-                    :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
-                  <div class="cell">
-                    <!-- text link_label -->
-                    <div v-if="column.type === 'link_label'">
-                      <div class="flex header-style"
-                           :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
-                        <div class="title highlight_label" @click="linkLabelClick(trItem)">{{trItem[column.code]}}</div>
+                  </th>
+                  <th>
+                    <div class="cell">
+                      <div class="flex header-style">
+                        <div class="split"></div>
+                        <div class="title">操作</div>
+                        <div class="split"></div>
                       </div>
                     </div>
-                    <!-- text -->
-                    <div v-if="column.type === 'text'">
-                      <div class="flex header-style"
-                           :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
-                        <div class="title" v-if="column.unit">{{trItem[column.code] | currency(column.unit)}}</div>
-                        <div class="title" v-else>{{trItem[column.code]}}</div>
+                  </th>
+                </tr>
+                </thead>
+                <!-- 表身信息 -->
+                <tbody>
+                <tr v-for="(trItem, trIndex) in tableData" :key="trIndex" class="self-table__row"
+                    @mouseenter.prevent="mouseEnterTr($event, trIndex)"
+                    @mouseleave.prevent="mouseLeaveTr($event, trIndex)">
+                  <td v-for="(column, tdIndex) in columns"
+                      :key="tdIndex"
+                      :style="{'width': column.columnWidth ? column.columnWidth : 'auto'}">
+                    <div class="cell">
+                      <!-- text link_label -->
+                      <div v-if="column.type === 'link_label'">
+                        <div class="flex header-style"
+                             :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
+                          <div class="title highlight_label" @click="linkLabelClick(trItem)">{{trItem[column.code]}}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <!-- 长条 -->
-                    <div v-if="column.type === 'sliver'">
-                      <div class="flex header-style"
-                           :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
-                        <div class="title">
-                          <!-- :style="{'width': }" -->
-                          <div v-if="tab_active_index===0" class="slip"
-                               :style="{'width': (trItem[column.code]/avg_totalSum*100).toFixed(2)+'%'}"
-                               style="color:#fff"></div>
-                          <div v-if="tab_active_index===1" class="slip"
-                               :style="{'width': (trItem[column.code]/error_totalSum*100).toFixed(2)+'%'}"
-                               style="color:#fff"></div>
+                      <!-- text -->
+                      <div v-if="column.type === 'text'">
+                        <div class="flex header-style"
+                             :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left', 'align-width-word': column.textAiignWithoutIcon}">
+                          <div class="title" v-if="column.unit">{{trItem[column.code] | currency(column.unit)}}</div>
+                          <div class="title" v-else>{{trItem[column.code]}}</div>
+                        </div>
+                      </div>
+                      <!-- 长条 -->
+                      <div v-if="column.type === 'sliver'">
+                        <div class="flex header-style"
+                             :class="{'flex-end': column.textAlign === 'right' || !column.textAlign, 'flex-start': column.textAlign === 'left'}">
+                          <div class="title">
+                            <!-- :style="{'width': }" -->
+                            <div v-if="tab_active_index===0" class="slip"
+                                 :style="{'width': (trItem[column.code]/avg_totalSum*100).toFixed(2)+'%'}"
+                                 style="color:#fff"></div>
+                            <div v-if="tab_active_index===1" class="slip"
+                                 :style="{'width': (trItem[column.code]/error_totalSum*100).toFixed(2)+'%'}"
+                                 style="color:#fff"></div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="cell opt_cell">
-                    <div class="flex header-style flex-end">
-                      <div class="title">
-                        <a class="tb_filter" :class="[trItem.show_click_pop?'':'no_click_pop']"
-                           @click.stop="tbFilterClick(trItem)">
-                          <div class="column-icon iconfont iconfilter"></div>
-                          <div class="hover_pop">筛选</div>
-                        </a>
-                        <a class="tb_more" :class="[trItem.show_click_pop?'':'no_click_pop']"
-                           @click.stop="tbMoreClick($event, trItem)">
-                          <i class="el-icon-more"></i>
-                          <div class="hover_pop">更多</div>
-                        </a>
+                  </td>
+                  <td>
+                    <div class="cell opt_cell">
+                      <div class="flex header-style flex-center">
+                        <div class="title">
+                          <a class="tb_filter" :class="[trItem.show_click_pop?'':'no_click_pop']"
+                             @click.stop="tbFilterClick(trItem)">
+                            <div class="column-icon iconfont iconfilter"></div>
+                            <div class="hover_pop">筛选</div>
+                          </a>
+                          <a class="tb_more" :class="[trItem.show_click_pop?'':'no_click_pop']"
+                             @click.stop="tbMoreClick($event, trItem)">
+                            <DYIcon type="more" size="14"></DYIcon>
+                            <div class="hover_pop">更多</div>
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-            <div class="flex-center empty" v-if="tableData.length === 0">
-              <div class="column-icon iconfont iconrecords"></div>
-              <span>暂无数据</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              <div class="flex-center empty" v-if="tableData.length === 0">
+                <DYIcon size="80" type="records" class="icon-records"></DYIcon>
+                <span>暂无数据</span>
+              </div>
+            </div>
+            <!-- 更多popup -->
+            <div class="click_pop" v-show="currentClickItem && currentClickItem.show_click_pop"
+                 :style="{'left': click_pop_position.x+'px', 'top': click_pop_position.y+'px'}">
+              <div class="head">分析</div>
+              <div class="line" @click.stop="skipPage('logQuery', currentClickItem)">日志详情</div>
+              <div class="line" @click.stop="skipPage('apiTracing', currentClickItem)">调用跟踪</div>
+              <span @click.stop="closeClickPop(currentClickItem)">
+                <DYIcon type="delete" size="12"></DYIcon>
+              </span>
+            </div>
+            <!-- table 行的 hover popup -->
+            <div class="sf_popup" :style="{'left': clientX+'px', 'top': clientY+'px'}" ref="sf_popup"
+                 v-show="currentHoverItem">
+              <div class="name">{{currentHoverItem.endpoint}}</div>
+              <div class="explain">Values are calculated over whole timefram.</div>
+              <div class="sec">
+                <div class="line">
+                  <p>调用次数</p>
+                  <div class="dot"></div>
+                  <div class="val" v-if="currentHoverItem.unit">{{currentHoverItem.call_count | currency('次')}}</div>
+                  <div class="val" v-else>{{currentHoverItem.call_count}}</div>
+                </div>
+                <div class="line">
+                  <p>调用次数</p>
+                  <div class="dot"></div>
+                  <div class="val" v-if="currentHoverItem.unit">{{currentHoverItem.call_count | currency('次')}}</div>
+                  <div class="val" v-else>{{currentHoverItem.call_count}}</div>
+                </div>
+              </div>
+              <div class="sec">
+                <div class="line">
+                  <p>平均响应时间</p>
+                  <div class="dot"></div>
+                  <div class="val">{{currentHoverItem.avg_res_time | currency('ms')}}</div>
+                </div>
+                <div class="line">
+                  <p>平均响应时间</p>
+                  <div class="dot"></div>
+                  <div class="val">{{currentHoverItem.avg_res_time | currency('ms')}}</div>
+                </div>
+                <div class="line">
+                  <p>调用次数</p>
+                  <div class="dot"></div>
+                  <div class="val">{{currentHoverItem.call_count | currency('次')}}</div>
+                </div>
+              </div>
+              <div class="sec">
+                <div class="line">
+                  <p>失败率</p>
+                  <div class="dot"></div>
+                  <div class="val">{{currentHoverItem.req_error_rate | currency('%')}}</div>
+                </div>
+              </div>
             </div>
           </div>
-          <!-- 更多popup -->
-          <div class="click_pop" v-show="currentClickItem && currentClickItem.show_click_pop"
-               :style="{'left': click_pop_position.x+'px', 'top': click_pop_position.y+'px'}">
-            <div class="head">分析</div>
-            <div class="line" @click.stop="skipPage('logQuery', currentClickItem)">日志详情</div>
-            <div class="line" @click.stop="skipPage('apiTracing', currentClickItem)">调用跟踪</div>
-            <span @click.stop="closeClickPop(currentClickItem)"><i class="el-icon-close"></i></span>
-          </div>
-          <!-- table 行的 hover popup -->
-          <div class="sf_popup" :style="{'left': clientX+'px', 'top': clientY+'px'}" ref="sf_popup"
-               v-show="currentHoverItem">
-            <div class="name">{{currentHoverItem.endpoint}}</div>
-            <div class="explain">Values are calculated over whole timefram.</div>
-            <div class="sec">
-              <div class="line">
-                <p>调用次数</p>
-                <div class="dot"></div>
-                <div class="val" v-if="currentHoverItem.unit">{{currentHoverItem.call_count | currency('次')}}</div>
-                <div class="val" v-else>{{currentHoverItem.call_count}}</div>
-              </div>
-              <div class="line">
-                <p>调用次数</p>
-                <div class="dot"></div>
-                <div class="val" v-if="currentHoverItem.unit">{{currentHoverItem.call_count | currency('次')}}</div>
-                <div class="val" v-else>{{currentHoverItem.call_count}}</div>
-              </div>
-            </div>
-            <div class="sec">
-              <div class="line">
-                <p>平均响应时间</p>
-                <div class="dot"></div>
-                <div class="val">{{currentHoverItem.avg_res_time | currency('ms')}}</div>
-              </div>
-              <div class="line">
-                <p>平均响应时间</p>
-                <div class="dot"></div>
-                <div class="val">{{currentHoverItem.avg_res_time | currency('ms')}}</div>
-              </div>
-              <div class="line">
-                <p>调用次数</p>
-                <div class="dot"></div>
-                <div class="val">{{currentHoverItem.call_count | currency('次')}}</div>
-              </div>
-            </div>
-            <div class="sec">
-              <div class="line">
-                <p>失败率</p>
-                <div class="dot"></div>
-                <div class="val">{{currentHoverItem.req_error_rate | currency('%')}}</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        </DYCard>
       </div>
     </div>
   </div>
@@ -266,9 +275,8 @@ import HighCharts from 'highcharts'
 import bus from '@/assets/eventBus.js'
 import '@/components/ntTable/index.less'
 import stepper from 'components/stepper/stepper.vue'
-import icon from 'components/base/icon.vue'
 import charts from '@/components/charts/charts.vue'
-import tagsInput from '@/components/tagsInput/tagsInput.vue'
+// import tagsInput from '@/components/tagsInput/tagsInput.vue'
 import searchBar from 'components/searchBar/searchBar.vue'
 import '@/directives/currency.js'
 /* eslint-disable-next-line */
@@ -286,6 +294,7 @@ import {
 } from '@/api'
 import {PAGESIZE} from '@/common/util/common.js'
 import {healthLineChartOption} from '@/common/mock/usdeur'
+import {getLessColor} from 'common/util/util'
 
 export default {
   data () {
@@ -306,7 +315,7 @@ export default {
         {
           name: '应用tit',
           routerTo: 'appDetail',
-          myCoutomRouter: true
+          myCustomRouter: true
         },
         {
           name: '应用监控'
@@ -352,7 +361,7 @@ export default {
                 y: 0
               }, {
                 name: '其他',
-                color: '#E6E6E6',
+                color: '#e6e6e6',
                 y: 0
               }]
             }]
@@ -418,7 +427,7 @@ export default {
               overflow: 'visible'
             },
             // spacing : [0, 0 , 0, 0],
-            backgroundColor: '#fff',
+            backgroundColor: getLessColor('@gray-00'),
             zoomType: 'x'
           },
           lengend: {
@@ -632,7 +641,8 @@ export default {
           unit: 'ms',
           type: 'text',
           sortOrder: 'none',
-          sortAbled: true
+          sortAbled: true,
+          textAiignWithoutIcon: true
         }]
       }, {
         title: '失败率',
@@ -679,7 +689,8 @@ export default {
           unit: '%',
           type: 'text',
           sortOrder: 'none',
-          sortAbled: true
+          sortAbled: true,
+          textAiignWithoutIcon: true
         }]
       }, {
         title: '吞吐量',
@@ -714,7 +725,8 @@ export default {
           type: 'text',
           unit: '次',
           sortOrder: 'none',
-          sortAbled: true
+          sortAbled: true,
+          textAiignWithoutIcon: true
         }]
       }],
       tab_active_index: 0,
@@ -771,19 +783,19 @@ export default {
     }
   },
   computed: {
-    menuState: function () {
+    menuState () {
       return this.$store.state.openMenu
     }
   },
   watch: {
-    menuState: function (newVal) {
+    menuState (newVal) {
       // console.log('左菜单伸缩state变化')
       // 菜单变化  echart图表自适应
       this.$nextTick(() => {
-        this.$refs['pie_chart001'].drawChart(this.pieChartOptions[0].option)
-        this.$refs['pie_chart002'].drawChart(this.pieChartOptions[1].option)
-        this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
-        this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+        this.$refs.pie_chart001.drawChart(this.pieChartOptions[0].option)
+        this.$refs.pie_chart002.drawChart(this.pieChartOptions[1].option)
+        this.$refs.healthlineChart.drawChart(this.healthChartOption.option)
+        this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
       })
     }
   },
@@ -821,7 +833,7 @@ export default {
       switch (type) {
         case 'asc':
           // 从小到大
-          var min
+          let min
           for (let i = 0; i < arr.length; i++) {
             for (let j = i; j < arr.length; j++) {
               if (arr[i][key] > arr[j][key]) {
@@ -872,7 +884,7 @@ export default {
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_app_avg_res_time_get()
 
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
         case 'req_error_rate':
           this.tableData.forEach(DATA => {
@@ -888,7 +900,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_app_error_rate_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
         case 'throughput':
           this.columnLineChartOption.option.yAxis[0].labels.format = '{value} /s'
@@ -901,7 +913,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_app_throughput_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
       }
       this.tableDataTypeFunc()
@@ -937,7 +949,7 @@ export default {
         })
         this.query = ''
       }
-      this.$refs['tagsInput'].setModelValues(this.filterModelValues)
+      // this.$refs.tagsInput.setModelValues(this.filterModelValues)
       this.nxmc_app_health_index_get()
       this.tabClick(this.tabList[this.tab_active_index], this.tab_active_index)
     },
@@ -983,6 +995,12 @@ export default {
               code: 'name',
               value: currentClickItem.path,
               value_label: currentClickItem.path
+            },
+            {
+              key: '应用',
+              code: 'app_id',
+              value: this.detailData.app_id,
+              value_label: this.detailData.name
             }
           ]
         }
@@ -1060,13 +1078,13 @@ export default {
         data: dateLabelFormats
       }
       this[type].option.xAxis.labels = {
-        formatter: function () {
-          var labelVal = HighCharts.dateFormat(dateLabelFormats, this.value)
-          var reallyVal = ''
+        formatter () {
+          let labelVal = HighCharts.dateFormat(dateLabelFormats, this.value)
+          let reallyVal = ''
           if (labelVal) {
-            var arr = labelVal.split(' ')
+            let arr = labelVal.split(' ')
             if (labelVal.length <= 5) {
-              reallyVal = arr[0]
+              [reallyVal] = arr
             } else {
               reallyVal = arr[0] + '<br/>' + arr[1]
             }
@@ -1096,13 +1114,13 @@ export default {
           }
           this.pieChartOptions[0].option.series[0].data[0].y = res.data.total
           this.pieChartOptions[0].option.series[0].data[1].y = 100 - res.data.total
-          this.$refs['pie_chart001'].drawChart(this.pieChartOptions[0].option)
+          this.$refs.pie_chart001.drawChart(this.pieChartOptions[0].option)
           // 右上 环形
           if (res.data.health_level) {
             res.data.health_level.data.forEach((data, index) => {
               this.pieChartOptions[1].option.series[0].data[index].y = data
             })
-            this.$refs['pie_chart002'].drawChart(this.pieChartOptions[1].option)
+            this.$refs.pie_chart002.drawChart(this.pieChartOptions[1].option)
           }
           // console.log('this.pieChartOptions[1].option.series', this.pieChartOptions[1].option.series)
           // 健康指数图
@@ -1135,12 +1153,12 @@ export default {
             this.healthChartOption.option.series[3].data = [[min + 3600000, -1]]
           }
           // console.log('this.healthChartOption.option', this.healthChartOption.option)
-          this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
+          this.$refs.healthlineChart.drawChart(this.healthChartOption.option)
         }
       })
     },
     // 获取健康指标 y轴范围柱子 彩色
-    nxmc_setting_health_index_info_get () {
+    nxmc_setting_health_index_info_get (from) {
       let _this = this
       NXDF_SETTING_HEALTH_INDEX_INFO_GET({}).then(res => {
         if (res.code === 0) {
@@ -1158,8 +1176,8 @@ export default {
               it.value = arr[index + 1]
             })
             this.healthChartOption.option.yAxis[1].labels = {
-              formatter: function () {
-                var result = _this.healthObj
+              formatter () {
+                let result = _this.healthObj
                 return result[this.value]
               },
               style: {
@@ -1170,7 +1188,7 @@ export default {
             }
           })
           // this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
-          this.nxmc_app_health_index_get()
+          // this.nxmc_app_health_index_get()
         }
       })
     },
@@ -1199,15 +1217,15 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Response time') {
-                  handelData['response_time'].push(itemData)
+                  handelData.response_time.push(itemData)
                 } else if (el1.code === 'Reuqests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[2].data = handelData['response_time']
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
+          this.columnLineChartOption.option.series[2].data = handelData.response_time
+          this.columnLineChartOption.option.series[0].data = handelData.requests
         }
       })
     },
@@ -1237,18 +1255,18 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Failure rate') {
-                  handelData['failure_rate'].push(itemData)
+                  handelData.failure_rate.push(itemData)
                 } else if (el1.code === 'Requests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 } else if (el1.code === 'Failure requests') {
-                  handelData['failure_requests'].push(itemData)
+                  handelData.failure_requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
-          this.columnLineChartOption.option.series[1].data = handelData['failure_requests']
-          this.columnLineChartOption.option.series[2].data = handelData['failure_rate']
+          this.columnLineChartOption.option.series[0].data = handelData.requests
+          this.columnLineChartOption.option.series[1].data = handelData.failure_requests
+          this.columnLineChartOption.option.series[2].data = handelData.failure_rate
         }
       })
     },
@@ -1277,15 +1295,15 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Throughput') {
-                  handelData['throughput'].push(itemData)
+                  handelData.throughput.push(itemData)
                 } else if (el1.code === 'Requests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[2].data = handelData['throughput']
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
+          this.columnLineChartOption.option.series[2].data = handelData.throughput
+          this.columnLineChartOption.option.series[0].data = handelData.requests
         }
       })
     },
@@ -1377,9 +1395,7 @@ export default {
       this.nxmc_app_health_index_get()
       this.tabClick(this.tabList[this.tab_active_index], this.tab_active_index)
     })
-    bus.$emit('resetTime')
-  },
-  created () {
+
     if (this.$route.params && this.$route.params.detailData) {
       this.detailData = this.$route.params.detailData
       // console.log('detailData', this.detailData)
@@ -1387,30 +1403,28 @@ export default {
       this.getEndpointList()
       this.tab_active_index = 0
       // this.tabClick(this.tabList[0], 0)
+
       this.nxmc_setting_health_index_info_get()
     } else {
       this.$router.push({name: 'appList'})
     }
+
+    bus.$emit('resetTime')
   },
   components: {
     stepper,
     charts,
-    icon,
-    tagsInput,
     searchBar
   }
 }
 </script>
 <style scoped lang="less">
   @import "~common/style/variable";
-  @import './monitorApplication.less';
 
   .empty {
     width: 100%;
 
-    .iconrecords {
-      width: 80px;
-      height: 83px;
+    .icon-records {
       margin-top: 29px;
       font-size: 80px;
     }
@@ -1418,10 +1432,380 @@ export default {
     span {
       margin-left: 10px;
       font-size: 18px;
-      font-family: SourceHanSansSC-Medium, SourceHanSansSC;
       font-weight: 500;
       color: rgba(69, 70, 70, 1);
       line-height: 26px;
     }
   }
+
+  .monitorApplication {
+    .circleDiv {
+      display: flex;
+      margin-bottom: 16px;
+
+      .fx {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .pie_chart {
+          display: flex;
+
+          .x-chart {
+            width: 100px;
+          }
+
+          .data_view {
+            display: flex;
+            flex-direction: column;
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(69, 70, 70, 1);
+            line-height: 22px;
+            margin-left: 20px;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+
+            div.val {
+              font-size: 43px;
+              font-weight: 300;
+              line-height: 61px;
+            }
+
+            div.view_item {
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 20px;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: flex-end;
+              margin-bottom: -5px;
+
+              .iconfont {
+                font-size: 20px;
+                margin-left: 10px;
+
+                &.red {
+                  color: @red-05;
+                }
+
+                &.yellow {
+                  color: @warning-color;
+                }
+
+                &.green {
+                  color: #2AB06F;
+                }
+              }
+
+              div.flex + div.flex {
+                margin-top: 5px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .line_chart {
+      padding: 16px;
+    }
+  }
+
+  .column_chart {
+    min-height: 436px;
+  }
+
+  .sf_chart_legend {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+
+    .legend_item {
+      display: flex;
+      align-items: center;
+
+      & + .legend_item {
+        margin-left: 25px;
+      }
+
+      .legend_item_icon {
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        img {
+          width: 16px;
+          height: 16px;
+          margin-top: -6px;
+        }
+      }
+
+      .legent_item_tit {
+        margin-left: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        color: rgb(51, 51, 51);
+        font-weight: normal;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .my-table {
+    table {
+      border-collapse: separate;
+
+      thead {
+        th {
+          padding: 15px 0px;
+
+          .caret-wrapper {
+            width: 17px;
+            height: 15px;
+            position: relative;
+
+            img.sort_icon {
+              width: 15px;
+              height: 15px;
+              position: absolute;
+              right: -3px;
+              top: 0
+            }
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          // height: 40px;
+          position: relative;
+
+          &:hover {
+            td {
+              background: rgba(0, 0, 0, 0);
+            }
+          }
+
+          td {
+            padding: 15px 0;
+
+            .title.highlight_label {
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 16px;
+              color: rgba(0, 161, 178, 1);
+            }
+
+            .title {
+              width: 100%;
+              display: flex;
+              align-content: center;
+              justify-content: flex-start;
+            }
+
+            .flex.header-style {
+              .split {
+                margin-bottom: 2px;
+              }
+
+              &.flex-end {
+                .title {
+                  justify-content: flex-end;
+                }
+              }
+
+              &.flex-center {
+                .title {
+                  justify-content: center;
+                }
+              }
+
+              &.align-width-word {
+                .title {
+                  position: relative;
+                  right: 17px;
+                }
+              }
+            }
+
+            .slip {
+              height: 8px;
+              background: @purple-06;
+            }
+          }
+
+          .opt_cell {
+            .tb_filter {
+              .iconfilter {
+                font-size: 15px;
+                width: 100%;
+              }
+            }
+
+            .tb_filter, .tb_more {
+              color: rgba(0, 161, 178, 1);
+              width: 24px;
+              height: 24px;
+              text-align: center;
+              display: inline-block;
+              line-height: 24px;
+              cursor: pointer;
+
+              &:hover, &:focus {
+                text-decoration: unset;
+                outline: none;
+                background-color: rgba(183, 183, 183, 0.3);
+                border-radius: @default-border-radius;
+              }
+
+              img {
+                width: 24px;
+                height: 24px;
+              }
+
+              &.no_click_pop:hover .hover_pop {
+                display: block;
+              }
+
+              .hover_pop {
+                display: none;
+                position: absolute;
+                white-space: nowrap;
+                width: 80px;
+                height: 29px;
+                background: rgba(255, 255, 255, 1);
+                border-radius: @default-border-radius;
+                border: 1px solid rgba(0, 161, 178, 1);
+                text-align: center;
+                line-height: 29px;
+                z-index: 5;
+              }
+            }
+
+            .tb_filter .hover_pop {
+              bottom: 40px;
+              right: 30px;
+            }
+
+            .tb_more .hover_pop {
+              bottom: 40px;
+              right: 0;
+            }
+          }
+        }
+
+        tr:nth-child(even) {
+          background-color: rgba(248, 248, 248, 1) !important;
+        }
+      }
+    }
+
+    .sf_popup {
+      position: absolute;
+      top: 990px;
+      left: 520px;
+      min-width: 384px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: @default-border-radius;
+      border: 1px solid rgba(0, 161, 178, 1);
+      padding: 17px;
+      font-weight: 400;
+      color: rgba(69, 70, 70, 1);
+      font-size: 14px;
+      line-height: 20px;
+
+      .name {
+        padding-bottom: 1px;
+        border-bottom: 1px solid rgba(204, 204, 204, 1);
+        margin-bottom: 12px;
+      }
+
+      .explain, .sec {
+        margin-bottom: 12px;
+      }
+
+      .sec {
+        .line {
+          display: flex;
+
+          .dot {
+            flex: 1;
+            border-bottom: 1px dashed #454646;
+            margin: 0 5px 3px;
+          }
+
+          .val {
+            font-size: 12px;
+            line-height: 17px;
+          }
+        }
+      }
+
+      p {
+        font-size: 12px;
+        line-height: 17px;
+      }
+    }
+  }
+
+  .click_pop {
+    width: 160px;
+    height: 142px;
+    background: rgba(69, 70, 70, 1);
+    border-radius: @default-border-radius;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    position: absolute;
+    text-align: left;
+
+    .head {
+      width: 160px;
+      height: 52px;
+      line-height: 52px;
+      padding: 0 12px;
+      background: rgba(109, 109, 109, 1);
+      border-radius: @default-border-radius @default-border-radius 0 0;
+      font-size: 20px;
+    }
+
+    .line {
+      font-size: 14px;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 12px;
+
+      &:hover {
+        background: rgba(53, 53, 53, 1);
+      }
+    }
+
+    span {
+      width: 24px;
+      height: 24px;
+      border-radius: @default-border-radius;
+      display: inline-block;
+      line-height: 24px;
+      text-align: center;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+
+      &:hover {
+        background: rgba(109, 109, 109, 1);
+      }
+
+      i {
+        font-size: 10px;
+        color: @gray-00;
+        font-weight: bolder;
+      }
+    }
+  }
+
 </style>

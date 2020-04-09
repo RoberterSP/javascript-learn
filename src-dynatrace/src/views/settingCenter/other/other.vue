@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="app-list">
       <stepper :stepper="stepper" theme="gray"></stepper>
-      <div class="content flex">
+      <!-- <div class="content flex">
         <div class="left-content">
           <div class="side-title">其它</div>
           <div class="side-nav-title" v-for="(item,index) in sideList" :key="index" :class="{'side-nav-active': item.active, 'side-nav-disable': !item.active}" @click="clickSide(item)">{{item.name}}</div>
@@ -10,7 +10,26 @@
         <div class="right-content p10">
           <router-view></router-view>
         </div>
-      </div>
+      </div> -->
+      <DYLayout class="content">
+        <template slot="left">
+          <div class="left-content">
+            <DYHeader
+              class="side-title"
+              title="其它"
+            />
+            <div class="side-nav-title" v-for="(item,index) in sideList" :key="index"
+                 :class="{'side-nav-active': item.active, 'side-nav-disable': !item.active}" @click="clickSide(item)">
+              {{item.name}}
+            </div>
+          </div>
+        </template>
+        <template slot="content">
+          <DYCard class="overflow-x-hidden">
+            <router-view></router-view>
+          </DYCard>
+        </template>
+      </DYLayout>
     </div>
   </div>
 </template>
@@ -47,18 +66,15 @@ export default {
   methods: {
     clickSide (obj) {
       this.sideList.forEach(item => {
-        if (item.code === obj.code) {
-          item.active = true
-        } else {
-          item.active = false
-        }
+        item.active = item.code === obj.code
       })
+
       this.isShowComponent = obj.code
-      const stapObj = {
+      const stepObj = {
         name: obj.name,
         routerTo: ''
       }
-      this.$set(this.stepper, 1, stapObj)
+      this.$set(this.stepper, 1, stepObj)
       switch (obj.code) {
         case 'agent':
           // agent
@@ -73,9 +89,10 @@ export default {
       }
     }
   },
-  mounted () {},
+  mounted () {
+  },
   created () {
-    this.clickSide(this.sideList[0])
+    // this.clickSide(this.sideList[0])
   },
   components: {
     stepper
@@ -83,52 +100,45 @@ export default {
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
-.wrapper {
-  .app-list {
-    height: calc(100% - 30px);
-    .content {
-      width: 100%;
-      height: 100%;
-      padding: 24px 24px 23px 0;
-      .left-content {
-        width: 238px;
-        flex-shrink:0;
-        .side-title {
-          padding: 20px 0 20px 24px;
-          font-size: 26px;
-          font-family: PingFangSC-Medium, PingFang SC;
-          font-weight: 600;
-          color: @default-font-color;
-          line-height: 33px;
-        }
-        .side-nav-title {
-          cursor: pointer;
-          height: 60px;
-          padding-left: 24px;
-          line-height: 60px;
-          font-size: 15px;
-          font-family: SourceHanSansSC-Medium, SourceHanSansSC;
-          font-weight: 500;
-          &:hover {
-            background: @theme-gray;
-            color: @theme-color
+  @import "~common/style/variable";
+
+  .wrapper {
+    .app-list {
+      height: calc(100% - 30px);
+
+      .content {
+        width: 100%;
+        height: 100%;
+        padding: 24px 24px 23px 0;
+
+        .left-content {
+          width: 238px;
+          flex-shrink: 0;
+
+          .side-title {
+            padding-left: 24px;
+          }
+
+          .side-nav-title {
+            cursor: pointer;
+            height: 60px;
+            padding-left: 24px;
+            line-height: 60px;
+            font-size: 15px;
+            font-weight: 500;
+
+            &:hover {
+              background: @gray-03;
+              color: @turq-06
+            }
+          }
+
+          .side-nav-active {
+            color: @turq-06;
+            background: @gray-03 !important;
           }
         }
-        .side-nav-active {
-          color: @theme-color;
-          background: @theme-gray !important;
-        }
-        // .side-nav-disable {
-        //   color: rgba(204, 204, 204, 1);
-        // }
-      }
-      .right-content {
-        background: #ffffff;
-        display: inline-block;
-        width: calc(100% - 238px);
       }
     }
   }
-}
 </style>

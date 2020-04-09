@@ -1,29 +1,41 @@
 <template>
   <div class="editPanel">
     <!-- 表单 -->
-    <el-form class="default-width" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
+    <el-form class="form-default-width" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
       <el-form-item label="名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="例如：第三方接口请求日志"></el-input>
       </el-form-item>
       <el-form-item label="标识" prop="code">
         <el-input v-model="ruleForm.code" :disabled="!!ruleForm.log_config_id" placeholder="例如：third_party_request"></el-input>
       </el-form-item>
-      <nt-switch  @dyClick="switchChange" :title="'激活查询状态'" v-model="ruleForm.query_state" class="mb20"></nt-switch>
+      <div class="switch_form_item"><nt-switch  @dyClick="switchChange" :title="'激活查询状态'" v-model="ruleForm.query_state"></nt-switch></div>
       <el-form-item label="日志路径" prop="path">
         <el-input v-model="ruleForm.path" placeholder="例如：/opt/dataforce/log/data_server/hird_party_request.log"></el-input>
       </el-form-item>
-      <el-form-item class="mb-30" label="描述" prop="filter_conditions">
+      <el-form-item label="时间格式" prop="time_format">
+        <el-input v-model="ruleForm.time_format" placeholder="例如：%d/%b/%Y:%H:%M:%S %z"></el-input>
+      </el-form-item>
+      <el-form-item label="描述" prop="filter_conditions">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入描述"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
-      <div class="btns" v-permission="'settingCenter_logSetting_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
+      <div class="btns" v-permission="'settingCenter_logSetting_edit'" v-if="!ruleForm.log_config_id">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_logSetting_add'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -130,9 +142,10 @@ export default {
           type: 'success'
         })
         this.$emit('close')
+        this.$emit('refresh')
       })
     },
-    // 修改订阅事件
+    // 修改事件订阅
     subscribe_record_edit (data) {
       CONFIG_LOG_UPDATE_POST(data).then(res => {
         // this.$message(res.data.result)
@@ -157,79 +170,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="less">
-@import "~common/style/variable";
-
-@default-width: 425px;
-.default-width {
-  width: @default-width;
-}
-
-.mt-23 {
-  margin-top: 23px;
-}
-.mt-47 {
-  margin-top: 47px;
-}
-// .mb-37 {
-//   margin-bottom: 37px;
-// }
-.mb-30 {
-  margin-bottom: 30px;
-}
-
-.editPanel {
-  .tilte {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
-    margin-bottom: 10px;
-  }
-  .eventTitle {
-    font-family: @default-font;
-    font-size: 20px;
-    color: @default-font-color;
-    font-weight: 500;
-    line-height: 29px;
-    margin-bottom: 26px;
-  }
-  .eventSubTitle {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
-    margin-bottom: 28px;
-  }
-  .headerList {
-    margin-bottom: 42px;
-    .header {
-      margin-bottom: 4px;
-      .headTitle {
-        width: 107px;
-      }
-      .headmid {
-        width: 14px;
-        margin-left: 17px;
-        margin-right: 9px;
-      }
-      .headBody {
-        width: 238px;
-      }
-      img {
-        width: 12px;
-        height: 12px;
-        margin-left: 14px;
-        cursor: pointer;
-      }
-    }
-  }
-  .select {
-    margin-bottom: 30px;
-    width: @default-width;
-  }
-}
-</style>

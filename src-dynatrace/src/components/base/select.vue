@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import './index.less'
 export default {
   data () {
     return {
@@ -27,9 +26,7 @@ export default {
   props: {
     selectData: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => []
     },
     placeholder: {
       type: String,
@@ -37,16 +34,14 @@ export default {
     },
     keyValue: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => []
     }
   },
   computed: {
     arrData: {
       get () {
-        var arr = []
-        for (var i = 0; i < this.selectData.length; i++) {
+        let arr = []
+        for (let i = 0; i < this.selectData.length; i++) {
           arr.push({
             value: this.selectData[i][this.keyValue[0]],
             label: this.selectData[i][this.keyValue[1]]
@@ -61,18 +56,21 @@ export default {
       this.$emit('change', val)
     }
   },
-  mounted () {},
-  created () {},
+  mounted () {
+  },
+  created () {
+  },
   components: {}
 }
 </script>
 
 <style scoped lang="less">
-@import "~common/style/variable";
+  @import "~common/style/variable";
+  @import './index.less';
 
-.nt_select {
-  .el-select-dropdown {
-    margin: 0 !important;
+  .nt_select {
+    .el-select-dropdown {
+      margin: 0 !important;
+    }
   }
-}
 </style>

@@ -1,8 +1,7 @@
 <template>
-  <div class="third-party p10">
-    <h2 class="mb30">用户列表</h2>
-
-    <div class="add-content mb20" v-if="isAdd">
+  <div class="third-party">
+    <DYHeader class="row-title" title="用户列表" type="small" no-gap />
+    <div class="add-panel row-action" v-if="isAdd">
       <add-user-form
         :isAdd="true"
         :clientDetails="addForm"
@@ -10,11 +9,11 @@
         @saveForm="saveForm"></add-user-form>
     </div>
 
-    <div class="mb30" v-else>
-      <el-button type="primary" @click="isAdd = true" v-permission="'settingCenter_roleList_add'">添加用户</el-button>
+    <div class="row-action" v-else>
+      <DYButton type="primary" @click="isAdd = true" v-permission="'settingCenter_roleList_add'">添加用户</DYButton>
     </div>
 
-    <div class="table-content">
+    <div class="row-content">
       <nt-table
         :tableData="tableList"
         :columns="columns"
@@ -80,16 +79,16 @@ export default {
           name: '启用/禁用', // 表头名字
           code: 'active', // 表身显示值
           type: 'switch',
-          textAlign: 'left',
+          textAlign: 'right',
           disable: false
         },
         {
           name: '删除',
           code: '',
           type: 'delete',
-          textAlign: 'right',
+          textAlign: 'center',
           showDel: true, // 删除
-          width: 50,
+          width: 60,
           disable: false
         }
       ],
@@ -134,8 +133,8 @@ export default {
         info: params.info,
         email: params.email,
         third_party_id: params.third_party_id,
-        active: params.active ? params.active : false,
-        password: params.password
+        active: params.active ? params.active : false
+        // password: params.password
       }
       NXMC_AUTH_USER_UPDATE(data).then(res => {
         if (res.code === 0) {
@@ -219,29 +218,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" scoped>
-@import "~common/style/variable";
-
-.third-party {
-  .h3 {
-    height: 26px;
-    line-height: 26px;
-    margin-bottom: 9px;
-  }
-  .add-third-party-container {
-    width: 40%;
-    min-width: 400px;
-    padding: 8px 8px 8px 6px;
-  }
-
-  .add-content {
-    padding: 21px 0 10px 12px;
-    background: @default-gray;
-  }
-  .table-content {
-    margin-top: 22px;
-  }
-}
-
-</style>

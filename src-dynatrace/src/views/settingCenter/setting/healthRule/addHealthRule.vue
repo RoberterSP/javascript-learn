@@ -1,8 +1,8 @@
 <template>
   <div class="add-box add-health-rule">
-    <el-form class="default-width" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
-      <split-title class="title" :title="'基本信息'"></split-title>
-      <el-form-item class="default-width mt-34" label="名称" prop="name">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
+      <DYSplitTitle class="title h3-title-mb" :title="'基本信息'"></DYSplitTitle>
+      <el-form-item class="default-width" label="名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="例如：订单相关" :disabled="ruleForm.type === 'default'"></el-input>
       </el-form-item>
       <el-form-item class="default-width" label="标识" prop="code">
@@ -10,12 +10,13 @@
                   :disabled="!!(ruleForm.id || ruleForm.type === 'default')"></el-input>
       </el-form-item>
     </el-form>
-    <split-title class="title" :title="'规则设置'"></split-title>
-    <div class="default-label mt-34">接口的健康判定规则由“满意”、“容忍”、“沮丧”这三个区间通过响应时间数值“T”来划分，T值代表着用户对接口性能满意的响应时间界限或者说是“门槛”（Threshold）。系统会根据接口设置的健康规则，对每一次调用的实际响应时间判定并记录其所在的满意度区间。不同的接口可以设置不同的健康规则</div>
-    <div class="desc default-label defaultHieght">
-      <span class="default-height">单位响应时间：1 T = <span v-if="!globalEdit">{{globleSetting.apdex}} ms</span></span>
+    <DYSplitTitle class="title h3-title-pt" :title="'规则设置'"></DYSplitTitle>
+    <p class="mt24 half-width">接口的健康判定规则由“满意”、“容忍”、“沮丧”这三个区间通过响应时间数值“T”来划分，T值代表着用户对接口性能满意的响应时间界限或者说是“门槛”（Threshold）。系统会根据接口设置的健康规则，对每一次调用的实际响应时间判定并记录其所在的满意度区间。不同的接口可以设置不同的健康规则</p>
+
+    <div class="desc">
+      <span>单位响应时间：1 T = <span v-if="!globalEdit">{{globleSetting.apdex}} ms</span></span>
       <div class="set_input_value el-input" v-if="ruleForm.code === 'default'">
-        <div class="iconfont iconedit"  v-permission="'settingCenter_healthRule_apdex_edit'" @click="editGlobal(globleSetting)" v-if="!globalEdit"></div>
+        <div class="iconfont icon_edit" v-permission="'settingCenter_healthRule_apdex_edit'" @click="editGlobal(globleSetting)" v-if="!globalEdit"><DYIcon type="edit"></DYIcon></div>
         <nt-input
           v-else
           :value="globleSetting.copyapdex"
@@ -59,7 +60,7 @@
         <div class="p_end"></div>
       </div>
     </div>
-    <div class="table_list mt10">
+    <div class="table_list mt10 pb16">
       <el-table
         :data="tableList"
         style="width: 100%">
@@ -76,9 +77,9 @@
           </template>
           <template slot-scope="scope">
             <div class="title" v-if="index === 0">
-              <i class="iconfont iconmanyi green" v-if="scope.row.name === '满意'"></i>
-              <i class="iconfont iconyiban yellow" v-if="scope.row.name === '容忍'"></i>
-              <i class="iconfont iconshiwang red" v-if="scope.row.name === '沮丧'"></i>
+              <i class="iconfont green" v-if="scope.row.name === '满意'"><DYIcon type="manyi"></DYIcon></i>
+              <i class="iconfont yellow" v-if="scope.row.name === '容忍'"><DYIcon type="yiban"></DYIcon></i>
+              <i class="iconfont red" v-if="scope.row.name === '沮丧'"><DYIcon type="shiwang"></DYIcon></i>
               {{scope.row.name}}
             </div>
             <div class="title" v-if="index === 1">{{scope.row.start}}<span class="pl8">T</span></div>
@@ -98,17 +99,27 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="mt16" v-if="ruleForm.type !== 'default'">
+    <div class="mt16 mb24" v-if="ruleForm.type !== 'default'">
       <nt-switch
         :value="switchValue"
         :title="'激活健康规则'"
         @dyClick="switchChange"
       ></nt-switch>
     </div>
-    <div class="btns" v-permission="'settingCenter_healthRule_edit'">
-      <el-button @click="submitForm('ruleForm')" type="primary">保存
-      </el-button>
-      <el-button @click="cancleForm('ruleForm')">取消</el-button>
+
+    <div class="el-form">
+      <div class="btns" v-permission="'settingCenter_healthRule_edit'" v-if="!ruleForm.id">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_healthRule_add'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
     </div>
   </div>
 </template>
@@ -118,7 +129,6 @@ import ntTable from 'components/ntTable/ntTable.vue'
 import ntSwitch from 'components/base/switch.vue'
 import ntSlider from 'components/base/slider/slider.vue'
 import ntInput from 'components/base/input.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 import './index.less'
 import bus from '@/assets/eventBus.js'
 
@@ -126,12 +136,10 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-          name: '', // 角色名称
-          code: '' // 标识
-        }
-      }
+      default: () => ({
+        name: '', // 角色名称
+        code: '' // 标识
+      })
     }
   },
   data () {
@@ -233,8 +241,7 @@ export default {
             code: this.ruleForm.code
           }
           this.tableList.forEach((item, index) => {
-            const start = item.start
-            const end = item.end
+            const {start, end} = item
             if (index === 0) params.satisfaction = `${start}|${end}`
             if (index === 1) params.tolerance = `${start}|${end}`
             if (index === 2) params.despondent = `${start}|${end}`
@@ -344,7 +351,6 @@ export default {
     })
   },
   components: {
-    splitTitle,
     ntTable,
     ntSlider,
     ntSwitch,
@@ -355,14 +361,10 @@ export default {
 
 <style lang="less" rel="stylesheet/less" scoped>
   @import "~common/style/variable";
-.iconedit {
-  color: #00A1B2 !important;
+.icon_edit {
+  color: @turq-06 !important;
   font-size: 24px;
 }
-.mt-34 {
-  margin-top: 34px;
-}
-
   .add-box {
     .default-width {
       width: 425px;
@@ -386,18 +388,13 @@ export default {
       align-items: center;
       // margin-left: -20px;
       .title {
-        font-size: 14px;
-        font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-        font-weight: 400;
-        color: rgba(69, 70, 70, 1);
         line-height: 16px;
-        margin: 0px;
+        margin: 0;
       }
 
       .split {
-        border-bottom: 1px solid #E6E6E6;
+        border-bottom: 1px solid @gray-03;
         -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
         flex-grow: 1;
         padding: initial !important;
         margin-bottom: 2px;
@@ -473,7 +470,7 @@ export default {
       .dm-desc {
         position: absolute;
         left: -22px;
-        background-color: #CCCCCC;
+        background-color: @gray-04;
       }
 
       .default-model1 {
@@ -527,11 +524,11 @@ export default {
       margin-right: 10px;
 
       &.red {
-        color: #DC172A;
+        color: @red-05;
       }
 
       &.yellow {
-        color: #F5D30F;
+        color: @warning-color;
       }
 
       &.green {

@@ -1,5 +1,5 @@
 <template>
-  <div class="add_deploy_box p10">
+  <div class="add_deploy_box">
     <el-form class="default-width" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
       <el-form-item label="名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="请输入名称"></el-input>
@@ -39,13 +39,13 @@
         </ntSlider>
 
       </el-form-item>
-      <el-form-item>
+      <div class="switch_form_item">
         <nt-switch
           :value="switchValue"
           :title="'激活异常弹出策略'"
           @dyClick="switchChange"
         ></nt-switch>
-      </el-form-item>
+      </div>
       <template v-if="switchValue">
         <el-form-item label="异常阈值">
           <ntSlider
@@ -123,18 +123,21 @@
       </template>
     </el-form>
     <el-form class="default-width" :model="ruleForm">
-      <el-form-item class="mb-30" label="备注" prop="info">
+      <el-form-item label="备注" prop="info">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入内容"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
       <div class="btns" v-permission="'serviceCenter_deployGroupDetail_baseInfo_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary" :disabled="!ruleForm.name">保存</el-button>
-        <el-button @click="cancleForm('ruleForm')">取消</el-button>
+        <DYButtonGroup>
+          <DYButton type="primary" :disabled="!ruleForm.name" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -255,11 +258,6 @@ export default {
       width: 46% !important;
     }
     .tilte {
-      font-family: @default-font;
-      font-size: @default-font-size;
-      color: @default-font-color;
-      font-weight: @default-font-weight;
-      line-height: @default-line-height;
       margin-bottom: 10px;
     }
     .headerList {

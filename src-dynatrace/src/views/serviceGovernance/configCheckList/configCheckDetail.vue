@@ -2,10 +2,9 @@
   <div class="wrapper configCheckList">
     <stepper :stepper="stepper" theme="blue"></stepper>
     <div class="apiList" >
-      <div class="header_div m20 p15">
+      <div class="header_div m20 p16">
         <div class="head_title_b mt20">
           <div class="panelRow fresh flex-start" style="align-items: flex-start;">
-            <!-- <div><el-button type="primary" :disabled="isChecking" @click="reCheckClick">{{isChecking?'正在检查':'开始检查'}}</el-button></div> -->
             <div class="progress-box ml24">
               <div class="progress-per flex-start">
                 <ntSlider
@@ -24,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="check_result_div mlr20 p15">
+    <div class="check_result_div ml20 mr20 p16">
       <div class="dwr-b">
         <div class="dwr-p">
           <!-- 当有config_check_info 才有header头 -->
@@ -60,17 +59,17 @@
                     <div class="k_l flex">
                       <div class="flex-start" @click="isShowLabel(item, index, meshList)"
                       :style="{opacity: item.node_check_info && item.node_check_info.length ? 1 : 0}">
-                        <i class="iconfont iconarrowdown" v-if="!!item.isShow"></i>
-                        <i class="iconfont iconarrowup" v-else></i>
+                        <DYIcon type="arrowdown" class="iconfont icon_arrowdown" v-if="!!item.isShow"></DYIcon>
+                        <DYIcon type="arrowup" class="iconfont icon_arrowup" v-else></DYIcon>
                       </div>
                       <div class="flex-center">
-                        <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="nodeState[item.state].iconUrl==='iconLoading'" />
-                        <i class="iconfont" :class="[nodeState[item.state].iconUrl]" v-else></i>
+                        <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="nodeState[item.state].iconUrl==='Loading'" />
+                        <DYIcon :type="nodeState[item.state].iconUrl" class="iconfont" :class="[`icon_${nodeState[item.state].iconUrl}`]" v-else></DYIcon>
                       </div>
                     </div>
                     <div class="k_r flex-start" style="margin-left: 15px;">
                       <!-- <img class="icon icon-merge-default" :src=nodeState[items.state].img alt="open"> -->
-                      <i class="iconfont iconAppliance" style="margin-right: 10px;"></i>
+                      <DYIcon type="Appliance" class="iconfont icon_Appliance" style="margin-right: 10px;"></DYIcon>
                       <span class="right-text">{{item.name}}</span>
                       <!-- <div class="right-status-box">
                         <span v-for="(info, ind) in item.config_check_info" :key="ind" :title="info.info" :class="configState[info.state].color">{{info.config_type}}</span>
@@ -79,21 +78,21 @@
                   </div>
                   <div class="dwr-e">
                     <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="item.CDS_state === 'checking'" />
-                    <i class="iconfont iconclock" v-if="item.CDS_state === 'wait'" ></i>
-                    <i class="iconfont iconcheckOK" v-if="item.CDS_state === 'success'" ></i>
-                    <i class="iconfont icondelete" v-if="item.CDS_state === 'fail'" ></i>
+                    <DYIcon type="clock" class="iconfont icon_clock" v-if="item.CDS_state === 'wait'"></DYIcon>
+                    <DYIcon type="checkOK" class="iconfont icon_checkOK" v-if="item.CDS_state === 'success'"></DYIcon>
+                    <DYIcon type="delete" class="iconfont icon_delete" v-if="item.CDS_state === 'fail'"></DYIcon>
                   </div>
                   <div class="dwr-e">
                     <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="item.RDS_state === 'checking'" />
-                    <i class="iconfont iconclock" v-if="item.RDS_state === 'wait'" ></i>
-                    <i class="iconfont iconcheckOK" v-if="item.RDS_state === 'success'" ></i>
-                    <i class="iconfont icondelete" v-if="item.RDS_state === 'fail'" ></i>
+                    <DYIcon type="clock" class="iconfont icon_clock" v-if="item.RDS_state === 'wait'"></DYIcon>
+                    <DYIcon type="checkOK" class="iconfont icon_checkOK" v-if="item.RDS_state === 'success'"></DYIcon>
+                    <DYIcon type="delete" class="iconfont icon_delete" v-if="item.RDS_state === 'fail'"></DYIcon>
                   </div>
                   <div class="dwr-e">
                     <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="item.LDS_state === 'checking'" />
-                    <i class="iconfont iconclock" v-if="item.LDS_state === 'wait'" ></i>
-                    <i class="iconfont iconcheckOK" v-if="item.LDS_state === 'success'" ></i>
-                    <i class="iconfont icondelete" v-if="item.LDS_state === 'fail'" ></i>
+                    <DYIcon type="clock" class="iconfont icon_clock" v-if="item.LDS_state === 'wait'"></DYIcon>
+                    <DYIcon type="checkOK" class="iconfont icon_checkOK" v-if="item.LDS_state === 'success'"></DYIcon>
+                    <DYIcon type="delete" class="iconfont icon_delete" v-if="item.LDS_state === 'fail'"></DYIcon>
                   </div>
                   <div class="dwr-f">
                     <span class="car-header-left-text" :class="[nodeState[item.state].color, item.state==='fail'?'pointer':'']" @click="reCheckClick(item)">{{nodeState[item.state].text}}</span>
@@ -104,40 +103,40 @@
                     <!-- 只是占位 start -->
                     <div class="k_l flex" style="opacity: 0">
                       <div class="flex-start">
-                        <i class="iconfont iconarrowup"></i>
+                        <DYIcon type="arrowup" class="iconfont icon_arrowup"></DYIcon>
                       </div>
                       <div class="flex-center">
-                        <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="nodeState[items.state].iconUrl==='iconLoading'" />
-                        <i class="iconfont" :class="[nodeState[items.state].iconUrl]" v-else></i>
+                        <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="nodeState[items.state].iconUrl==='Loading'" />
+                        <DYIcon :type="nodeState[items.state].iconUrl" class="iconfont" :class="[`icon_${nodeState[items.state].iconUrl}`]" v-else></DYIcon>
                       </div>
                     </div>
                     <!-- 只是占位 end -->
                     <div class="k_r flex-start" style="margin-left: 15px;">
                       <div class="flex-center" style="margin-right: 15px;">
-                        <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="nodeState[items.state].iconUrl==='iconLoading'" />
-                        <i class="iconfont" :class="[nodeState[items.state].iconUrl]" v-else></i>
+                        <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="nodeState[items.state].iconUrl==='Loading'" />
+                        <DYIcon :type="nodeState[items.state].iconUrl" class="iconfont" :class="[`icon_${nodeState[items.state].iconUrl}`]" v-else></DYIcon>
                       </div>
-                      <i class="iconfont iconurlc" style="margin-right: 10px;"></i>
+                      <DYIcon type="urlc" class="iconfont icon_urlc" style="margin-right: 10px;"></DYIcon>
                       <span class="right-text">{{items.ip}}</span>
                     </div>
                   </div>
                   <div class="dwr-e">
                     <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="items.CDS_state === 'checking'" />
-                    <i class="iconfont iconclock" v-if="items.CDS_state === 'wait'" ></i>
-                    <i class="iconfont iconcheckOK" v-if="items.CDS_state === 'success'" ></i>
-                    <i class="iconfont icondelete" v-if="items.CDS_state === 'fail'" ></i>
+                    <DYIcon type="clock" class="iconfont icon_clock" v-if="item.CDS_state === 'wait'"></DYIcon>
+                    <DYIcon type="checkOK" class="iconfont icon_checkOK" v-if="item.CDS_state === 'success'"></DYIcon>
+                    <DYIcon type="delete" class="iconfont icon_delete" v-if="item.CDS_state === 'fail'"></DYIcon>
                   </div>
                   <div class="dwr-e">
                     <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="items.RDS_state === 'checking'" />
-                    <i class="iconfont iconclock" v-if="items.RDS_state === 'wait'" ></i>
-                    <i class="iconfont iconcheckOK" v-if="items.RDS_state === 'success'" ></i>
-                    <i class="iconfont icondelete" v-if="items.RDS_state === 'fail'" ></i>
+                    <DYIcon type="clock" class="iconfont icon_clock" v-if="item.RDS_state === 'wait'"></DYIcon>
+                    <DYIcon type="checkOK" class="iconfont icon_checkOK" v-if="item.RDS_state === 'success'"></DYIcon>
+                    <DYIcon type="delete" class="iconfont icon_delete" v-if="item.RDS_state === 'fail'"></DYIcon>
                   </div>
                   <div class="dwr-e">
                     <img class="icon-loading" src="~@/assets/image/icon-loading.png" title="" v-if="items.LDS_state === 'checking'" />
-                    <i class="iconfont iconclock" v-if="items.LDS_state === 'wait'" ></i>
-                    <i class="iconfont iconcheckOK" v-if="items.LDS_state === 'success'" ></i>
-                    <i class="iconfont icondelete" v-if="items.LDS_state === 'fail'" ></i>
+                    <DYIcon type="clock" class="iconfont icon_clock" v-if="item.LDS_state === 'wait'"></DYIcon>
+                    <DYIcon type="checkOK" class="iconfont icon_checkOK" v-if="item.LDS_state === 'success'"></DYIcon>
+                    <DYIcon type="delete" class="iconfont icon_delete" v-if="item.LDS_state === 'fail'"></DYIcon>
                   </div>
                   <div class="dwr-f">
                     <!--  v-if="nodeState[items.state]==='fail'" -->
@@ -204,22 +203,22 @@ export default {
         done: {
           text: '已完成',
           color: 'done',
-          iconUrl: 'iconOK'
+          iconUrl: 'OK'
         },
         wait: {
           text: '等待检查',
           color: 'wait',
-          iconUrl: 'iconclock'
+          iconUrl: 'clock'
         },
         checking: {
           text: '检查中',
           color: 'checking',
-          iconUrl: 'iconLoading'
+          iconUrl: 'Loading'
         },
         fail: {
           text: '重新检查',
           color: 'fail',
-          iconUrl: 'iconalert'
+          iconUrl: 'alert'
         }
       },
       meshList: []
@@ -523,7 +522,7 @@ export default {
       CONFIG_PATCH_CHECK_POST(params).then(res => {
         // this.isChecking = false
         bus.$emit('openMessage', {
-          message: '配置检查提交成功',
+          message: res.data.result,
           type: 'success'
         })
         this.config_check_list_get()

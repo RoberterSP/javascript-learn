@@ -1,9 +1,11 @@
 <template>
+  <!-- 未找着对应页面  -->
   <div class="add_fault_box">
     <el-form class="default-width" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
       <el-form-item label="名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="请输入名称"></el-input>
       </el-form-item>
+
       <el-form :model="ruleForm" class="custom_width" :inline="true">
         <el-form-item style="width:65%" class="full-content" label="执行间隔">
           <div style="{paddingLeft: '30px'}">
@@ -12,7 +14,7 @@
               :in-form="true"
               show-input
               :min="0"
-              :max="20"
+              :max="120"
               :show-input-controls="false"
               :marks="marks"
               :format-tooltip="formatTooltip"
@@ -26,7 +28,7 @@
         </el-form-item>
         <el-form-item style="width: 10%;" label="间隔单位">
           <el-select
-            style="width: 100%; margin: 30px 0;"
+            style="width: 100%; margin: 2px 0;"
             v-model="ruleForm.interval_type"
             @change="selected"
             placeholder="请选择间隔单位">
@@ -39,6 +41,7 @@
           </el-select>
         </el-form-item>
       </el-form>
+
       <el-form :model="ruleForm" class="custom_width" :inline="true">
         <el-form-item style="width:75%" class="full-content" label="调用次数">
           <ntSlider
@@ -69,13 +72,13 @@
       <el-form-item label="优先级(0=紧急)">
         <el-input v-model="ruleForm.priority" type="number" min=0 placeholder="请输入优先级"></el-input>
       </el-form-item>
-      <el-form-item class="mb-10">
+      <div class="switch_form_item">
         <nt-switch
           :value="ruleForm.active"
           :title="'激活任务'"
           @dyClick="switchChange"
         ></nt-switch>
-      </el-form-item>
+      </div>
       <el-form-item label="类型">
         <el-select
           style="width: 100%;"
@@ -101,25 +104,28 @@
       <el-form-item label="消息代码" v-if="ruleForm.type === 'message'">
         <el-input v-model="ruleForm.message_name" placeholder="请输入内容"></el-input>
       </el-form-item>
-      <el-form-item class="mb-30" label="消息参数" v-if="ruleForm.type === 'message'">
+      <el-form-item label="消息参数" v-if="ruleForm.type === 'message'">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入内容"
+          resize="none"
           v-model="ruleForm.message_args">
         </el-input>
       </el-form-item>
       <!-- <div class="tips">说明文案说明文案说明文案说明文案说明文案说明文案说明文案说明文案</div> -->
       <div class="btns" v-permission="'serviceCenter_serviceDetail_cronList_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary" :disabled="!ruleForm.name">保存</el-button>
-        <el-button @click="cancleForm('ruleForm')">取消</el-button>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')" :disabled="!ruleForm.name">保存</DYButton>
+          <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
 </template>
 <script>
-import { NXMC_MESH_FAULT_INJECTION_UPLOAD_POST, CRON_LIST_UPDATE } from '@/api'
+import { CRON_LIST_UPDATE } from '@/api'
 import ntSwitch from 'components/base/switch.vue'
 import ntSlider from 'components/base/slider/slider.vue'
 
@@ -127,14 +133,9 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-          name: '', // 名称
-          code: '',
-          fault_type: 'delay',
-          match_header: [{key: '', value: ''}]
-        }
-      }
+      default: () => ({
+        name: '' // 名称
+      })
     },
     meshCode: {
       type: String
@@ -145,15 +146,9 @@ export default {
       interval_type_text: '秒',
       switchValue: false, // 状态
       ruleForm: {
-        name: '', // 名称
-        code: '',
-        fault_type: 'delay',
-        match_header: [{key: '', value: ''}]
+        name: '' // 名称
       },
       rules: {
-        code: [
-          { required: true, message: '标识不能为空！', trigger: 'blur' }
-        ],
         name: [
           { required: true, message: '名称不能为空！', trigger: 'blur' }
         ]
@@ -187,8 +182,8 @@ export default {
         value: 'months',
         label: '月'
       }],
-      marks: {0: '0分', 20: '20分'},
-      marks1: {0: '-1', 20: '20'}
+      marks: {0: '0', 120: '120'},
+      marks1: {'-1': '不限制', 20: '20'}
     }
   },
   methods: {
@@ -196,17 +191,12 @@ export default {
       this.interval_type_text = (this.selectData.find(item => item.value === val)).label
       this.marks = {
         0: `0${this.interval_type_text}`,
-        20: `20${this.interval_type_text}`
+        120: `120${this.interval_type_text}`
       }
     },
-    addHeader () {
-      this.ruleForm.match_header.push({key: '', value: ''})
-    },
-    deleteHeader (index) {
-      this.ruleForm.match_header.splice(index, 1)
-    },
     formatTooltip (val) {
-      return `${val}分`
+      let format = val + this.interval_type_text
+      return `${format}`
     },
     formatTooltip1 (val) {
       return `${val}`
@@ -226,7 +216,7 @@ export default {
             numbercall: this.ruleForm.numbercall,
             doall: this.ruleForm.doall,
             nextcall: this.ruleForm.nextcall,
-            priority: this.ruleForm.priority,
+            priority: +this.ruleForm.priority,
             model: this.ruleForm.model,
             function: this.ruleForm.function,
             message_name: this.ruleForm.message_name,
@@ -239,13 +229,6 @@ export default {
             CRON_LIST_UPDATE(params).then(res => {
               if (res.code === 0) {
                 this.$emit('saveContent', this.ruleForm)
-              }
-            })
-          } else {
-            params.mesh_code = this.meshCode
-            NXMC_MESH_FAULT_INJECTION_UPLOAD_POST(params).then(res => {
-              if (res.code === 0) {
-                this.$emit('addHandle')
               }
             })
           }
@@ -290,11 +273,6 @@ export default {
       width: 46% !important;
     }
     .tilte {
-      font-family: @default-font;
-      font-size: @default-font-size;
-      color: @default-font-color;
-      font-weight: @default-font-weight;
-      line-height: @default-line-height;
       margin-bottom: 10px;
     }
     .headerList {
@@ -343,7 +321,7 @@ export default {
     .el-slider__marks-text {
       width: 80px;
       &:first-child {
-        left: 0% !important;
+        left: 0 !important;
         transform: translateX(0) !important;
       }
     }

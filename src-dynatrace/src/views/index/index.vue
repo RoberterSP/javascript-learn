@@ -57,8 +57,9 @@
                                 <!-- <div class="dhb-j dC-ob dC-x">Type something</div> -->
                                 <div class="flex-start">
                                   <div class="dhb-g dC-ob dC-e dhb-a">
-                                    <i class="iconfont" style="line-height: 16px;margin-right: 2px;"
-                                       :class="[`icon${item.list[dataLayerIndex-1].icon}`]"></i>
+                                    <i class="iconfont" style="line-height: 16px;margin-right: 2px;" :class="[`icon_${item.list[dataLayerIndex-1].icon}`]">
+                                      <DYIcon :type="item.list[dataLayerIndex-1].icon"></DYIcon>
+                                    </i>
                                     {{item.list[dataLayerIndex-1].name}}
                                   </div>
                                 </div>
@@ -116,7 +117,7 @@
                                 {{tabitem.name}}
                               </div>
                             </div>
-                            <area-line-chart :ref="'area_line_chart_'+parItem.columnIndex+''+item.sequence" :chartId="'area_line_chart_'+parItem.columnIndex+''+item.sequence" :comData="item"></area-line-chart>
+                            <area-line-chart :ref="'area_line_chart_'+parItem.columnIndex+''+item.sequence" :chartId="'area_line_chart_'+ parItem.columnIndex + '' + item.sequence + item.applicationTabIndex" :comData="item"></area-line-chart>
                           </div>
                           <!-- 应用tab end -->
                           <!-- 圆环图 start -->
@@ -144,7 +145,6 @@
                           <!-- 调用概览 end -->
                           <!-- 慢调用，错误率 start -->
                           <div class="dC-s dbb-c" v-if="item.viewType==='barChart'" style="margin-bottom: -12px;height: 100%">
-                            <!-- <bar-chart :ref="'bar_chart_'+parItem.columnIndex+''+item.sequence" style="margin-top:18px;" :chartId="'bar_chart_'+parItem.columnIndex+''+item.sequence" :comData="item"></bar-chart> -->
                             <bar-stack-chart :ref="'bar_stack_chart_'+parItem.columnIndex+''+item.sequence" style="margin-top:18px;" :chartId="'bar_stack_chart_'+parItem.columnIndex+''+item.sequence" :comData="item"></bar-stack-chart>
                           </div>
                           <!-- 慢调用，错误率 end -->
@@ -193,7 +193,6 @@
 <script>
 /* eslint-disable */
 import HighCharts from 'highcharts'
-import $ from '@/common/util/resource/jquery-1.8.3.min'
 import './index.less'
 import d3Hexbin from 'components/d3hexbin/d3hexbin.vue'
 import areaLineChart from '@/components/miniChart/areaLineChart/areaLineChart.vue'
@@ -202,7 +201,7 @@ import pieChart from '@/components/miniChart/pieChart/pieChart.vue'
 import treemapChart from '@/components/miniChart/treemapChart/treemapChart.vue'
 import barStackChart from '@/components/miniChart/barStackChart/barStackChart.vue'
 import lineColumnChart from '@/components/miniChart/lineColumnChart/lineColumnChart.vue'
-import barChart from '@/components/miniChart/barChart/barChart.vue'
+// import barChart from '@/components/miniChart/barChart/barChart.vue'
 import { currencyFunc } from '@/common/util/util'
 import bus from '@/assets/eventBus.js'
 import {
@@ -223,6 +222,7 @@ import {
 } from '@/api'
 // import { barChartData1, barChartData2, lineColumnChartData } from '@/common/mock/usdeur'
 import stepper from 'components/stepper/stepper.vue'
+import {getLessColor} from 'common/util/util'
 export default {
   data() {
     return {
@@ -445,7 +445,7 @@ export default {
               viewType: 'seriesViewBoard',
               seriesData: [{
                 value: 0,
-                name: '非标型'
+                name: '开发语言'
               }, {
                 value: 0,
                 name: '业务型'
@@ -542,6 +542,7 @@ export default {
               sizey: 1,
               sequence: 1,
               title: '慢调用',
+              unit: 'ms',
               viewType: 'barChart',
               barStackChartOptions: {
                 data: [],
@@ -564,6 +565,8 @@ export default {
               sizey: 1,
               sequence: 2,
               title: '错误率',
+              type: 'error_rate',
+              unit: '%',
               viewType: 'barChart',
               barStackChartOptions: {
                 data: [],
@@ -586,7 +589,6 @@ export default {
       dataLayerIndex: 4,
       // 服务治理 高亮定时器
       serviceGovernanceTimer: null,
-      namespace_code: ''
     }
   },
   computed: {
@@ -616,6 +618,7 @@ export default {
       })
       // 获取首页指标数据 (简要概览)
       this.getBriefOverviewData()
+
       // 获取首页服务指标数据 （服务概览 上半部分）
       this.getServicesOverviewData()
       // 剩余
@@ -623,117 +626,205 @@ export default {
     },
     // 获取首页指标数据 (简要概览)
     async getBriefOverviewData () {
-      let _that = this
-      let data = await this.handleCommonParams()
-      NXMC_METRICS_HOME_GET(data).then((res) => {
-        // console.log('获取首页指标数据', res)
+      // 处理函数
+      function handleFunc (module, res) {
         if (res.code === 0) {
-          // 简要概览 -> 预警
-          this.viewColumnList['brief_overview'].viewList['warning'].total_num = res.data.total_problem_num
-          this.viewColumnList['brief_overview'].viewList['warning'].error_num = res.data.total_wait_handel_problem_num
-          this.viewColumnList['brief_overview'].viewList['warning'].showLoading = false
-          // 简要概览 -> 接口
-          this.viewColumnList['brief_overview'].viewList['interface'].total_endpoint_num = res.data.total_endpoint_num
-          this.viewColumnList['brief_overview'].viewList['interface'].total_deployed_endpoint_num = res.data.total_deployed_endpoint_num
-          this.viewColumnList['brief_overview'].viewList['interface'].showLoading = false
-          // 简要概览 -> 应用
-          this.viewColumnList['brief_overview'].viewList['application'].normal_num = res.data.total_app_num
-          this.viewColumnList['brief_overview'].viewList['application'].showLoading = false
-          // 简要概览 -> 事件
-          this.viewColumnList['brief_overview'].viewList['event'].normal_num = res.data.total_event_num
-          this.viewColumnList['brief_overview'].viewList['event'].showLoading = false
-          // 简要概览 -> 服务
-          this.viewColumnList['brief_overview'].viewList['service'].total_num = res.data.total_mesh_num
-          this.viewColumnList['brief_overview'].viewList['service'].error_num = res.data.total_error_mesh_num
-          this.viewColumnList['brief_overview'].viewList['service'].normal_num = res.data.total_normal_mesh_num
-          if (res.data.total_mesh_num) {
-            this.$nextTick(() => {
-              if (this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['service'].sequence][0]) {
-                this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['service'].sequence][0].resetDrawView(this.viewColumnList['brief_overview'].viewList['service'])
+          switch (module) {
+            case 'warning':
+              // 简要概览 -> 预警
+              this.viewColumnList['brief_overview'].viewList['warning'].total_num = res.data.total_problem_num
+              this.viewColumnList['brief_overview'].viewList['warning'].error_num = res.data.total_wait_handel_problem_num
+              break
+
+            case 'interface':
+              // 简要概览 -> 接口
+              this.viewColumnList['brief_overview'].viewList['interface'].total_endpoint_num = res.data.total_endpoint_num
+              this.viewColumnList['brief_overview'].viewList['interface'].total_deployed_endpoint_num = res.data.total_deployed_endpoint_num
+              break
+
+            case 'application':
+              // 简要概览 -> 应用
+              this.viewColumnList['brief_overview'].viewList['application'].normal_num = res.data.total_app_num
+              break
+
+            case 'event':
+              // 简要概览 -> 事件
+              this.viewColumnList['brief_overview'].viewList['event'].normal_num = res.data.total_event_num
+              break
+
+            case 'service':
+              // 简要概览 -> 服务
+              this.viewColumnList['brief_overview'].viewList['service'].total_num = res.data.total_mesh_num
+              this.viewColumnList['brief_overview'].viewList['service'].error_num = res.data.total_error_mesh_num
+              this.viewColumnList['brief_overview'].viewList['service'].normal_num = res.data.total_normal_mesh_num
+              if (res.data.total_mesh_num) {
+                this.$nextTick(() => {
+                  if (this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['service'].sequence][0]) {
+                    this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['service'].sequence][0].resetDrawView(this.viewColumnList['brief_overview'].viewList['service'])
+                  }
+                })
+              } else {
+                this.viewColumnList['brief_overview'].viewList['service'].showEmpty = true
               }
-            })
-          } else {
-            this.viewColumnList['brief_overview'].viewList['service'].showEmpty = true
-          }
-          this.viewColumnList['brief_overview'].viewList['service'].showLoading = false
-          // 简要概览 -> 节点
-          this.viewColumnList['brief_overview'].viewList['node'].total_num = res.data.total_node_num
-          this.viewColumnList['brief_overview'].viewList['node'].error_num = res.data.total_error_node_num
-          this.viewColumnList['brief_overview'].viewList['node'].normal_num = res.data.total_normal_node_num
-          if (res.data.total_node_num) {
-            this.$nextTick(() => {
-              if (this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['node'].sequence][0]) {
-                this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['node'].sequence][0].resetDrawView(this.viewColumnList['brief_overview'].viewList['node'])
+              break
+
+            case 'node':
+              // 简要概览 -> 节点
+              this.viewColumnList['brief_overview'].viewList['node'].total_num = res.data.total_node_num
+              this.viewColumnList['brief_overview'].viewList['node'].error_num = res.data.total_error_node_num
+              this.viewColumnList['brief_overview'].viewList['node'].normal_num = res.data.total_normal_node_num
+              if (res.data.total_node_num) {
+                this.$nextTick(() => {
+                  if (this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['node'].sequence][0]) {
+                    this.$refs['hexbin_chart_'+this.viewColumnList['brief_overview'].columnIndex + '' + this.viewColumnList['brief_overview'].viewList['node'].sequence][0].resetDrawView(this.viewColumnList['brief_overview'].viewList['node'])
+                  }
+                })
+              } else {
+                this.viewColumnList['brief_overview'].viewList['node'].showEmpty = true
               }
-            })
-          } else {
-            this.viewColumnList['brief_overview'].viewList['node'].showEmpty = true
+              break
+
+            case 'smart_scape':
+              // 简要概览 -> 服务治理
+              this.viewColumnList['brief_overview'].viewList['service_governance'].list[0].num = res.data.total_route_rule_num
+              this.viewColumnList['brief_overview'].viewList['service_governance'].list[1].num = res.data.total_deploy_group_num
+              this.viewColumnList['brief_overview'].viewList['service_governance'].list[2].num = res.data.total_mesh_num
+              this.viewColumnList['brief_overview'].viewList['service_governance'].list[3].num = res.data.total_app_num
+              break
+
+            default:
+              break
           }
-          this.viewColumnList['brief_overview'].viewList['node'].showLoading = false
-          // 简要概览 -> 服务治理
-          this.viewColumnList['brief_overview'].viewList['service_governance'].list[2].num = res.data.total_mesh_num
-          this.viewColumnList['brief_overview'].viewList['service_governance'].list[3].num = res.data.total_app_num
-          this.viewColumnList['brief_overview'].viewList['service_governance'].list[1].num = res.data.total_deploy_group_num
-          this.viewColumnList['brief_overview'].viewList['service_governance'].list[0].num = res.data.total_route_rule_num
-        } else {
         }
+
+        if (this.viewColumnList['brief_overview'].viewList[module]) {
+          this.viewColumnList['brief_overview'].viewList[module].showLoading = false
+        }
+
+
+
+      }
+
+      let data = await this.handleCommonParams()
+
+      const moduleKeyMap = {
+        warning: 'problem_info',
+        interface: 'endpoint_info',
+        application: 'app_info',
+        event: 'event_info',
+        service: 'mesh_info',
+        node: 'node_info',
+        smart_scape: 'smart_scape'
+      }
+
+      // 创建请求数组
+      const requestSet = Object.values(moduleKeyMap).map(metric => {
+        return NXMC_METRICS_HOME_GET({
+          ...data,
+          metric
+        })
+      })
+
+      Promise.all(requestSet).then(resAll => {
+        // console.log('获取首页指标数据', res)
+        const moduleKeys = Object.keys(moduleKeyMap)
+
+        moduleKeys.forEach((moduleKey, index) => {
+          const res = resAll[index]
+
+          handleFunc.call(this, moduleKey, res)
+        })
 
         this.viewColumnList['brief_overview'].viewList['service_governance'].showLoading = false
       })
     },
     // 获取首页服务指标数据 （服务概览 上半部分）
     async getServicesOverviewData () {
-      let _that = this
-      NXMC_METRICS_MESH_GET({namespace_code: this.namespace_code}).then((res) => {
-        // console.log('------获取首页服务指标数据', res)
+
+      function handleFunc (module, res) {
         if (res.code === 0) {
-          // 服务概览 -> 服务类型
-          this.viewColumnList['service_overview'].viewList['service_type'].seriesData[0].value = res.data.total_lang_num
-          this.viewColumnList['service_overview'].viewList['service_type'].seriesData[1].value = res.data.total_business_num
-          this.viewColumnList['service_overview'].viewList['service_type'].seriesData[2].value = res.data.total_component_num
+          switch (module) {
+            case 'service_type':
+              // 服务概览 -> 服务类型
+              this.viewColumnList['service_overview'].viewList['service_type'].seriesData[0].value = res.data.total_lang_num
+              this.viewColumnList['service_overview'].viewList['service_type'].seriesData[1].value = res.data.total_business_num
+              this.viewColumnList['service_overview'].viewList['service_type'].seriesData[2].value = res.data.total_component_num
+              break
 
-          // 服务概览 -> 部署组
-          this.viewColumnList['service_overview'].viewList['deployment_group'].chartOptions.total_num = res.data.total_deploy_group_num
-          if (res.data.total_deploy_group_num) {
-            let startedDeployPercent = ((res.data.total_started_deploy_group_num/res.data.total_deploy_group_num).toFixed(2))*100
-            this.viewColumnList['service_overview'].viewList['deployment_group'].chartOptions.data = [
-              {name:'已停止', y: 100 - startedDeployPercent, value: res.data.total_stopped_deploy_group_num, color: '#5D5D5D'},
-              {name: '运行中', y: startedDeployPercent, value: res.data.total_started_deploy_group_num, color: 'rgba(162,112,196,1)'}
-            ]
-            this.$nextTick(() => {
-              if (this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['deployment_group'].sequence][0]) {
-                this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['deployment_group'].sequence][0].resetDrawView(this.viewColumnList['service_overview'].viewList['deployment_group'])
+            case 'deployment_group':
+              // 服务概览 -> 部署组
+              this.viewColumnList['service_overview'].viewList['deployment_group'].chartOptions.total_num = res.data.total_deploy_group_num
+              if (res.data.total_deploy_group_num) {
+                let startedDeployPercent = ((res.data.total_started_deploy_group_num/res.data.total_deploy_group_num).toFixed(2))*100
+                this.viewColumnList['service_overview'].viewList['deployment_group'].chartOptions.data = [
+                  {name:'已停止', y: 100 - startedDeployPercent, value: res.data.total_stopped_deploy_group_num, color: '#5D5D5D'},
+                  {name: '运行中', y: startedDeployPercent, value: res.data.total_started_deploy_group_num, color: 'rgba(162,112,196,1)'}
+                ]
+                this.$nextTick(() => {
+                  if (this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['deployment_group'].sequence][0]) {
+                    this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['deployment_group'].sequence][0].resetDrawView(this.viewColumnList['service_overview'].viewList['deployment_group'])
+                  }
+                })
+              } else {
+                this.viewColumnList['service_overview'].viewList['deployment_group'].showEmpty = true
               }
-            })
-          } else {
-            this.viewColumnList['service_overview'].viewList['deployment_group'].showEmpty = true
-          }
+              break
 
-
-          // 服务概览 -> 路由
-          this.viewColumnList['service_overview'].viewList['route'].chartOptions.total_num = res.data.total_route_rule_num
-          if (res.data.total_route_rule_num) {
-            let enabledRoutePercent = ((res.data.total_enabled_route_rule_num/res.data.total_route_rule_num).toFixed(2))*100
-            this.viewColumnList['service_overview'].viewList['route'].chartOptions.data = [
-              {name:'禁用', y: 100 - enabledRoutePercent, value: res.data.total_disabled_route_rule_num, color: '#5D5D5D'},
-              {name: '启用', y: enabledRoutePercent, value: res.data.total_enabled_route_rule_num, color: 'rgba(162,112,196,1)'}
-            ]
-            this.$nextTick(() => {
-              if (this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['route'].sequence][0]) {
-                this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['route'].sequence][0].resetDrawView(this.viewColumnList['service_overview'].viewList['route'])
+            case 'route':
+              // 服务概览 -> 路由
+              this.viewColumnList['service_overview'].viewList['route'].chartOptions.total_num = res.data.total_route_rule_num
+              if (res.data.total_route_rule_num) {
+                let enabledRoutePercent = ((res.data.total_enabled_route_rule_num/res.data.total_route_rule_num).toFixed(2))*100
+                this.viewColumnList['service_overview'].viewList['route'].chartOptions.data = [
+                  {name:'禁用', y: 100 - enabledRoutePercent, value: res.data.total_disabled_route_rule_num, color: '#5D5D5D'},
+                  {name: '启用', y: enabledRoutePercent, value: res.data.total_enabled_route_rule_num, color: 'rgba(162,112,196,1)'}
+                ]
+                this.$nextTick(() => {
+                  if (this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['route'].sequence][0]) {
+                    this.$refs['pie_chart_'+this.viewColumnList['service_overview'].columnIndex + '' + this.viewColumnList['service_overview'].viewList['route'].sequence][0].resetDrawView(this.viewColumnList['service_overview'].viewList['route'])
+                  }
+                })
+              } else {
+                this.viewColumnList['service_overview'].viewList['route'].showEmpty = true
               }
-            })
-          } else {
-            this.viewColumnList['service_overview'].viewList['route'].showEmpty = true
-          }
+              break
 
+            default:
+              break
+          }
         } else {
-          this.viewColumnList['service_overview'].viewList['deployment_group'].showEmpty = true
-          this.viewColumnList['service_overview'].viewList['route'].showEmpty = true
+          if (this.viewColumnList['service_overview'].viewList[module]) {
+            this.viewColumnList['service_overview'].viewList[module].showEmpty = true
+          }
         }
-        this.viewColumnList['service_overview'].viewList['service_type'].showLoading = false
-        this.viewColumnList['service_overview'].viewList['route'].showLoading = false
-        this.viewColumnList['service_overview'].viewList['deployment_group'].showLoading = false
+
+        if (this.viewColumnList['service_overview'].viewList[module]) {
+          this.viewColumnList['service_overview'].viewList[module].showLoading = false
+        }
+      }
+
+      const moduleKeyMap = {
+        service_type: 'base_info',
+        deployment_group: 'deploy_group_info',
+        route: 'route_rule_info',
+      }
+
+      // 创建请求数组
+      const requestSet = Object.values(moduleKeyMap).map(metric => {
+        return NXMC_METRICS_MESH_GET({
+          metric
+        })
+      })
+
+      Promise.all(requestSet).then(resAll => {
+        // console.log('------获取首页服务指标数据', res)
+        const moduleKeys = Object.keys(moduleKeyMap)
+
+        moduleKeys.forEach((moduleKey, index) => {
+          const res = resAll[index]
+
+          handleFunc.call(this, moduleKey, res)
+        })
       })
     },
     // 查询指标
@@ -759,7 +850,6 @@ export default {
       this.getInterfacesSlowCallData(postParams)
     },
     getHealthIndexData (postParams) {
-      let _that = this
 
       NXMC_METRICS_HEALTH_INDEX_GET(postParams).then((res) => {
         // console.log('获取 健康指数', res)
@@ -797,7 +887,6 @@ export default {
       })
     },
     getRequestIndexData (postParams) {
-      let _that = this
       NXMC_METRICS_REQUEST_INDEX_GET(postParams).then((res) => {
         // console.log('获取 访问请求', res)
         if (res.code === 0) {
@@ -826,7 +915,6 @@ export default {
     },
     // tab点击事件
     async ApplicationTtabClick (item, index) {
-      let _that = this
       let postParams = await this.handleCommonParams()
       this.viewColumnList['application_overview'].viewList['application_tab'].showLoading = true
       this.viewColumnList['application_overview'].viewList['application_tab'].showEmpty = false
@@ -852,7 +940,8 @@ export default {
       }
     },
     getAvgResTimeData (postParams, item={}, index=0) {
-      let _that = this
+      this.viewColumnList['application_overview'].viewList['application_tab'].applicationTabIndex = index
+
       NXMC_METRICS_AVG_RES_TIME_GET(postParams).then((res) => {
         // console.log('获取 平均响应时间', res)
         if (res.code === 0) {
@@ -869,7 +958,6 @@ export default {
             res.data.series[0].data = handleData
             // 计算刻度间隔
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.tickInterval = (handleData[handleData.length-1][0] - handleData[0][0])/3
-            this.viewColumnList['application_overview'].viewList['application_tab'].applicationTabIndex = index
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.seriesColor = item.seriesColor
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.areaColor = item.areaColor
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.yAxisFormat = item.yAxisFormat
@@ -892,7 +980,7 @@ export default {
       })
     },
     getReqErrorRateData (postParams, item={}, index=0) {
-      let _that = this
+      this.viewColumnList['application_overview'].viewList['application_tab'].applicationTabIndex = index
       NXMC_METRICS_REQ_ERROR_RATE_GET(postParams).then((res) => {
         // console.log('获取 错误率', res)
         if (res.code === 0) {
@@ -909,7 +997,6 @@ export default {
             res.data.series[0].data = handleData
             // 计算刻度间隔
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.tickInterval = (handleData[handleData.length-1][0] - handleData[0][0])/3
-            this.viewColumnList['application_overview'].viewList['application_tab'].applicationTabIndex = index
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.seriesColor = item.seriesColor
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.areaColor = item.areaColor
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.yAxisFormat = item.yAxisFormat
@@ -932,7 +1019,7 @@ export default {
       })
     },
     getThroughputData (postParams, item={}, index=0) {
-      let _that = this
+      this.viewColumnList['application_overview'].viewList['application_tab'].applicationTabIndex = index
       NXMC_METRICS_THROUGHPUT_GET(postParams).then((res) => {
         // console.log('获取 吞吐量', res)
         if (res.code === 0) {
@@ -949,7 +1036,6 @@ export default {
             res.data.series[0].data = handleData
             // 计算刻度间隔
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.tickInterval = (handleData[handleData.length-1][0] - handleData[0][0])/3
-            this.viewColumnList['application_overview'].viewList['application_tab'].applicationTabIndex = index
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.seriesColor = item.seriesColor
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.areaColor = item.areaColor
             this.viewColumnList['application_overview'].viewList['application_tab'].chartOptions.yAxisFormat = item.yAxisFormat
@@ -972,7 +1058,6 @@ export default {
       })
     },
     getAppsRankData (postParams, rankType='') {
-      let _that = this
       postParams.index = rankType
       let type = ''
       let subsidiary = ''
@@ -1016,7 +1101,6 @@ export default {
       })
     },
     getServicesHeatMapData (postParams) {
-      let _that = this
       NXMC_METRICS_SERVICES_HEAT_MAP_GET(postParams).then((res) => {
         // console.log('获取 服务热力图', res)
         if (res.code === 0) {
@@ -1038,7 +1122,6 @@ export default {
       })
     },
     getServicesRankData (postParams) {
-      let _that = this
       NXMC_METRICS_SERVICES_RANK_GET(postParams).then((res) => {
         // console.log('获取 服务排名', res)
         if (res.code === 0) {
@@ -1062,11 +1145,22 @@ export default {
       })
     },
     getInterfacesCallOverviewData (postParams) {
-      let _that = this
       NXMC_METRICS_INTERFACES_CALL_OVERVIEW_GET(postParams).then((res) => {
-        // console.log('获取 接口调用概览', res)
+        // 53359
         if (res.code === 0) {
-          if (res.data.xAxis.length && res.data.series.length && res.data.series[0].data.length) {
+          if (res.data.xAxis.length && res.data.series.length) {
+            // 检查 data， 如果为空， 则补零
+            res.data.series = res.data.series.map(item => {
+              if (item.data.length === 0) {
+                return {
+                  ...item,
+                  data: new Int8Array(res.data.xAxis.length)
+                }
+              }
+
+              return item
+            })
+
             let resultData = [{
               name: '',
               type: 'column',
@@ -1085,7 +1179,7 @@ export default {
               marker: {
                 radius: 1.5,
                 lineWidth: 0,
-                fillColor: '#DEBBF3',
+                fillColor: getLessColor('@purple-02'),
                 symbol: 'square'
               },
               yAxis: 1,
@@ -1125,12 +1219,15 @@ export default {
             this.viewColumnList['interface_overview'].viewList['call_overview'].lineColumnChartOptions.data = resultData
             this.viewColumnList['interface_overview'].viewList['call_overview'].lineColumnChartOptions.legends = [{
               name: '错误率',
-              color: '#DEBBF3'
+              icon: 'chart_linepoint',
+              color: getLessColor('@purple-02')
             }, {
               name: '错误数',
-              color: '#BA8ED6'
+              icon: 'chart_bar1',
+              color: getLessColor('@purple-04')
             }, {
               name: '总数',
+              icon: 'chart_bar1',
               color: '#714191'
             }]
             // this.handleXAxisFormats(this.viewColumnList['interface_overview'].viewList['call_overview'].lineColumnChartOptions)
@@ -1149,7 +1246,6 @@ export default {
       })
     },
     getInterfacesCallCountData (postParams) {
-      let _that = this
       NXMC_METRICS_INTERFACES_CALL_COUNT_GET(postParams).then((res) => {
         // console.log('获取 接口调用量', res)
         if (res.code === 0) {
@@ -1173,14 +1269,13 @@ export default {
       })
     },
     getInterfacesErrorRateData (postParams) {
-      let _that = this
       NXMC_METRICS_INTERFACES_ERROR_RATE_GET(postParams).then((res) => {
         // console.log('获取 接口错误率', res)
         if (res.code === 0) {
           if (res.data.yAxis.length && res.data.series.length && res.data.series[0].data.length) {
             this.viewColumnList['interface_overview'].viewList['error_rate'].barStackChartOptions.data = res.data.series[0].data
             this.viewColumnList['interface_overview'].viewList['error_rate'].barStackChartOptions.categories = res.data.yAxis
-            this.viewColumnList['interface_overview'].viewList['error_rate'].barStackChartOptions.themeColor = '#A972CC'
+            this.viewColumnList['interface_overview'].viewList['error_rate'].barStackChartOptions.themeColor = getLessColor('@purple-02')
             this.viewColumnList['interface_overview'].viewList['error_rate'].barStackChartOptions.tooltip = {
               formatter: function () {
                 return this.x
@@ -1218,7 +1313,6 @@ export default {
       })
     },
     getInterfacesSlowCallData (postParams) {
-      let _that = this
       NXMC_METRICS_INTERFACES_SLOW_CALL_GET(postParams).then((res) => {
         // console.log('获取 接口慢调用', res)
         if (res.code === 0) {
@@ -1227,8 +1321,15 @@ export default {
             this.viewColumnList['interface_overview'].viewList['slow_call'].barStackChartOptions.categories = res.data.yAxis
             this.viewColumnList['interface_overview'].viewList['slow_call'].barStackChartOptions.themeColor = '#B7C2FC'
             this.viewColumnList['interface_overview'].viewList['slow_call'].barStackChartOptions.tooltip = {
-              formatter: function () {
-                return this.x
+              // formatter: function () {
+              //   return this.x
+              // }
+              /**
+               * 使用formatter保留title部分会导致字体变大文字溢出被遮挡
+               * 使用pointFormatter把内容部分省略title部分就有布局和样式的变化
+               */
+              pointFormatter () {
+                return ''
               }
             }
             this.$nextTick(() => {
@@ -1303,26 +1404,27 @@ export default {
     bus.$off('timeChanged')
   },
   mounted () {
-    this.updateHomeView()
-    let _this = this
+    // this.updateHomeView()
     bus.$on('timeChanged', (obj) => {
-      _this.time_range_obj = obj
+      this.time_range_obj = obj
       // _this.$loading()
-      Object.keys(_this.viewColumnList).forEach(key1 => {
-        Object.keys(_this.viewColumnList[key1].viewList).forEach(key2 => {
-          if (key1 !== 'brief_overview' && key2 !== 'service_type' && key2 !== 'deployment_group' && key2 !== 'route') {
-            _this.viewColumnList[key1].viewList[key2].showLoading = true
-            _this.viewColumnList[key1].viewList[key2].showEmpty = false
-          }
+      // Object.keys(this.viewColumnList).forEach(key1 => {
+      //   Object.keys(this.viewColumnList[key1].viewList).forEach(key2 => {
+      //     if (key1 !== 'brief_overview' && key2 !== 'service_type' && key2 !== 'deployment_group' && key2 !== 'route') {
+      //       this.viewColumnList[key1].viewList[key2].showLoading = true
+      //       this.viewColumnList[key1].viewList[key2].showEmpty = false
+      //     }
+      //
+      //     if (key2 === 'warning') {
+      //       this.viewColumnList[key1].viewList[key2].showLoading = true
+      //       this.viewColumnList[key1].viewList[key2].showEmpty = false
+      //     }
+      //   })
+      // })
+      // this.getBriefOverviewData()
+      // this.getIndicationChartData()
 
-          if (key2 === 'warning') {
-            _this.viewColumnList[key1].viewList[key2].showLoading = true
-            _this.viewColumnList[key1].viewList[key2].showEmpty = false
-          }
-        })
-      })
-      this.getBriefOverviewData()
-      this.getIndicationChartData()
+      this.updateHomeView()
     })
     bus.$emit('resetTime')
     window.onresize = () => {
@@ -1341,7 +1443,6 @@ export default {
     }
   },
   created () {
-    this.namespace_code = window.localStorage.getItem('namespace_code')
     clearInterval(this.serviceGovernanceTimer)
     this.serviceGovernanceTimer = null
     this.serviceGovernanceTimer = setInterval(this.switchServiceGovernance, 3000)
@@ -1354,14 +1455,16 @@ export default {
     pieChart,
     treemapChart,
     barStackChart,
-    barChart,
+    // barChart,
     lineColumnChart
   }
 };
 </script>
 
 <style lang="less" scoped>
-.applicationTab{
+  @import "~common/style/variable";
+
+  .applicationTab{
   height: 100%;
 }
 .sf_view_tab{
@@ -1376,13 +1479,10 @@ export default {
     height: 19px;
     line-height: 19px;
     font-size:11px;
-    font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-    font-weight:400;
-    color:rgba(255,255,255,1);
-    color: #898989;
+    color: @gray-06;
     &.active{
       background:rgba(82,82,82,1);
-      color: #ffffff;
+      color: @gray-00;
     }
   }
 }

@@ -26,7 +26,7 @@ export default {
   props: {
     name: {
       type: String,
-      default: 'redio'
+      default: 'radio'
     },
     list: {
       type: Array,
@@ -130,7 +130,7 @@ export default {
       .sf-checkbox__inner{
         display: inline-block;
         position: relative;
-        border: 2px solid @theme-color;
+        border: 2px solid @turq-06;
         border-radius: 0;
         box-sizing: border-box;
         width: 20px;
@@ -142,16 +142,16 @@ export default {
           width: 16px;
           height: 16px;
           margin-top: 0px;
-          // fill: #00a1b2;
+          // fill: @turq-06;
           // stroke-width: 64;
-          // stroke: #00a1b2;
+          // stroke: @turq-06;
           // margin-top: 2px;
           opacity: 0;
         }
       }
       &.is-checked .sf-checkbox__inner {
-        // background-color: @theme-color;
-        border-color: @theme-color;
+        // background-color: @turq-06;
+        border-color: @turq-06;
         img{
           opacity: 1;
         }
@@ -167,10 +167,6 @@ export default {
       }
     }
     .sf-checkbox__label{
-      font-size:14px;
-      font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-      font-weight:400;
-      color:rgba(69,70,70,1);
       line-height: 38px;
       margin-left: 10px;
     }

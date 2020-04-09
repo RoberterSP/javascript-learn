@@ -1,32 +1,45 @@
 <template>
   <div>
-    <el-form class="default-width" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
-      <h4>基本信息</h4>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
+      <DYSplitTitle class="title h3-title-mb" :title="'基本信息'"></DYSplitTitle>
       <!-- 名称 -->
-      <el-form-item class="mt18" label="名称" prop="name">
+      <el-form-item class="default-width" label="名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="请输入名称"></el-input>
       </el-form-item>
       <!-- 代码 -->
-      <el-form-item class="mt37" label="标识" prop="code">
+      <el-form-item class="default-width" label="标识" prop="code">
         <el-input v-model="ruleForm.code" :disabled="!create" placeholder="请输入标识"></el-input>
       </el-form-item>
-      <el-form-item class="mt37" label="描述" prop="info">
+      <el-form-item class="default-width" label="描述" prop="info">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入描述"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
-      <p class="default-label mb10">模版内容(yaml格式)</p>
-      <div class="editor-container" style="width: 100%;">
+      <p class="el-form-item__label">模版内容(yaml格式)</p>
+      <div class="editor-container mb16" style="width: 100%;">
         <yaml-editor ref="jsonEditor" v-model="ruleForm.content" :mode="mode" @changed="onJsonCodeChange"/>
       </div>
       <!-- 操作按钮 -->
-      <div class="btns mt37" v-permission="'settingCenter_configTemplate_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
+      <div v-if="create">
+        <div class="btns" v-permission="'settingCenter_configTemplate_add'">
+          <DYButtonGroup>
+            <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+            <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+          </DYButtonGroup>
+        </div>
+      </div>
+      <div v-else>
+        <div class="btns" v-permission="'settingCenter_configTemplate_edit'">
+          <DYButtonGroup>
+            <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+            <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+          </DYButtonGroup>
+        </div>
       </div>
     </el-form>
   </div>
@@ -101,7 +114,7 @@ export default {
       CONFIG_TEMPLATE_UPDATE(data).then(res => {
         // this.$message('更新成功')
         bus.$emit('openMessage', {
-          message: '更新成功',
+          message: res.data.result,
           type: 'success'
         })
       })
@@ -110,7 +123,7 @@ export default {
       CONFIG_TEMPLATE_UPLOAD(data).then(res => {
         // this.$message('创建成功')
         bus.$emit('openMessage', {
-          message: '创建成功',
+          message: res.data.result,
           type: 'success'
         })
         this.$emit('update')

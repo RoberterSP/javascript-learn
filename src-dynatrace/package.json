@@ -27,8 +27,9 @@
     "vue-clipboard2": "0.3.1",
     "vue-codemirror": "4.0.6",
     "vue-i18n": "7.8.1",
-    "vue-router": "3.0.7",
-    "vuex": "3.0.1"
+    "vue-router": "3.1.6",
+    "vuex": "3.0.1",
+    "lodash": "latest"
   },
   "devDependencies": {
     "autoprefixer": "7.1.2",

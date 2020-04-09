@@ -1,8 +1,17 @@
 <template>
-  <div class="single-sign-on p10">
-    <h2 class="mb30">单点登录白名单</h2>
+  <div>
+    <DYHeader
+      no-gap
+      type="small"
+      class="row-title"
+      title="单点登录白名单"
+    />
 
-    <div class="addPanel" v-if="isAdd">
+    <DYButton v-if="!isAdd" type="primary" class="row-action" @click="isAdd = true"
+              v-permission="'settingCenter_singleSignOn_add'">添加白名单
+    </DYButton>
+
+    <div class="add-panel row-action" v-else>
       <add-form-container
         :isAdd="true"
         :clientDetails="addForm"
@@ -10,17 +19,14 @@
         @saveForm="saveForm"></add-form-container>
     </div>
 
-    <el-button v-else type="primary" @click="isAdd = true" v-permission="'settingCenter_singleSignOn_add'">添加白名单</el-button>
-
-    <div class="table-content">
-      <nt-table
-        :tableData="tableList"
-        :columns="columns"
-        :tableSet="tableSet"
-        :componentsName="'addFormContainer'"
-        @deleteOne="deleteOne"
-        @componentSaveContent="updateRowInof"></nt-table>
-    </div>
+    <nt-table
+      class="row-content"
+      :tableData="tableList"
+      :columns="columns"
+      :tableSet="tableSet"
+      :componentsName="'addFormContainer'"
+      @deleteOne="deleteOne"
+      @componentSaveContent="updateRowInof"/>
   </div>
 </template>
 
@@ -28,12 +34,12 @@
 import ntTable from 'components/ntTable/ntTable.vue'
 import addFormContainer from '@/views/settingCenter/setting/singleSignOn/addForm.vue'
 import {
+  NXMC_SSO_WHITELIST_DELETE_POST,
   NXMC_SSO_WHITELIST_GET,
   NXMC_SSO_WHITELIST_UPDATE_POST,
-  NXMC_SSO_WHITELIST_UPLOAD_POST,
-  NXMC_SSO_WHITELIST_DELETE_POST
+  NXMC_SSO_WHITELIST_UPLOAD_POST
 } from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import {PAGESIZE} from '@/common/util/common.js'
 import bus from '@/assets/eventBus.js'
 
 export default {
@@ -83,9 +89,9 @@ export default {
           code: '',
           disable: false,
           type: 'delete',
-          textAlign: 'right',
+          textAlign: 'center',
           showDel: true, // 删除
-          width: 50
+          width: 60
         }
       ],
       addForm: {}
@@ -179,18 +185,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" scoped>
-.single-sign-on {
-  .h3 {
-    height: 26px;
-    line-height: 26px;
-    margin-bottom: 9px;
-  }
-
-  .table-content {
-    margin-top: 20px;
-  }
-}
-
-</style>

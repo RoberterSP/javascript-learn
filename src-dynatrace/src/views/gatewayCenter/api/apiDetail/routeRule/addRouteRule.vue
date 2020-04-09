@@ -14,11 +14,11 @@
         <el-input type="number" v-model="ruleForm.priority" min=0 placeholder="请输入优先级"></el-input>
       </el-form-item>
 
-      <el-form-item class="mb-30" label="路由流量过滤">
+      <el-form-item label="流量过滤">
         <el-select
           style="width: 100%;"
           v-model="ruleForm.match_type"
-          placeholder="请选择路由流量过滤类型" clearable>
+          placeholder="请选择过滤类型" clearable>
           <el-option
             v-for="item in match_types"
             :key="item.value"
@@ -27,7 +27,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <div class="moreDiv" v-if="ruleForm.match_type==='headers'">
+      <div class="moreDiv pl10 pr10 mb16" v-if="ruleForm.match_type==='headers'">
         <div class="headLine flex-start">
           <div class="line_l">键</div>
           <div class="line_r">值</div>
@@ -45,11 +45,11 @@
           </div>
         </div>
       </div>
-      <el-form-item class="mb-30" label="路由流量分配">
+      <el-form-item label="流量分配">
         <el-select
           style="width: 100%;"
           v-model="ruleForm.route_type"
-          placeholder="请选择路由流量分配类型">
+          placeholder="请选择分配类型">
           <el-option
             v-for="item in route_types"
             :key="item.value"
@@ -58,7 +58,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <div class="moreDiv" v-if="ruleForm.route_type==='mesh_code'">
+      <div class="moreDiv pl10 pr10 mb16" v-if="ruleForm.route_type==='mesh_code'">
         <div class="headLine flex-start">
           <div class="line_l">服务</div>
         </div>
@@ -72,7 +72,7 @@
           </div>
         </div>
       </div>
-      <div class="moreDiv threeLine" v-if="ruleForm.route_type==='weight'">
+      <div class="moreDiv pl10 pr10 mb16 threeLine" v-if="ruleForm.route_type==='weight'">
         <div class="headLine flex-start">
           <div class="line_l">权重</div>
           <div class="line_r">服务</div>
@@ -94,18 +94,28 @@
               </el-form-item>
             </div>
             <el-form-item>
-              <el-button :class="[index===0?'no_visible':'']" type="primary" icon="el-icon-delete" @click="delDestinationKind(index)"></el-button>
+              <DYButton :class="[index===0?'no_visible':'']" type="primary" @click="delDestinationKind(index)">
+                 <DYIcon type="delete" size="14"></DYIcon>
+              </DYButton>
             </el-form-item>
           </div>
           <div class="add-kind">
-            <el-button type="primary" @click="addDestinationKind">添加</el-button>
+            <DYButton @click="addDestinationKind">添加</DYButton>
           </div>
         </div>
       </div>
-      <nt-switch :title="'激活路由规则'" v-model="ruleForm.state" @dyClick="switchChange"></nt-switch>
-      <div class="btns">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
+      <div class="switch_form_item"><nt-switch :title="'激活路由规则'" v-model="ruleForm.state" @dyClick="switchChange"></nt-switch></div>
+      <div class="btns" v-permission="'gatewayCenter_apiDetail_routeRule_add'" v-if="ruleForm.id">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'gatewayCenter_apiDetail_routeRule_edit'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -123,7 +133,7 @@ export default {
       ruleForm: {
         name: '',
         code: '',
-        priority: '',
+        priority: 10,
         state: false,
         match_type: '',
         route_type: 'mesh_code',
@@ -158,9 +168,7 @@ export default {
     },
     meshList: {
       type: Array,
-      default: () => {
-        return []
-      }
+      default: () => []
     }
   },
   computed: {
@@ -173,7 +181,6 @@ export default {
       this.isSubmit = true
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.ruleForm)
           this.$emit('saveContent', this.ruleForm)
         } else {
           console.log('error submit!!')
@@ -217,33 +224,15 @@ export default {
   width: @default-width;
 }
 
-.mt-23 {
-  margin-top: 23px;
-}
-.mt-47 {
-  margin-top: 47px;
-}
-
-.mb-30 {
-  margin-bottom: 30px;
-}
-
 .editPanel {
   &.create {
     background: rgba(242, 242, 242, 1);
   }
   .tilte {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
     margin-bottom: 10px;
   }
   .eventTitle {
-    font-family: @default-font;
     font-size: 20px;
-    color: @default-font-color;
     font-weight: 500;
     line-height: 29px;
     margin-bottom: 26px;
@@ -255,15 +244,15 @@ export default {
 }
 
 .moreDiv{
-  margin-bottom: 22px;
-  padding: 0 10px;
+  // margin-bottom: 22px;
+  // padding: 0 10px;
   user-select: none;
   border: 1px solid #ebebeb;
   border-radius: 3px;
   background: #ffffff;
   .headLine{
     height:40px;
-    background-color: #f8f8f8;
+    background-color: @gray-01;
     display: flex;
     margin-top: 10px;
     .el-form-item__content{
@@ -328,7 +317,7 @@ export default {
     }
     .bodyLine{
       border: 0;
-      margin-top: 0px;
+      margin-top: 0;
       .item_line {
         padding: 5px;
       }

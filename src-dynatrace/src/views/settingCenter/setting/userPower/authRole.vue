@@ -1,14 +1,17 @@
 <template>
-  <div class="auth_container p10">
-    <h2 class="mb30">{{detailData.name}}</h2>
-    <div class="auth_btn">
-      <el-button @click="cancle">取消</el-button>
-      <el-button @click="onSure" type="primary">确认</el-button>
-    </div>
+  <div class="auth_container">
+    <DYHeader class="row-title" :title="detailData.name" type="small" no-gap>
+      <div slot="actions">
+        <DYButtonGroup>
+          <DYButton @click="cancle">取消</DYButton>
+          <DYButton type="primary" @click="onSure">确认</DYButton>
+        </DYButtonGroup>
+      </div>
+    </DYHeader>
     <div class="mt44">
       <div>
         <div class="source_name"><span class="name">资源名称</span> <div class="line"></div></div>
-            <div class="mt18"></div>
+            <div style="margin-top: 18px;"></div>
             <div class="tree_list_container">
                 <el-tree
                     :data="authSourceList"
@@ -35,7 +38,7 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label',
-        disabled: function (data, node) {
+        disabled (data) {
           return !data.state
         }
       },
@@ -139,7 +142,7 @@ export default {
       treeList.forEach(tree => {
         obj[tree.id] = tree
         if (tree.children !== undefined) {
-          this.buildParentList(tree['children'], obj)
+          this.buildParentList(tree.children, obj)
         }
       })
       return obj
@@ -179,6 +182,11 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+  .mt44 {
+    margin-top: 44px;
+  }
+</style>
 <style lang="less">
 .tree_list{
   .el-tree-node__content{
@@ -187,10 +195,5 @@ export default {
 }
 .auth_container {
   position: relative;
-  .auth_btn{
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
 }
 </style>

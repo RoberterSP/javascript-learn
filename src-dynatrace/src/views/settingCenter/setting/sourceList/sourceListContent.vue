@@ -1,5 +1,5 @@
 <template>
-  <div class="strategyContent ptb16 pl12 pr16">
+  <div class="strategyContent">
     <el-form
       class="default-width"
       ref="diagform"
@@ -17,16 +17,16 @@
           clearable
         ></el-cascader>
       </el-form-item>
-      <el-form-item v-if="create" class="mt37" label="标识" prop="code">
+      <el-form-item v-if="create" label="标识" prop="code">
         <el-input v-model.trim="menu_info.code" placeholder="请输入标识" :disabled="menu_info.id !== -1" clearable validate-event></el-input>
       </el-form-item>
-      <el-form-item v-else class="mt37" label="标识" prop="code">
+      <el-form-item v-else label="标识" prop="code">
         <el-input v-model.trim="menu_info.code" placeholder="请输入标识" clearable></el-input>
       </el-form-item>
-      <el-form-item class="mt37" label="标题" prop="label">
+      <el-form-item label="标题" prop="label">
         <el-input v-model.trim="menu_info.label" placeholder="请输入标题" clearable></el-input>
       </el-form-item>
-      <el-form-item class="mt37" label="路由标识" v-if="menu_info.type==='page' || menu_info.type === 'menu'" prop="name">
+      <el-form-item label="路由标识" v-if="menu_info.type==='page' || menu_info.type === 'menu'" prop="name">
         <el-input v-model.trim="menu_info.name" placeholder="请输入路由标识" clearable></el-input>
       </el-form-item>
       <!-- <el-form-item class="mt37" label="组件"  v-if="menu_info.type==='page' || menu_info.type === 'menu'">
@@ -35,7 +35,7 @@
       <el-form-item class="mt37" label="组件路径"  v-if="menu_info.type==='page' || menu_info.type === 'menu'">
         <el-input v-model.trim="menu_info.component_path" placeholder="请输入组件路径" clearable></el-input>
       </el-form-item> -->
-      <el-form-item class="mt37" label="类型" prop="type">
+      <el-form-item label="类型" prop="type">
         <el-select v-model="menu_info.type" placeholder="请选择类型" @change="menuInfoTypeChange">
           <el-option
             v-for="item in menu_type"
@@ -58,8 +58,18 @@
       <el-form-item label="排序" prop="sort">
         <el-input-number :min="1" v-model="menu_info.sort" step-strictly></el-input-number>
       </el-form-item>
-      <el-button type="primary" @click="saveMenu('diagform')">确 定</el-button>
-      <el-button @click="resetForm('diagform')">取 消</el-button>
+      <div class="btns" v-permission="'settingCenter_sourceList_add'" v-if="menu_info.id">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="saveMenu('diagform')">确 定</DYButton>
+          <DYButton @click="resetForm('diagform')">取 消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_sourceList_edit'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="saveMenu('diagform')">确 定</DYButton>
+          <DYButton @click="resetForm('diagform')">取 消</DYButton>
+        </DYButtonGroup>
+      </div>
     </el-form>
   </div>
 </template>
@@ -170,8 +180,8 @@ export default {
           stack.push(item.id)
           if (item.id === id) {
             going = false
-          } else if (item['children']) {
-            walker(item['children'], id)
+          } else if (item.children) {
+            walker(item.children, id)
           } else {
             stack.pop()
           }
@@ -208,7 +218,7 @@ export default {
     saveMenu (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          var data = {
+          let data = {
             parent_id: this.menu_info.superiorItem[this.menu_info.superiorItem.length - 1] || 0,
             title: this.menu_info.label,
             code: this.menu_info.code,
@@ -232,7 +242,7 @@ export default {
                 //   message: '添加成功!'
                 // })
                 bus.$emit('openMessage', {
-                  message: '添加成功！',
+                  message: res.data.result,
                   type: 'success'
                 })
               }
@@ -244,7 +254,7 @@ export default {
                 this.$emit('refresh')
                 // this.$message({message: '编辑成功!'})
                 bus.$emit('openMessage', {
-                  message: '编辑成功！',
+                  message: res.data.result,
                   type: 'success'
                 })
               }
@@ -258,7 +268,7 @@ export default {
     },
     // 接口调用方法
     resource_list_get () {
-      var data = {}
+      let data = {}
       AUTH_SOURCE_LIST_GET(data).then(res => {
         if (res.code === 0) {
           this.tableListData = res.data.resource_list

@@ -1,35 +1,8 @@
-.monitorApplication{
-  .headTitle{
-    width: 100%;
-    background:rgba(255,255,255,1);
-    border-bottom: 1px solid rgba(124,56,161,1);
-    span{
+@import "~common/style/variable";
 
-      font-size:28px;
-      font-family:PingFangSC-Regular,PingFang SC;
-      font-weight:400;
-      color:rgba(69,70,70,1);
-      line-height:40px;
-    }
-    .head_title_l{
-      display: flex;
-      align-items: center;
-    }
-  }
-  .el-button {
-    border:1px solid rgba(230,230,230,1);
-  }
-  .filter_div{
-  }
-  .tit{
-    font-size:20px;
-    font-family:PingFangSC-Medium,PingFang SC;
-    font-weight:500;
-    color:rgba(69,70,70,1);
-    line-height:28px;
-  }
+.monitorApplication{
   .health{
-    background-color: #fff;
+    background-color: @gray-00;
     min-height: 390px;
     .circleDiv{
       display: flex;
@@ -48,13 +21,8 @@
             display: flex;
             flex-direction: column;
             font-size:16px;
-            font-family:PingFangSC-Regular,PingFang SC;
-            font-weight:400;
-            color:rgba(69,70,70,1);
             line-height:22px;
             margin-left: 20px;
-            display: flex;
-            flex-direction: column;
             justify-content: flex-end;
             margin-bottom: 10px;
             div.val{
@@ -76,10 +44,10 @@
                 font-size: 20px;
                 margin-left: 10px;
                 &.red{
-                  color: #DC172A;
+                  color: @red-05;
                 }
                 &.yellow{
-                  color: #F5D30F;
+                  color: @warning-color;
                 }
                 &.green{
                   color: #2AB06F;
@@ -99,45 +67,7 @@
   }
   .section{
     padding: 16px;
-    background-color: #fff;
-    .tabDiv{
-      cursor: pointer;
-      height: 30px;
-      .tab_item {
-        position: relative;
-        flex: 1;
-        font-size: 12px;
-        font-family: PingFangSC-Regular, PingFang SC, serif;
-        font-weight: 400;
-        color: rgba(96,96,96,1);
-        line-height: 29px;
-
-        &+.tab_item{
-          margin-left: 4px;
-        }
-
-        &.is_active{
-          color:rgba(255,255,255,1);
-          cursor: pointer;
-          background-color: @purple-12;
-        }
-
-        &::after {
-          content: " ";
-          height: 1px;
-          width: 100%;
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          transition: height .1s ease-out;
-          background-color: @purple-12;
-        }
-
-        &:not(.is_active):hover::after {
-          height: 4px;
-        }
-      }
-    }
+    background-color: @gray-00;
     .column_chart{
       min-height: 436px;
     }
@@ -167,7 +97,6 @@
           margin-left: 6px;
           font-size: 12px;
           white-space: nowrap;
-          color: rgb(51, 51, 51);
           font-weight: normal;
           text-overflow: ellipsis;
           color: rgb(51, 51, 51);
@@ -176,7 +105,7 @@
     }
   }
   .table_view{
-    background-color: #fff;
+    background-color: @gray-00;
     .my-table{
       table{
         border-collapse: separate;
@@ -203,18 +132,14 @@
             position: relative;
             &:hover{
               td{
-                background-color:rgba(0,0,0,0);
-                background:rgba(0,0,0,0);
+                background: rgba(0, 0, 0, 0);
               }
             }
             td{
-              padding: 15px 0px;
+              padding: 15px 0;
               .title.highlight_label{
-                font-size: 14px;
-                font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-                font-weight: 400;
                 line-height: 16px;
-                color:rgba(0,161,178,1);
+                color:@turq-06;
               }
               .title{
                 width: 100%;
@@ -236,21 +161,27 @@
                     justify-content: center;
                   }
                 }
+                &.align-width-word {
+                  .title {
+                    position: relative;
+                    right: 17px;
+                  }
+                }
               }
               .slip{
                 height:8px;
-                background:@purple-8;
+                background:@purple-04;
               }
             }
             .opt_cell{
               .tb_filter{
-                .iconfilter{
+                .icon_filter{
                   font-size: 15px;
                   width: 100%;
                 }
               }
               .tb_filter, .tb_more{
-                color:rgba(0,161,178,1);
+                color:@turq-06;
                 width: 24px;
                 height: 24px;
                 text-align: center;
@@ -261,7 +192,7 @@
                   text-decoration: unset;
                   outline: none;
                   background-color:rgba(183,183,183,0.3);
-                  border-radius:3px;
+                  border-radius:@default-border-radius;
                 }
                 img{
                   width: 24px;
@@ -277,8 +208,8 @@
                   width:80px;
                   height:29px;
                   background:rgba(255,255,255,1);
-                  border-radius:3px;
-                  border:1px solid rgba(0,161,178,1);
+                  border-radius: @default-border-radius;
+                  border:1px solid @turq-06;
                   text-align: center;
                   line-height: 29px;
                   z-index: 5;
@@ -303,16 +234,12 @@
         position: absolute;
         top: 990px;
         left: 520px;
-        background-color: #fff;
         min-width:384px;
-        background:rgba(255,255,255,1);
-        border-radius:4px;
-        border:1px solid rgba(0,161,178,1);
+        background: rgba(255, 255, 255, 1);
+        border-radius: @default-border-radius;
+        border:1px solid @turq-06;
         padding: 17px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
         color:rgba(69,70,70,1);
-        font-size:14px;
         line-height:20px;
         .name{
           padding-bottom: 1px;
@@ -350,9 +277,7 @@
   width:160px;
   height:142px;
   background:rgba(69,70,70,1);
-  border-radius:3px;
-  font-family:PingFangSC-Regular,PingFang SC;
-  font-weight:400;
+  border-radius:@default-border-radius;
   color:rgba(255,255,255,1);
   position: absolute;
   text-align: left;
@@ -362,12 +287,11 @@
     line-height:52px;
     padding: 0 12px;
     background:rgba(109,109,109,1);
-    border-radius:3px 3px 0px 0px;
+    border-radius: @default-border-radius @default-border-radius 0 0;
     font-size:20px;
   }
   .line{
     font-size:14px;
-    line-height:20px;
     height:30px;
     line-height:30px;
     padding: 0 12px;
@@ -378,7 +302,7 @@
   span{
     width:24px;
     height:24px;
-    border-radius:3px;
+    border-radius: @default-border-radius;
     display: inline-block;
     line-height:24px;
     text-align: center;
@@ -390,7 +314,7 @@
     }
     i{
       font-size: 10px;
-      color: #fff;
+      color: @gray-00;
       font-weight: bolder;
     }
   }

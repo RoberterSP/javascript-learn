@@ -1,8 +1,8 @@
 <template>
-  <div class="third-party p10">
-    <h2 class="mb30">服务供应商</h2>
+  <div>
+    <DYHeader class="row-title" title="服务供应商" type="small" no-gap />
 
-    <div class="mb20 add-content" v-if="isAdd">
+    <div class="row-action add-panel" v-if="isAdd">
       <add-third-party-form
         :isAdd="true"
         :clientDetails="addForm"
@@ -10,11 +10,11 @@
         @saveForm="saveForm"></add-third-party-form>
     </div>
 
-    <div v-else class="mb30">
-      <el-button type="primary" @click="isAdd = true" v-permission="'settingCenter_namespaceList_add'">添加服务供应商</el-button>
+    <div v-else class="row-action">
+      <DYButton type="primary" @click="isAdd = true" v-permission="'settingCenter_namespaceList_add'">添加服务供应商</DYButton>
     </div>
 
-    <div class="table-content">
+    <div class="row-content">
       <nt-table
         :tableData="tableList"
         :columns="columns"
@@ -78,16 +78,16 @@ export default {
           name: '启用/禁用', // 表头名字
           code: 'state', // 表身显示值
           type: 'switch',
-          textAlign: 'left',
-          disable: false
+          disable: false,
+          textAlign: 'right'
         },
         {
           name: '删除',
           code: '',
           type: 'delete',
-          textAlign: 'right',
+          textAlign: 'center',
           showDel: true, // 删除
-          width: 50,
+          width: 60,
           disable: false
         }
       ],
@@ -207,29 +207,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" scoped>
-@import "~common/style/variable";
-.third-party {
-  .h3 {
-    height: 26px;
-    line-height: 26px;
-    margin-bottom: 9px;
-  }
-  .add-third-party-container {
-    width: 40%;
-    min-width: 400px;
-    padding: 8px;
-    padding-left: 6px;
-  }
-
-  .add-content {
-    padding: 21px 0 10px 12px;
-    background: @default-gray;
-  }
-  .table-content {
-    margin-top: 22px;
-  }
-}
-
-</style>

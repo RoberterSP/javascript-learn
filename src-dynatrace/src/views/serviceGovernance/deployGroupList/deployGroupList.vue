@@ -1,82 +1,84 @@
 <template>
-  <div class="wrapper deployGroupList">
+  <div class="wrapper">
     <stepper :stepper="stepper" theme="blue"></stepper>
-    <div class="apiList" >
-      <div class="banner">
-        <div class="head_title_l">
-          <div class="bannericon iconfont iconAppliance"></div>
-          <div class="title">部署组</div>
-        </div>
-      </div>
+    <div class="">
+      <DYPageHeader title="部署组" icon="Appliance" theme="blue" @eventGetHeight="getHeight" />
       <div class="m20">
         <!-- <input type="text" placeholder="过滤条件"/> -->
-        <tags-input ref="curTagsInput" :filterKeys="filterTagsInputData" :keysValue="keysValue" @returnFilterFunc="returnFilterFunc" :userInputQuery="true"></tags-input>
+<!--        <tags-input ref="curTagsInput" :filterKeys="filterTagsInputData" :keysValue="keysValue"-->
+<!--                    @returnFilterFunc="returnFilterFunc" :userInputQuery="true"></tags-input>-->
+
+        <DYFilter
+          class="input-filter"
+          :filtersModel="filtersModel"
+          :filterKeys="filterTagsInputData"
+          :quickSearch="{label: '应用名称', key: 'name'}"
+          @returnFilterFunc="returnFilterFunc"
+        />
       </div>
-      <div class="api-list flex" >
+      <div class="api-list flex" :style="{minHeight: appHeight + 'px'}">
         <div class="api-left">
-          <div class="filter">
-            <div class="filter-item" v-for="(filter, index) in filterKeys" :key="index" :class="{'select':filter.selected}" @click="tofilter(filter, index)">
-              <div class="up">{{filter.name}}</div>
-              <div class="down">
-                <div>{{filter.select_name}}</div>
-                <div class="cursor_pointer">编辑</div>
+          <left-filter :filter-list="filterKeys" @click="tofilter"/>
+        </div>
+
+        <div class="app-right">
+          <DYCard class="full-height">
+            <template v-if="this_page === 'list'">
+              <DYHeader class="row-title" :title="`${tableData.length}个部署组`" type="small" no-gap/>
+              <div class="row-content">
+                <my-table
+                  :tableData="tableData"
+                  :columns="columns"
+                  :tableSet="tableSet"
+                  @changeSwitch="changeSwitch"
+                  @readDetail="readDetail"
+                ></my-table>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="api-right" v-if="this_page === 'list'">
-          <div class="api-list-title">
-            <div class="head">{{tableData.length}}个部署组</div>
-          </div>
-          <div class="api-data-list">
-            <my-table
-              :tableData="tableData"
-              :columns="columns"
-              :tableSet="tableSet"
-              @changeSwitch="changeSwitch"
-              @readDetail="readDetail"
-            ></my-table>
-          </div>
-        </div>
-        <!-- 选择过滤 -->
-        <div class="api-right" v-if="this_page === 'filter-view'">
-          <div class="head_title pt16 pl16">{{filterViewData.title}}</div>
-          <div class="desc">{{filterViewData.desc}}</div>
-          <!-- ntredio -->
-          <nt-redio class="category-list" :name="filterViewData[keysValue[0]]" :list="filterViewData.list" :keyValue="redioKeyValue" v-on:redioChecked="redioChecked" v-if="hardRender"></nt-redio>
-          <div class="footer" v-if="showOptTooltip">
-            <div class="tag default-label">是否保存修改？</div>
-            <el-button class="btn-cancel" @click="cancelPage(filterViewData)">取消</el-button>
-            <el-button class="btn-save" :disabled="!isNeedSave" type="primary" @click="savePage(filterViewData)">保存</el-button>
-          </div>
+            </template>
+
+            <!-- 选择过滤 -->
+            <template v-if="this_page === 'filter-view'">
+              <DYHeader :title="filterViewData.title" type="small" no-gap/>
+              <div class="row-desc">{{filterViewData.desc}}</div>
+
+              <!-- ntRadio -->
+              <nt-radio class="category-edit-list" :name="filterViewData[keysValue[0]]" :list="filterViewData.list"
+                        :keyValue="radioKeyValue" v-on:radioChecked="radioChecked" v-if="hardRender"></nt-radio>
+
+            </template>
+          </DYCard>
         </div>
       </div>
     </div>
+
+    <DYConfirmationDialog
+      :show="showOptTooltip"
+      message="是否保存修改？"
+      okText="保存"
+      :okDisabled="!isNeedSave"
+      @onOk="savePage"
+      @onCancel="cancelPage"
+    />
+
   </div>
 </template>
 
 <script>
-import './deployGroupList.less'
 import stepper from 'components/stepper/stepper.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import ntRedio from 'components/base/redio.vue'
+import ntRadio from 'components/base/radio.vue'
 import ntCheckbox from 'components/base/checkbox.vue'
 import myTable from 'components/ntTable/ntTable.vue'
-import tagsInput from '@/components/tagsInput/tagsInput.vue'
-import {
-  MESH_DEPLOY_GROUP_LIST,
-  MESH_DEPLOY_GROUP_INFO,
-  NXMC_MESH_LANG_GET,
-  NXMC_MESH_LIST_GET,
-  NXMC_THIRD_PARTY_LIST_GET
-  // MESH_DEPLOY_GROUP_STOP_POST
-} from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import leftFilter from '@/components/leftFilter/leftFilter.vue'
+import {MESH_DEPLOY_GROUP_LIST, NXMC_MESH_LANG_GET, NXMC_MESH_LIST_GET, NXMC_THIRD_PARTY_LIST_GET} from '@/api'
+import {PAGESIZE} from '@/common/util/common.js'
+
 let DEFAULT_NAME = '任意'
 
 export default {
   data () {
     return {
+      appHeight: '',
+      pageHeaderHeight: '',
       // 强制渲染
       hardRender: true,
       // 是否需要保存过滤条件
@@ -106,35 +108,33 @@ export default {
         {
           name: '名称', // 表头名
           code: 'name', // 表身
-          width: 300,
           type: 'edit',
           showicon: 'iconfont',
           icon_url: 'bylang',
-          default_icon: 'Appliance'
+          default_icon: 'Appliance',
+          width: 300
         }, {
           name: '服务', // 表头名字
           code: 'mesh_code', // 表身显示值
           type: 'text'
         }, {
           name: '服务供应商', // 表头名字
-          code: 'third_party_code', // 表身显示值
+          code: 'third_party_name', // 表身显示值
           type: 'text'
         }, {
           name: '负载均衡', // 表头名字
           code: 'lb_type_text', // 表身显示值
-          type: 'text',
-          width: 90
+          type: 'text'
         }, {
           name: '版本', // 表头名字
           code: 'version', // 表身显示值
-          type: 'text',
-          width: 130
+          type: 'text'
         }, {
           name: '状态', // 表头名字
           code: 'status', // 表身显示值
           type: 'text',
-          textAlign: 'right',
-          width: 80
+          width: 80,
+          textAlign: 'right'
         }
       ],
       // 过滤组件绑定的值
@@ -206,7 +206,7 @@ export default {
         type: 'select_obj',
         list: []
       },
-      redioKeyValue: ['value', 'label'],
+      radioKeyValue: ['value', 'label'],
       checkboxKeyValue: ['value', 'label'],
       nameObj: ''
     }
@@ -221,6 +221,9 @@ export default {
     // }
   },
   methods: {
+    getHeight (value) {
+      this.pageHeaderHeight = value
+    },
     // 过滤条件 调用
     returnFilterFunc (data) {
       console.log('过滤条件回传', data)
@@ -251,8 +254,8 @@ export default {
               }
             } else {
               // radio
-              if (item.value === el[this.redioKeyValue[0]]) {
-                filterObj.select_name = el[this.redioKeyValue[1]]
+              if (item.value === el[this.radioKeyValue[0]]) {
+                filterObj.select_name = el[this.radioKeyValue[1]]
                 el.default = true
               } else {
                 el.default = false
@@ -268,7 +271,9 @@ export default {
       // 执行查询
       this.filterSearchFunc(data)
     },
-    tofilter (filter, filterIndex) {
+    tofilter (code, filter, filterIndex) {
+      // topHeader: 44px & stepper: 30px & filter: 72px & confirm: 56px & pageHeader: this.pageHeaderHeight
+      this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 202
       this.hardRender = false
       this.this_page = 'filter-view'
       this.filterKeys = JSON.parse(JSON.stringify(this.filterKeysCopy))
@@ -284,21 +289,17 @@ export default {
       })
       console.log('this.filterViewData', filter)
     },
-    redioChecked (name, checked) {
-      console.log('redioChecked', name, checked)
+    radioChecked (name, checked) {
+      console.log('radioChecked', name, checked)
       this.showOptTooltip = true
       if (name && checked !== undefined) {
         // 点击radio 做处理
         let obj = this.filterKeys.find(row => row[this.keysValue[0]] === name)
         obj.list.forEach(el => {
-          if (el[this.redioKeyValue[0]] === checked) {
+          if (el[this.radioKeyValue[0]] === checked) {
             el.default = true
             // 当选中的内容有变 才放开保存按钮
-            if (el[this.redioKeyValue[1]] !== obj.select_name) {
-              this.isNeedSave = true
-            } else {
-              this.isNeedSave = false
-            }
+            this.isNeedSave = el[this.radioKeyValue[1]] !== obj.select_name
           } else {
             el.default = false
           }
@@ -309,23 +310,26 @@ export default {
       this.$forceUpdate()
       console.log('this.filterKeys', this.filterKeys)
     },
+
     // 取消
-    cancelPage (filterViewData) {
+    cancelPage () {
+      // topHeader: 44px & stepper: 30px & filter: 72px & pageHeader: this.pageHeaderHeight
+      this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 146
       this.this_page = ''
       // 当有备份时  页面之前保存过
       this.filterKeys = JSON.parse(JSON.stringify(this.filterKeysCopy))
       if (this.filterViewData) {
-        let filterViewData = this.filterKeys.find(row => row[this.keysValue[0]] === this.filterViewData[this.keysValue[0]])
-        this.filterViewData = filterViewData
+        this.filterViewData = this.filterKeys.find(row => row[this.keysValue[0]] === this.filterViewData[this.keysValue[0]])
       }
       this.$nextTick(() => {
         this.this_page = 'list'
       })
       this.showOptTooltip = false
     },
+
     // 过滤查询
     filterSearchFunc (filtersModel) {
-      let filterParams = { mesh_codes: [] }
+      let filterParams = {mesh_codes: []}
       filtersModel.forEach(item => {
         if (item.value !== DEFAULT_NAME) filterParams[item.code] = item.value
       })
@@ -343,10 +347,13 @@ export default {
       console.log('postParams', postParams)
       this.deploy_group_list_get(postParams)
     },
+
     // 确定
-    savePage (filterViewData) {
+    savePage () {
+      // topHeader: 44px & stepper: 30px & filter: 72px & pageHeader: this.pageHeaderHeight
+      this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 146
       let filtersModel = []
-      if (this.nameObj && this.nameObj !== undefined) {
+      if (this.nameObj) {
         filtersModel.push(this.nameObj)
       }
       this.filterKeys.forEach(data => {
@@ -366,20 +373,22 @@ export default {
             }
           } else {
             // radio
-            if (item.default && item[this.redioKeyValue[1]] !== DEFAULT_NAME) {
-              data.select_name = item[this.redioKeyValue[1]]
+            if (item.default && item[this.radioKeyValue[1]] !== DEFAULT_NAME) {
+              data.select_name = item[this.radioKeyValue[1]]
               filtersModel.push({
                 key: data[this.keysValue[1]],
                 code: data[this.keysValue[0]],
-                value_label: item[this.redioKeyValue[1]],
-                value: item[this.redioKeyValue[0]]
+                value_label: item[this.radioKeyValue[1]],
+                value: item[this.radioKeyValue[0]]
               })
             }
           }
         })
       })
+
+      this.filtersModel = filtersModel
       console.log('保存修改 页面的默认过滤条件', filtersModel)
-      this.$refs['curTagsInput'].setModelValues(filtersModel)
+      // this.$refs.curTagsInput.setModelValues(filtersModel)
       this.showOptTooltip = false
       this.filterKeysCopy = JSON.parse(JSON.stringify(this.filterKeys))
       // 执行查询
@@ -410,7 +419,7 @@ export default {
       let _this = this
       MESH_DEPLOY_GROUP_LIST(params).then(res => {
         let _data = res.data.deploy_groups
-        _data.forEach(data => {
+        _data.forEach(async data => {
           if (data.lb_type === 'ROUND_ROBIN') {
             data.lb_type_text = '轮询'
           } else if (data.lb_type === 'LEAST_REQUEST') {
@@ -418,12 +427,7 @@ export default {
           } else if (data.lb_type === 'RANDOM') {
             data.lb_type_text = '随机'
           }
-          MESH_DEPLOY_GROUP_INFO({deploy_group_id: data.id}).then(resp => {
-            if (resp.code === 0) {
-              _this.$set(data, 'status', resp.data.deploy_group_info.status === 'stop' ? '已停止' : '运行中')
-              _this.$set(data, 'total_node_num', resp.data.deploy_group_info.total_node_num)
-            }
-          })
+          _this.$set(data, 'status', data.status === 'stop' ? '已停止' : '运行中')
         })
         if (!this.$_hasRoute('deployGroupDetail')) {
           this.$set(this.columns[0], 'type', 'text')
@@ -502,6 +506,8 @@ export default {
     }
   },
   mounted () {
+    // topHeader: 44px & stepper: 30px & filter: 72px & pageHeader: this.pageHeaderHeight
+    this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 146
   },
   created () {
     this.getMeshList()
@@ -515,13 +521,30 @@ export default {
   },
   components: {
     stepper,
-    ntRedio,
+    ntRadio,
     ntCheckbox,
-    splitTitle,
     myTable,
-    tagsInput
+    leftFilter
   }
 }
 </script>
+
 <style scoped lang="less">
+  @import "~common/style/variable";
+
+  .api-list {
+    // min-height: calc(100vh - 74px);
+    padding: 0 0 16px;
+    position: relative;
+
+    .api-left {
+      width: 238px;
+    }
+
+    .api-right {
+      background-clip: content-box;
+
+    }
+  }
+
 </style>

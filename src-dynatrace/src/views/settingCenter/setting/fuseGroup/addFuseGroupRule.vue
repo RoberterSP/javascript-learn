@@ -2,15 +2,15 @@
   <div class="">
     <!-- 表单 -->
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
-      <split-title class="title" :title="'基本信息'"></split-title>
-      <el-form-item class="default-width mt-34" label="名称" prop="name">
+      <DYSplitTitle class="title h3-title-mb" :title="'基本信息'"></DYSplitTitle>
+      <el-form-item class="default-width" label="名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="例如：订单相关" :disabled="ruleForm.code==='default'"></el-input>
       </el-form-item>
       <el-form-item class="default-width" label="标识" prop="code">
         <el-input v-model="ruleForm.code" placeholder="例如：order_gp"
                   :disabled="ruleForm.code==='default' || !!ruleForm.id"></el-input>
       </el-form-item>
-      <split-title class="title" :title="'移动窗口'"></split-title>
+      <DYSplitTitle class="title h3-title-mb h3-title-pt" :title="'移动窗口'"></DYSplitTitle>
       <div class="move-box">
         <div class="progress-per">
           <ntSlider v-model="slider"
@@ -27,7 +27,7 @@
           </ntSlider>
         </div>
       </div>
-      <div class="left-right">
+      <div class="left-right mb16">
         <div class="rolling_window">
           <div>时间粒度：</div>
           <el-form-item class="granularity" prop="granularity">
@@ -41,81 +41,87 @@
             </el-select>
             <!-- <el-input class="default-width input-right" v-model="ruleForm.granularity" placeholder="请输入内容"></el-input> -->
           </el-form-item>
-<!--          <div class="unit">分钟</div>-->
+          <!--          <div class="unit">分钟</div>-->
         </div>
-<!--        <div class="rolling_window">-->
-<!--          <div>个数：</div>-->
-<!--          <el-form-item class="granularity" prop="rolling_window">-->
-<!--            <el-select v-model="ruleForm.rolling_window" @change="resetTime" placeholder="请选择">-->
-<!--              <el-option-->
-<!--                v-for="item in numList"-->
-<!--                :key="item"-->
-<!--                :label="item"-->
-<!--                :value="item">-->
-<!--              </el-option>-->
-<!--            </el-select>-->
-<!--            &lt;!&ndash; <el-input class="default-width input-right" v-model="ruleForm.rolling_window" placeholder="请输入内容"></el-input> &ndash;&gt;-->
-<!--          </el-form-item>-->
-<!--          <div class="unit">个</div>-->
-<!--        </div>-->
+        <!--        <div class="rolling_window">-->
+        <!--          <div>个数：</div>-->
+        <!--          <el-form-item class="granularity" prop="rolling_window">-->
+        <!--            <el-select v-model="ruleForm.rolling_window" @change="resetTime" placeholder="请选择">-->
+        <!--              <el-option-->
+        <!--                v-for="item in numList"-->
+        <!--                :key="item"-->
+        <!--                :label="item"-->
+        <!--                :value="item">-->
+        <!--              </el-option>-->
+        <!--            </el-select>-->
+        <!--            &lt;!&ndash; <el-input class="default-width input-right" v-model="ruleForm.rolling_window" placeholder="请输入内容"></el-input> &ndash;&gt;-->
+        <!--          </el-form-item>-->
+        <!--          <div class="unit">个</div>-->
+        <!--        </div>-->
       </div>
-      <split-title class="title" :title="'阈值'"></split-title>
+      <DYSplitTitle class="title h3-title-mb h3-title-pt" :title="'阈值'"></DYSplitTitle>
       <div class="threshold">
-        <div class="threshold-name">调用次数阈值</div>
-        <div class="move-box">
-          <div class="progress-per">
-            <ntSlider v-model="ruleForm.threshold"
-                      start-tooltip="bottom"
-                      show-input
-                      :resident-tooltip="true"
-                      :show-input-controls="false"
-                      :min="0"
-                      :max="50"
-                      :marks="{0: '0次', 50: '50次'}"
-                      :format-tooltip="v => v + ' 次'"
-                      class="format_width">
-            </ntSlider>
+        <div>
+          <div class="threshold-name el-form-item__label">调用次数阈值</div>
+          <div class="move-box">
+            <div class="progress-per">
+              <ntSlider v-model="ruleForm.threshold"
+                        start-tooltip="bottom"
+                        show-input
+                        :resident-tooltip="true"
+                        :show-input-controls="false"
+                        :min="0"
+                        :max="50"
+                        :marks="{0: '0次', 50: '50次'}"
+                        :format-tooltip="v => v + ' 次'"
+                        class="format_width">
+              </ntSlider>
 
-            <div slot="reference" class="default_circle"
-                 :style="{'top': '', 'left': `calc(${defaultFuseGroup.threshold / 50} * 440px - 8px)`}"
-                 v-if="ruleForm.code !== 'default'"></div>
-            <div class="resident-tooltip disabled" :style="{'top': '35px', 'left': `calc(${defaultFuseGroup.threshold / 50} * 440px - 30px)`}"
-                 v-if="ruleForm.code !== 'default'">{{this.defaultFuseGroup.threshold}}次
+              <div slot="reference" class="default_circle"
+                   :style="{'top': '', 'left': `calc(${defaultFuseGroup.threshold / 50} * 440px - 8px)`}"
+                   v-if="ruleForm.code !== 'default'"></div>
+              <div class="resident-tooltip disabled"
+                   :style="{'top': '35px', 'left': `calc(${defaultFuseGroup.threshold / 50} * 440px - 30px)`}"
+                   v-if="ruleForm.code !== 'default'">{{this.defaultFuseGroup.threshold}}次
+              </div>
             </div>
+            <span class="demonstration">次</span>
           </div>
-          <span class="demonstration">次</span>
         </div>
-        <div class="threshold-name">错误比例阈值</div>
-        <div class="move-box">
-          <div class="progress-per">
-            <ntSlider
-              start-tooltip="bottom"
-              v-model="ruleForm.err_percent_hundred"
-              slider-type="error"
-              show-input
-              :resident-tooltip="true"
-              :show-input-controls="false"
-              :min="0"
-              :max="100"
-              :marks="{0: '0%', 100: '100%'}"
-              :format-tooltip="v => v + '%'"
-              :tooltip-class="'custom-tooltip'"
-              class="format_width">
-            </ntSlider>
 
-            <div class="default_circle"
-                 :style="{'top': '', 'left': `calc(${defaultFuseGroup.err_percent} * 440px - 8px)`}"
-                 v-if="ruleForm.code !== 'default'"></div>
-            <div class="resident-tooltip disabled"
-                 :style="{'top': '35px', 'left': `calc(${defaultFuseGroup.err_percent} * 440px - 30px)`}"
-                 v-if="ruleForm.code !== 'default'">{{parseInt(defaultFuseGroup.err_percent * 100)}}%
+        <div>
+          <div class="threshold-name el-form-item__label">错误比例阈值</div>
+          <div class="move-box">
+            <div class="progress-per">
+              <ntSlider
+                start-tooltip="bottom"
+                v-model="ruleForm.err_percent_hundred"
+                slider-type="error"
+                show-input
+                :resident-tooltip="true"
+                :show-input-controls="false"
+                :min="0"
+                :max="100"
+                :marks="{0: '0%', 100: '100%'}"
+                :format-tooltip="v => v + '%'"
+                :tooltip-class="'custom-tooltip'"
+                class="format_width">
+              </ntSlider>
+
+              <div class="default_circle"
+                   :style="{'top': '', 'left': `calc(${defaultFuseGroup.err_percent} * 440px - 8px)`}"
+                   v-if="ruleForm.code !== 'default'"></div>
+              <div class="resident-tooltip disabled"
+                   :style="{'top': '35px', 'left': `calc(${defaultFuseGroup.err_percent} * 440px - 30px)`}"
+                   v-if="ruleForm.code !== 'default'">{{parseInt(defaultFuseGroup.err_percent * 100)}}%
+              </div>
             </div>
+            <span class="demonstration">%</span>
           </div>
-          <span class="demonstration">%</span>
         </div>
       </div>
 
-      <split-title class="title" :title="'熔断恢复时间设置'"></split-title>
+      <DYSplitTitle class="title h3-title-mb h3-title-pt" :title="'熔断恢复时间设置'"></DYSplitTitle>
       <div class="fuse-time">
         <div class="move-box">
           <div class="slider-box">
@@ -153,7 +159,7 @@
             </div>
           </div>
         </div>
-        <div class="fuse-item">
+        <div class="fuse-item mb16">
           <div>熔断后，经过</div>
           <el-form-item class="granularity" prop="min_recovery_time">
             <el-input-number :controls="false" class="default-width" v-model="ruleForm.min_recovery_time"
@@ -172,53 +178,68 @@
           <div>秒自动恢复关闭状态</div>
         </div>
       </div>
-      <split-title class="title" :title="'异常判定类型'"></split-title>
-      <div class="checkbox">
-        <el-checkbox v-model="ruleForm.check_types_arr[0]">HTTP通信异常</el-checkbox>
-      </div>
-      <el-form-item class="checkbox" prop="need_check_codes" ref="need_check_codes">
-        <el-checkbox v-model="ruleForm.check_types_arr[1]">业务功能异常</el-checkbox>
-        <div class="text" v-if="ruleForm.check_types_arr[1]">指定异常码</div>
-        <div class="sf-tagsinput" v-if="ruleForm.check_types_arr[1]">
-          <div class="tagsinput_values">
-            <span class="tag_item" v-for="(item, index) in ruleForm.need_check_codes_arr" :key="index">
-              <span class="tag_val" v-if="item||item==0">{{item}}</span>
-              <span class="tags_remove" v-if="item||item==0" @click="removeTag(index)"><i
-                class="el-icon-close"></i></span>
-            </span>
-            <div class="tagsinput_input">
-              <input ref="tags_input" class="tags_input" type="text" placeholder="请输入指定异常码回车键结束" size="11"
-                     @keyup.enter="tagsInputkeyupEnter($event)" v-onlyNumber>
+      <DYSplitTitle class="title h3-title-mb h3-title-pt" :title="'异常判定类型'"></DYSplitTitle>
+      <el-form-item>
+        <div class="checkbox">
+          <el-checkbox v-model="ruleForm.check_types_arr[0]">HTTP通信异常</el-checkbox>
+        </div>
+        <el-form-item class="checkbox" prop="need_check_codes" ref="need_check_codes">
+          <el-checkbox v-model="ruleForm.check_types_arr[1]">业务功能异常</el-checkbox>
+          <div class="text" v-if="ruleForm.check_types_arr[1]">指定异常码</div>
+
+          <div class="sf-tagsinput" v-if="ruleForm.check_types_arr[1]">
+            <div class="tagsinput_values">
+              <span class="tag_item" v-for="(item, index) in ruleForm.need_check_codes_arr" :key="index">
+                <span class="tag_val" v-if="item||item==0">{{item}}</span>
+                <span class="tags_remove" v-if="item||item==0" @click="removeTag(index)">
+                  <DYIcon type="delete" class="iconClose" size="14"></DYIcon>
+                </span>
+              </span>
+              <div class="tagsinput_input">
+                <input ref="tags_input" class="tags_input" type="text" placeholder="请输入指定异常码回车键结束" size="11"
+                       @keyup.enter="tagsInputkeyupEnter($event)" v-onlyNumber>
+              </div>
             </div>
+          </div>
+
+        </el-form-item>
+        <div class="checkbox">
+          <el-checkbox v-model="ruleForm.check_types_arr[2]">请求响应时间异常</el-checkbox>
+          <div class="text" v-if="ruleForm.check_types_arr[2]">响应时间</div>
+          <div class="move-box" v-if="ruleForm.check_types_arr[2]">
+            <div class="progress-per">
+              <ntSlider
+                v-model="ruleForm.max_response_time"
+                show-input
+                :show-input-controls="false"
+                :min="0"
+                :max="60"
+                start-tooltip="bottom"
+                :resident-tooltip="true"
+                :marks="{0: '0秒', 60: '60秒'}"
+                :format-tooltip="v => v + ' 秒'"
+                :tooltip-class="'custom-tooltip'"
+                class="format_width">
+              </ntSlider>
+            </div>
+            <span class="demonstration">秒</span>
           </div>
         </div>
       </el-form-item>
-      <div class="checkbox">
-        <el-checkbox v-model="ruleForm.check_types_arr[2]">请求响应时间异常</el-checkbox>
-        <div class="text" v-if="ruleForm.check_types_arr[2]">响应时间</div>
-        <div class="move-box" v-if="ruleForm.check_types_arr[2]">
-          <div class="progress-per">
-            <ntSlider
-              v-model="ruleForm.max_response_time"
-              show-input
-              :show-input-controls="false"
-              :min="0"
-              :max="60"
-              start-tooltip="bottom"
-              :resident-tooltip="true"
-              :marks="{0: '0秒', 60: '60秒'}"
-              :format-tooltip="v => v + ' 秒'"
-              :tooltip-class="'custom-tooltip'"
-              class="format_width">
-            </ntSlider>
-          </div>
-          <span class="demonstration">秒</span>
-        </div>
+      <div class="switch_form_item">
+        <nt-switch :title="'启用熔断组'" v-model="ruleForm.state" @dyClick="switchChange"></nt-switch>
       </div>
-      <nt-switch class="switch" :title="'启用熔断组'" v-model="ruleForm.state" @dyClick="switchChange"></nt-switch>
-      <div class="btns" v-permission="'settingCenter_fusingGroup_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
+      <div class="btns" v-permission="'settingCenter_fusingGroup_edit'" v-if="!ruleForm.id">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_fusingGroup_add'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -229,9 +250,8 @@ import {mapState} from 'vuex'
 import ntSwitch from 'components/base/switch.vue'
 import ntSlider from 'components/base/slider/slider.vue'
 
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 import {UPDATE_CIRCUIT_BREAKER, UPDATE_DEFAULT_CIRCUIT_BREAKER, UPLOAD_CIRCUIT_BREAKER} from '@/api'
-// import { PAGESIZE } from 'common/util/common.js'
+
 export default {
   data () {
     return {
@@ -285,9 +305,8 @@ export default {
   },
   watch: {
     'recovery_time_arr': {
-      handler: function () {
-        this.ruleForm.min_recovery_time = this.recovery_time_arr[0]
-        this.ruleForm.max_recovery_time = this.recovery_time_arr[1]
+      handler () {
+        [this.ruleForm.min_recovery_time, this.ruleForm.max_recovery_time] = this.recovery_time_arr
       },
       deep: true
     }
@@ -309,9 +328,9 @@ export default {
           this.numList.push(val / i)
         }
       }
-      this.slider = val // 在此赋值，是为了防止拖动之后，标点会跳回到初始值0
-      this.ruleForm.granularity = this.timeList[0]
-      this.ruleForm.rolling_window = this.numList[0]
+      this.slider = val; // 在此赋值，是为了防止拖动之后，标点会跳回到初始值0
+
+      [this.ruleForm.granularity, this.ruleForm.rolling_window] = this.timeList
     },
 
     onGranularityChange (value) {
@@ -441,7 +460,7 @@ export default {
     tagsInputkeyupEnter (event) {
       let value = JSON.parse(JSON.stringify(event.target.value))
       if (!this.ruleForm.need_check_codes_arr.length) {
-        this.$refs['need_check_codes'].resetField()
+        this.$refs.need_check_codes.resetField()
       }
       event.target.value = ''
       if (value && this.ruleForm.need_check_codes_arr.indexOf(value) < 0) {
@@ -484,7 +503,6 @@ export default {
   created () {
   },
   components: {
-    splitTitle,
     ntSwitch,
     ntSlider
   }
@@ -499,42 +517,31 @@ export default {
     width: @default-width;
   }
 
-  .mt-34 {
-    margin-top: 34px;
+  .tilte {
+    margin-bottom: 10px;
   }
 
-    .tilte {
-      font-family: @default-font;
-      font-size: @default-font-size;
-      color: @default-font-color;
-      font-weight: @default-font-weight;
-      line-height: @default-line-height;
-      margin-bottom: 10px;
-    }
+  .eventTitle {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 29px;
+    margin-bottom: 26px;
+  }
 
-    .eventTitle {
-      font-family: @default-font;
-      font-size: 20px;
-      color: @default-font-color;
-      font-weight: 500;
-      line-height: 29px;
-      margin-bottom: 26px;
-    }
-
-    .select {
-      margin-bottom: 30px;
-      width: @default-width;
-    }
+  .select {
+    margin-bottom: 30px;
+    width: @default-width;
+  }
 
   .move-box {
-    margin: 44px 0;
+    // margin: 44px 0;
     padding-left: 15px;
     width: 640px;
     min-height: 60px;
+    display: flex;
 
     .progress-per {
       position: relative;
-      float: left;
       margin-left: 8px;
       width: 600px;
       height: 100px;
@@ -550,8 +557,8 @@ export default {
         left: 0;
         width: 16px;
         height: 16px;
-        border: 2px solid #00A1B2;
-        background-color: #00A1B2;
+        border: 2px solid @turq-06;
+        background-color: @turq-06;
         border-radius: 50%;
         opacity: 0.5;
       }
@@ -560,7 +567,7 @@ export default {
 
     .demonstration {
       line-height: 38px;
-      float: right;
+      margin-left: 10px;
     }
   }
 
@@ -568,7 +575,6 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 40px;
     width: 625px;
 
     .rolling_window {
@@ -591,7 +597,7 @@ export default {
 
   .threshold {
     .threshold-name {
-      margin-top: 31px;
+      // margin-top: 31px;
     }
   }
 
@@ -664,7 +670,7 @@ export default {
             height: 25px;
             background: rgb(0, 161, 178);
             border: 1px solid rgb(0, 161, 178);
-            border-radius: 3px;
+            border-radius: @default-border-radius;
             font-size: 10px;
             color: rgba(255, 255, 255, 1);
             line-height: 25px;
@@ -704,7 +710,7 @@ export default {
             height: 25px;
             background: rgb(0, 161, 178);
             border: 1px solid rgb(0, 161, 178);
-            border-radius: 3px;
+            border-radius: @default-border-radius;
             font-size: 10px;
             color: rgba(255, 255, 255, 1);
             line-height: 25px;
@@ -728,7 +734,7 @@ export default {
       align-items: center;
 
       &:last-child {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
       }
 
       .space {
@@ -766,9 +772,10 @@ export default {
       padding-left: 15px;
       width: 80%;
       min-height: 32px;
-      border: 1px solid #cccccc;
-      border-radius: 3px;
+      border: 1px solid @gray-04;
+      border-radius: @default-border-radius;
       background-color: #fff;
+      margin-left: 25px;
 
       .tagsinput_values {
         display: flex;
@@ -779,10 +786,9 @@ export default {
           display: flex;
           align-items: center;
           height: 26px;
-          border-radius: 3px;
+          border-radius: @default-border-radius;
           border: 1px solid rgba(230, 230, 230, 1);
-          background-color: #F2F2F2;
-          font-family: PingFangSC-Regular, PingFang SC;
+          background-color: @gray-02;
           font-weight: 400;
           color: rgba(137, 137, 137, 1);
           font-size: 12px;
@@ -814,8 +820,7 @@ export default {
             margin-left: 5px;
             line-height: 15px;
 
-            i {
-              font-size: 16px;
+            .iconClose {
               font-weight: bolder;
               color: rgba(0, 161, 178, 1);
             }
@@ -841,7 +846,7 @@ export default {
           left: 0;
           top: 28px;
           min-width: 115px;
-          border: 1px solid #cccccc;
+          border: 1px solid @gray-04;
           z-index: 9;
 
           .key_item {
@@ -849,9 +854,6 @@ export default {
             height: 28px;
             background-color: rgba(255, 255, 255, 1);
             font-size: 12px;
-            font-family: PingFangSC-Regular, PingFang SC;
-            font-weight: 400;
-            color: rgba(69, 70, 70, 1);
             line-height: 28px;
             padding: 0 12px;
 
@@ -888,10 +890,6 @@ export default {
                 padding-left: 7px;
 
                 label {
-                  font-size: 14px;
-                  font-family: PingFangSC-Regular, PingFang SC;
-                  font-weight: 400;
-                  color: rgba(69, 70, 70, 1);
                   line-height: 20px;
                 }
               }
@@ -924,7 +922,7 @@ export default {
                   width: 160px;
                   padding: 0 15px;
                   height: 32px;
-                  border-radius: 3px;
+                  border-radius: @default-border-radius;
                   background: rgba(242, 242, 242, 1);
                   border: 1px solid rgba(201, 201, 201, 1);
                 }
@@ -941,7 +939,7 @@ export default {
                 height: 32px;
                 border: 1px solid rgba(201, 201, 201, 1);
                 background-color: #fff;
-                border-radius: 3px;
+                border-radius: @default-border-radius;
                 margin: 0 6px;
                 padding: 0 15px;
               }
@@ -965,10 +963,6 @@ export default {
     }
   }
 
-  .switch {
-    margin-top: 54px;
-  }
-
 </style>
 
 <!-- 此处是全局样式 -->
@@ -990,6 +984,8 @@ export default {
       margin-left: 8px;
       width: 93%;
       height: 60px;
+      margin-top: 30px;
+      margin-bottom: 40px;
 
       .slider-box {
         position: relative;
@@ -1003,8 +999,8 @@ export default {
           left: 0;
           width: 16px;
           height: 16px;
-          border: 2px solid #00A1B2;
-          background-color: #00A1B2;
+          border: 2px solid @turq-06;
+          background-color: @turq-06;
           border-radius: 50%;
           opacity: 0.5;
         }
@@ -1033,7 +1029,7 @@ export default {
         left: 0;
         width: 0;
         height: 10px;
-        background: #DC172A;
+        background: @red-05;
       }
 
       .slider-right {
@@ -1046,7 +1042,7 @@ export default {
       }
 
       .el-slider__bar {
-        background: #FFE11C;
+        background: @warning-color;
       }
     }
   }

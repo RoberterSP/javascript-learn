@@ -1,26 +1,29 @@
 <template>
   <div class="wrapper">
     <stepper :stepper="stepper"></stepper>
-    <div class="banner">
-      <div class="head_title_l">
-        <div class="bannericon iconfont iconplaceholder"></div>
-        <div class="title">服务配置</div>
-      </div>
-      <div class="head_title_btn">
-        <el-button class="btn" type="primary" @click="showSurePopup = true">更新缓存</el-button>
+    <DYPageHeader
+      class="banner"
+      theme="purple"
+      icon="placeholder"
+      title="服务配置"
+    >
+      <div class="head_title_btn" slot="actions">
+        <DYButton type="primary" @click="showSurePopup = true">更新缓存</DYButton>
         <!-- 确认发布popup -->
         <div class="surePopup" v-if="showSurePopup">
           <div class="title">是否要更新配置, 是否继续?</div>
-          <el-button type="primary" @click="reflashConfig">确定</el-button>
-          <el-button @click="showSurePopup = false" class="btn-cancel">取消</el-button>
+          <DYButtonGroup>
+            <DYButton theme="dark" type="primary" @click="reflashConfig">确定</DYButton>
+            <DYButton theme="dark" @click="showSurePopup = false">取消</DYButton>
+          </DYButtonGroup>
         </div>
       </div>
-    </div>
-    <div class="down plr20 pt20">
-      <div class="role_container p15">
-        <h2>{{configList.length}}个配置组</h2>
+    </DYPageHeader>
+    <div class="down pr20 pr20 pt20">
+      <div class="role_container p16">
+        <DYHeader class="row-title" :title="`${configList.length}个配置组`" type="small" no-gap />
         <!-- <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div> -->
-        <el-button type="primary" class="add-btn" @click="addServiceConfig" v-if="isShowBtn">添加配置组</el-button>
+        <DYButton type="primary" @click="addServiceConfig" v-if="isShowBtn">添加配置组</DYButton>
         <div class="add-content" v-if="!isShowBtn" >
           <add-service-config @addHandle="addHandle" @cancelContent="cancleHandle"></add-service-config>
         </div>
@@ -114,7 +117,7 @@ export default {
         //   type: 'success'
         // })
         bus.$emit('openMessage', {
-          message: '更新配置完成啦！',
+          message: res.data.result,
           type: 'success'
         })
       })
@@ -146,7 +149,7 @@ export default {
     width: 100%;
     height: 73px;
     background: rgba(255,255,255,1);
-    border-bottom: 1px solid @theme-purple-dark;
+    border-bottom: 1px solid @purple-06;
     .head_title_l {
       display: flex;
       align-items: center;
@@ -179,9 +182,6 @@ export default {
         position: absolute;
         padding: 20px;
         .title{
-          font-size:14px;
-          font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-          font-weight:400;
           color:rgba(255,255,255,1);
           line-height:20px;
           margin-bottom: 11px;
@@ -204,7 +204,7 @@ export default {
     margin-bottom: 42px;
   }
   .down {
-    background-color: @default-gray;
+    background-color: @gray-02;
     .role_container {
       position: relative;
       background-color: #fff;
@@ -218,7 +218,7 @@ export default {
       }
       .add-content {
         padding: 21px 0 10px 12px;
-        background: @default-gray;
+        background: @gray-02;
       }
     }
   }

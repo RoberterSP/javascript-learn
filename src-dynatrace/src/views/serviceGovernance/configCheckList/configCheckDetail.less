@@ -4,14 +4,9 @@
     background:rgba(255,255,255,1);
     .head_title_t{
       font-size:28px;
-      font-family:PingFangSC-Regular,PingFang SC;
-      font-weight:400;
-      color:rgba(69,70,70,1);
       line-height:40px;
+
       .desc{
-        font-size:14px;
-        font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-        font-weight:400;
         color:rgba(69,70,70,1);
         line-height:16px;
         margin-top: 5px;
@@ -38,9 +33,6 @@
           line-height: 32px;
           background:rgba(132,192,241,1);
           border-radius:2px;
-          font-size:14px;
-          font-family:PingFangSC-Regular,PingFang SC;
-          font-weight:400;
           color:rgba(255,255,255,1);
           text-align: center;
           padding: 0 15px;
@@ -48,10 +40,6 @@
           cursor: pointer;
         }
         .progress-box {
-          font-size:14px;
-          font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-          font-weight:400;
-          color:rgba(69,70,70,1);
           width: 600px;
           max-width: 60%;
           .progress-per {
@@ -65,7 +53,7 @@
               .el-slider__runway{
                 height: 10px;
                 border-radius: 0px;
-                background-color: #cccccc;
+                background-color: @gray-04;
                 .el-slider__button-wrapper{
                   top: -14px;
                   z-index: 10;
@@ -76,7 +64,7 @@
                   }
                 }
                 .el-slider__button{
-                  background-color: #00A1B2;
+                  background-color: @turq-06;
                   width: 22px;
                   height: 22px;
                   border: 2px solid #fff;
@@ -86,7 +74,6 @@
                 }
                 .el-slider__marks{
                   .el-slider__marks-text{
-                    font-family: SourceHanSansSC-Regular, SourceHanSansSC;
                     font-size: 14px;
                     color: #454646;
                     font-weight: normal;
@@ -96,7 +83,7 @@
                 }
                 .el-slider__bar{
                   height: 10px;
-                  background-color: #00A1B2;
+                  background-color: @turq-06;
                   border-top-left-radius: 0px;
                   border-bottom-left-radius: 0px;
                 }
@@ -169,7 +156,7 @@
                   left: 100%;
                   bottom: 3px;
                   margin: 0 3px;
-                  border-bottom: 1px solid #e6e6e6;
+                  border-bottom: 1px solid @gray-03;
                 }
               }
             }
@@ -182,7 +169,7 @@
                 right: 100%;
                 bottom: 3px;
                 margin: 0 3px;
-                border-bottom: 1px solid #e6e6e6;
+                border-bottom: 1px solid @gray-03;
               }
             }
           }
@@ -220,27 +207,27 @@
                 background-color: white;
               }
               &.dVz-g.dVz-r {
-                background-color: #f8f8f8;
+                background-color: @gray-01;
               }
             }
             .car_item{
               line-height: 60px;
               .iconfont{
-                &.iconarrowup, &.iconarrowdown{
-                  color: @theme-color;
+                &.icon_arrowup, &.icon_arrowdown{
+                  color: @turq-06;
                   font-size: 16px;
                   margin-right: 10px;
                 }
-                &.icondelete, &.iconalert{
+                &.icon_delete, &.icon_alert{
                   color: #F5222D
                 }
-                &.iconOK, &.iconcheckOK{
+                &.icon_OK, &.icon_checkOK{
                   color: #7CB305
                 }
-                &.iconclock{
+                &.icon_clock{
                   color: #85929E
                 }
-                &.iconAppliance, &.iconurlc{
+                &.icon_Appliance, &.icon_urlc{
                   color: #34495E
                 }
               }

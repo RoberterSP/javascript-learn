@@ -40,7 +40,7 @@
 }
 
 .progress_processor {
-  margin-left: 0px;
+  margin-left: 0;
   width: 38px;
   height: 36px;
   background-image: url('/static/image/plugins/tips_processor.png');
@@ -548,7 +548,6 @@
   font-style: italic;
 } */
 .loader {
-  margin: 0 0 2em;
   height: 100px;
   width: 20%;
   text-align: center;

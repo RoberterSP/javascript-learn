@@ -2,13 +2,7 @@
   <div class="log_Query_wrapper">
     <stepper :stepper="stepper" theme="blue"></stepper>
     <div class="apiList">
-      <div class="headTitle">
-        <div class="head_title_l">
-          <div class="bannericon iconfont iconlog"></div>
-          <div class="h_title">日志查询</div>
-        </div>
-      </div>
-
+      <DYPageHeader title="日志查询" icon="log" theme="blue" @eventGetHeight="getHeight"/>
       <div class="filter_box">
         <div class="filter_content">
           <el-select style="margin-left: 20px" v-model="checkedLogType" placeholder="请选择日志类型" @change="changeValue">
@@ -33,55 +27,68 @@
             </el-option>
           </el-select>
           <div class="filter_div">
-            <tags-input ref="tagFilter" :filterKeys="filterKeys" :keysValue="filterKeysValue"
-                        conditionType="log"
-                        :disabled="!checkedLogType" :checkedLogType="checkedLogType"
-                        :isCustom="searchValue === 'custom'" :queryValue="queryStr"
-                        @returnFilterFunc="returnFilterFunc"
-                        @onEnter="onCustomInputEnter"
-                        @inputVal="inputVal"
+            <DYFilter
+              v-if="searchValue !== 'custom'"
+              class="input-filter"
+              :filtersModel="filtersModel"
+              :filterKeys="filterKeys"
+              :quickSearch="false"
+              :placeholder="filterPlaceholder"
+              @returnFilterFunc="returnFilterFunc"
+            />
 
-            ></tags-input>
+            <div class="input-filter" v-else>
+              <el-input ref="tags_input" class="tags_input" type="text" size="11" v-model="queryStr"
+                        placeholder="Search... (e.g. status:200 AND extension:PHP)"
+                        @input="inputVal"
+                        @keypress.native.enter="onCustomInputEnter"
+              >
+                <i slot="suffix" class="el-input__icon" @click="onCustomInputEnter">
+                  <DYIcon type="search"></DYIcon>
+                </i>
+              </el-input>
+            </div>
+
           </div>
         </div>
-
-        <!--        <el-button type="primary" class="btn_margin ml20 mb20" @click="searchHandle" :disabled="!checkedLogType">-->
-        <!--          查询结果-->
-        <!--        </el-button>-->
       </div>
     </div>
 
-    <!--      #51006 默认不显示，有查询动作后再展示 -->
-    <div class="app-list flex" v-if="operated">
+    <!-- #51006 默认不显示，有查询动作后再展示 -->
+    <div class="app-list flex" v-if="operated" :style="{minHeight: appHeight + 'px'}">
+
       <div class="app-left">
         <div class="filter mb24" v-if="checkedWorkBreak.length > 0">
-          <div class="filter-tip filter-tip_check"><span>已选字段</span><span class="delete_all" @click="deleteAll">删除全部</span></div>
+          <div class="filter-tip filter-tip_check"><span>已选字段</span><span class="delete_all"
+                                                                          @click="deleteAll">删除全部</span></div>
           <div class="filter-item" v-for="(filter, index) in checkedWorkBreak" :key="index">
-            <div class="up">{{filter.name}}</div>
-            <div class="down" @click="deleteFilter(index, filter)"><i class="el-icon-close add_icon"></i></div>
+            <div>{{filter.name}}</div>
+
+            <DYIcon type="delete" size="20" actions @click="deleteFilter(index, filter)"/>
+
           </div>
         </div>
         <div class="filter">
           <div class="filter-tip">筛选字段</div>
           <div class="filter-item" v-if="!filterTyleList.length">无筛选字段</div>
-          <div class="filter-item" v-for="(filter, index) in filterTyleList" :key="index" v-if="filterTyleList.length && filter.name">
+          <div class="filter-item" v-for="(filter, index) in filterTyleList" :key="index"
+               v-if="filterTyleList.length && filter.name">
             <div class="up">{{filter.name}}</div>
-            <div class="down" @click="tofilter(filter, index)">
-              <img src="../../../assets/image/add.svg"
-                   class="add_icon"></div>
+            <DYIcon type="add" size="20" actions @click="tofilter(filter, index)"></DYIcon>
           </div>
         </div>
       </div>
+
       <div class="app-right">
-        <div class="container">
-          <p class="tip">查询结果</p>
+        <DYCard class="full-height">
+          <DYHeader class="row-title" title="查询结果" type="small" no-gap/>
 
           <template v-if="!loglist.length && !clumnChartOptions.option.series[0].data.length">
-            <p class="no-data">没有符合筛选条件的结果</p>
+            <p class="no-data row-content">没有符合筛选条件的结果</p>
           </template>
 
           <template v-else>
-            <div class="app-grash">
+            <div class="app-grash row-content">
               <charts ref="logBarChart" :chartId="clumnChartOptions.id" :option="clumnChartOptions.option"></charts>
             </div>
             <div class="app-data-list" v-if="showTable">
@@ -89,7 +96,7 @@
                         @changePage="changePage"></my-table>
             </div>
           </template>
-        </div>
+        </DYCard>
       </div>
     </div>
   </div>
@@ -98,14 +105,17 @@
 <script>
 import stepper from 'components/stepper/stepper.vue'
 import myTable from 'components/ntTable/ntTable.vue'
-import tagsInput from '@/components/tagsInput/tagsInput.vue'
 import {LOGS_FILED, LOGS_LIST, LOGS_OVERVIEW, LOGS_TYPE} from '@/api'
 import charts from '@/components/charts/charts.vue'
 import bus from '@/assets/eventBus.js'
+import {getLessColor} from 'common/util/util'
+import {clone, isArray} from 'lodash'
 
 export default {
   data () {
     return {
+      appHeight: '',
+      pageHeaderHeight: '',
       time_range_obj: {code: 'Last 30 minutes'}, // 时间
       showTable: true,
       copyColumns: [],
@@ -130,6 +140,7 @@ export default {
         }
       ],
       filterKeys: [],
+      filtersModel: [],
       tableSet: {
         hidePagination: true,
         truePage: true,
@@ -165,11 +176,13 @@ export default {
       }, {
         label: 'is one of',
         value: 'is one of',
-        haveInput: true
+        haveInput: true,
+        inputType: 'tag'
       }, {
         label: 'is not one of',
         value: 'is not one of',
-        haveInput: true
+        haveInput: true,
+        inputType: 'tag'
       }, {
         label: 'exists',
         value: 'exists'
@@ -300,39 +313,37 @@ export default {
           series: [{
             name: 'Resolved problems...',
             type: 'column',
-            color: '#14A8F5',
+            color: getLessColor('@blue-05'),
             fontColor: '#282828',
-            data: [
-              // [Date.UTC(2010, 3, 1), 3],
-              // [Date.UTC(2010, 3, 2), 0.5],
-              // [Date.UTC(2010, 3, 3), 1],
-              // [Date.UTC(2010, 3, 4), 2],
-              // [Date.UTC(2010, 3, 5), 4],
-              // [Date.UTC(2010, 3, 6), 1.4],
-              // [Date.UTC(2010, 3, 7), 1]
-            ]
+            data: []
           }]
         }
       },
 
       // 初始化查询标识符
-      operated: false
+      operated: false,
+
+      filterPlaceholder: ''
     }
   },
   computed: {
-    menuState: function () {
+    menuState () {
       return this.$store.state.openMenu
     }
   },
   watch: {
-    menuState: function (newVal) {
+    menuState (newVal) {
       // 菜单变化  echart图表自适应
       this.$nextTick(() => {
-        this.$refs['logBarChart'] && this.$refs['logBarChart'].drawChart(this.clumnChartOptions.option)
+        this.$refs.logBarChart && this.$refs.logBarChart.drawChart(this.clumnChartOptions.option)
       })
     }
   },
   methods: {
+    getHeight (value) {
+      console.log('getHeight==>', value)
+      this.pageHeaderHeight = value
+    },
     returnFilterFunc (data) {
       console.log('filter', data)
       this.queryStr = ''
@@ -340,7 +351,7 @@ export default {
       data.forEach(item => {
         fieldList[item.key] = {
           operator: item.value,
-          value: item.value_label
+          value: isArray(item.value_label) ? item.value_label.join(',') : item.value_label
         }
       })
       this.searchData.field_list = fieldList
@@ -358,22 +369,57 @@ export default {
       this.searchHandle()
     },
 
-    changeValue (val, reset = true) {
-      this.checkedLogType = val
-      LOGS_FILED({log_type: val}).then(res => {
-        if (res.code === 0) {
-          res.data.fileds_list.forEach((item, index) => {
-            item.list = this.detailFilterList
-            item.type = 'select_obj'
-            item.positionIndex = index
-          })
-          this.filterKeys = res.data.fileds_list
-          this.filterTyleList = JSON.parse(JSON.stringify(res.data.fileds_list))
+    changeValue (val, reset = true, fromTimeChange = false) {
+      this.filtersModel = []
+      // 如果是日期变动引起的函数调用， 则不执行 field 拉取
+      if (!fromTimeChange) {
+        this.checkedLogType = val
+
+        let params = {log_type: val}
+
+        if (this.time_range_obj && this.time_range_obj.code) {
+          params.time_range = this.time_range_obj.code
+        } else {
+          params.start_time = Number(this.time_range_obj.start_time)
+          params.end_time = Number(this.time_range_obj.end_time)
         }
-      })
-      this.checkedWorkBreak = []
-      // 添加容错， 应用监控过来的会直接调用 changeValue， 此时 copyColumn 还是空
-      this.columns = this.copyColumns.length ? JSON.parse(JSON.stringify(this.copyColumns)) : this.columns
+
+        LOGS_FILED(params).then(res => {
+          if (res.code === 0) {
+            res.data.fileds_list = res.data.fileds_list.map((item, index) => {
+              let newItem = {}
+
+              newItem.list = this.detailFilterList
+              // newItem.type = 'select_obj'
+              newItem.type = 'select_obj_operator'
+              newItem.positionIndex = index
+              newItem.code = item.name
+              newItem.key = item.name
+              newItem.value = item.value
+              newItem.value_label = item.value
+
+              return {
+                ...item,
+                ...newItem
+              }
+            })
+
+            this.filterKeys = res.data.fileds_list
+            this.filterTyleList = clone(res.data.fileds_list)
+
+            if (this.filterKeys.length === 0) {
+              this.filterPlaceholder = '该日志类型下暂无可过滤条件'
+            } else {
+              this.filterPlaceholder = ''
+            }
+          }
+        })
+
+        // 如果只修改时间，则不清空筛选
+        this.checkedWorkBreak = []
+        // 添加容错， 应用监控过来的会直接调用 changeValue， 此时 copyColumn 还是空
+        this.columns = this.copyColumns.length ? clone(this.copyColumns) : this.columns
+      }
 
       // 如果 reset false，则不执行清空逻辑
       if (reset) {
@@ -394,7 +440,7 @@ export default {
         code: type.name,
         type: 'html'
       })
-      this.seachTable()
+      this.searchTable()
     },
     deleteFilter (index, type) {
       this.showTable = false
@@ -403,8 +449,8 @@ export default {
       this.columns.forEach((col, idex) => {
         if (col.code === type.name) this.columns.splice(idex, 1)
       })
-      if (this.columns.length === 1) this.columns = JSON.parse(JSON.stringify(this.copyColumns))
-      this.seachTable()
+      if (this.columns.length === 1) this.columns = clone(this.copyColumns)
+      this.searchTable()
     },
     deleteAll () {
       this.showTable = false
@@ -413,12 +459,13 @@ export default {
       })
       this.checkedWorkBreak = []
       this.columns = JSON.parse(JSON.stringify(this.copyColumns))
-      this.seachTable()
+      this.searchTable()
     },
     searchHandle () {
       // 点击查询按钮后，将标识符设置为true
       this.operated = true
-
+      // topHeader: 44px & stepper: 30px & filter: 72px & pageHeader: this.pageHeaderHeight
+      this.appHeight = document.documentElement.clientHeight - this.pageHeaderHeight - 146
       if (!this.checkedLogType) return
       this.tableSet.paginationConfig.currentPage = 1
       const params = {
@@ -434,10 +481,10 @@ export default {
       }
       if (this.searchData.field_list) params.field_list = this.searchData.field_list
       if (this.queryStr) params.query_string = this.queryStr
-      this.seachTable()
-      this.getGrash(params)
+      this.searchTable()
+      this.getGraph(params)
     },
-    seachTable () {
+    searchTable () {
       const params = {
         log_type: this.checkedLogType,
         page_size: this.tableSet.paginationConfig.pageSize,
@@ -484,7 +531,7 @@ export default {
         this.showTable = true
       })
     },
-    getGrash (params) {
+    getGraph (params) {
       LOGS_OVERVIEW(params).then(res => {
         if (res.code === 0 && res.data.overview_info.series) {
           this.chartsData = res.data.overview_info.series[0].data
@@ -498,13 +545,13 @@ export default {
           })
           this.clumnChartOptions.option.series[0].data = handleData
           this.clumnChartOptions.option.series[0].name = res.data.overview_info.series[0].name
-          this.$refs['logBarChart'] && this.$refs['logBarChart'].drawChart(this.clumnChartOptions.option)
+          this.$refs.logBarChart && this.$refs.logBarChart.drawChart(this.clumnChartOptions.option)
         }
       })
     },
     changePage (page) {
       this.tableSet.paginationConfig.currentPage = page
-      this.seachTable()
+      this.searchTable()
     },
     selectSearchVaule () {
       this.queryStr = ''
@@ -518,9 +565,10 @@ export default {
     bus.$on('timeChanged', (obj) => {
       this.time_range_obj = obj
       if (this.checkedLogType) {
-        this.changeValue(this.checkedLogType, false)
+        this.changeValue(this.checkedLogType, false, true)
       }
     })
+
     bus.$emit('resetTime')
 
     if (this.$route.params && this.$route.params.detailData) {
@@ -532,12 +580,13 @@ export default {
 
       this.$nextTick(() => {
         if (this.$route.params.logFiltersModel) {
-          this.$refs.tagFilter.setModelValues(this.$route.params.logFiltersModel)
+          this.filtersModel = this.$route.params.logFiltersModel
+          // this.$refs.tagFilter.setModelValues(this.$route.params.logFiltersModel)
           this.returnFilterFunc(this.$route.params.logFiltersModel)
         }
       })
     }
-    this.copyColumns = JSON.parse(JSON.stringify(this.columns))
+    this.copyColumns = clone(this.columns)
 
     LOGS_TYPE({}).then(res => {
       res.data.result.forEach(item => {
@@ -554,7 +603,6 @@ export default {
   components: {
     stepper,
     myTable,
-    tagsInput,
     charts
   }
 }
@@ -566,38 +614,8 @@ export default {
     color: #454646;
   }
 
-  .headTitle {
-    position: relative;
-    padding: 18px 32px 19px 16px;
-    width: 100%;
-    height: 73px;
-    background: rgba(255, 255, 255, 1);
-    border-bottom: 1px solid @blue-12;
-
-    .head_title_l {
-      display: flex;
-      align-items: center;
-      height: 40px;
-
-      .bannericon {
-        width: 36px;
-        height: 40px;
-        font-size: 36px;
-        line-height: 40px;
-      }
-
-      .h_title {
-        margin-left: 11px;
-        height: 40px;
-        font-size: 28px;
-        line-height: 40px;
-        font-weight: 500;
-      }
-    }
-  }
-
   .filter_box {
-    background-color: #fff;
+    background-color: @gray-00;
 
     .filter_content {
       display: flex;
@@ -613,8 +631,8 @@ export default {
   }
 
   .app-list {
-    min-height: calc(100vh - 74px);
-    margin-top: 24px;
+    // min-height: calc(100vh - 74px);
+    padding-top: 24px;
 
     .app-left {
       width: 230px;
@@ -624,13 +642,10 @@ export default {
 
       .filter {
         .filter-tip {
-          padding-bottom: 23px;
+          padding: 16px 0;
           color: #454646;
-          font-size: 14px;
-          font-family: SourceHanSansSC-Medium, SourceHanSansSC;
           font-weight: 500;
-          text-align: left;
-          border-bottom: 1px solid #E6E6E6;
+          border-bottom: 1px solid @gray-03;
         }
 
         .filter-tip_check {
@@ -638,7 +653,7 @@ export default {
           justify-content: space-between;
 
           .delete_all {
-            color: #00A1B2;
+            color: @turq-06;
           }
         }
 
@@ -647,46 +662,16 @@ export default {
           justify-content: space-between;
           align-items: center;
           padding: 14px 0 6px 0;
-          border-bottom: 1px solid #E6E6E6;
-
-          .up {
-            font-size: 14px;
-            font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-            font-weight: 400;
-            color: @default-font-color;
-            line-height: 20px;
-          }
-
-          .down {
-            .add_icon {
-              width: 14px;
-              height: 14px;
-              cursor: pointer;
-            }
-          }
+          border-bottom: 1px solid @gray-03;
         }
       }
     }
 
     .app-right {
-      width: calc(100% - 230px);
-      background: rgba(255, 255, 255, 1);
-      background-clip: content-box;
 
-      .container {
-        padding: 16px;
-
-        .tip {
-          font-size: 20px;
-          color: #454646;
-          font-weight: 500;
-          margin-bottom: 27px;
-        }
-
-        .app-grash {
-          width: 100%;
-          height: 147px;
-        }
+      .app-grash {
+        width: 100%;
+        height: 147px;
       }
 
       .app-data-list {

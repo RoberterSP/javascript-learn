@@ -33,7 +33,7 @@
               }">{{item.name}}
             </div>
             <div
-              class="iconarrow_bc column-icon iconfont"
+              class="column-icon iconfont"
               v-show="index < stepper.length -1"
               :class="{
                 'column-icon-dark': (index < stepper.length -1 && !item.type && item.type !== 'edit') || (stepper.length === 1 && !item.type && item.type !== 'edit'),
@@ -41,7 +41,9 @@
                 'column-icon-edit-dark': (index < stepper.length -1 && item.type && item.type === 'edit') || (stepper.length === 1 && item.type && item.type === 'edit'),
                 'column-icon-edit-light': item.type && item.type === 'edit' && index === stepper.length -1 && stepper.length !== 1
               }"
-            ></div>
+            >
+              <DYIcon type="arrow_bc"></DYIcon>
+            </div>
           </template>
         </div>
       </div>
@@ -55,7 +57,7 @@ stepper: [
   {
     name: '注册应用',
     routerTo: 'appList',
-    myCoutomRouter: true
+    myCustomRouter: true
   }
 ]
 @goRouter="goRouter"
@@ -64,7 +66,7 @@ goRouter (item) {
 },
 name: 显示的名字
 routerTo: 跳转到某个页面的路由
-myCoutomRouter: 自定义的路由,自己在父组件编写方法跳转 (方法: goRouter)
+myCustomRouter: 自定义的路由,自己在父组件编写方法跳转 (方法: goRouter)
 */
 import message from 'components/message/message.vue'
 
@@ -99,7 +101,7 @@ export default {
   },
   methods: {
     goPage (item) {
-      if (item.myCoutomRouter) {
+      if (item.myCustomRouter) {
         this.$emit('goRouter', item)
       } else {
         if (item.routerTo) this.$router.push({name: item.routerTo})
@@ -156,27 +158,27 @@ export default {
 
   .theme-config() {
     &.theme-royalblue {
-      .get-theme-color(@royalblue-15, @royalblue-12);
+      .get-theme-color(@royalblue-08, @royalblue-06);
     }
 
     &.theme-purple {
-      .get-theme-color(@purple-15, @purple-12);
+      .get-theme-color(@purple-08, @purple-06);
     }
 
     &.theme-blue {
-      .get-theme-color(@blue-14, @blue-12);
+      .get-theme-color(@blue-08, @blue-06);
     }
 
     &.theme-red {
-      .get-theme-color(@red-15, @red-11);
+      .get-theme-color(@red-08, @red-05);
     }
 
     &.theme-gray {
-      .get-theme-color(@gray-15, @gray-11);
+      .get-theme-color(@gray-10, @gray-08);
     }
 
     &.theme-gray-light {
-      .get-theme-color(@gray-10, @gray-8);
+      .get-theme-color(@gray-06, @gray-05);
     }
   }
 
@@ -209,13 +211,13 @@ export default {
 
     /*.column-icon-dark {
       &::after{
-        border-left: 7px solid @purple-15;
+        border-left: 7px solid @purple-08;
       }
     }
 
     .column-icon-light {
       &::after{
-        border-left: 7px solid @purple-12;
+        border-left: 7px solid @purple-06;
         right: 13px !important;
         top: 1px !important;
       }
@@ -224,13 +226,13 @@ export default {
 
     .column-icon-edit-dark {
       &::after {
-        border-left: 7px solid @theme-edit-dark;
+        border-left: 7px solid @gray-10;
       }
     }
 
     .column-icon-edit-light {
       &::after {
-        border-left: 7px solid @theme-edit-light;
+        border-left: 7px solid @gray-08;
       }
     }
 
@@ -251,19 +253,19 @@ export default {
       cursor: pointer;
       /*
           .first-text {
-            background: @theme-purple-dark;
+            background: @purple-06;
           }
           .end-text {
-            background: @theme-purple-light;
+            background: @purple-04;
           }
           */
 
       .edit-color-dark {
-        background: @theme-edit-dark;
+        background: @gray-10;
       }
 
       .edit-color-light {
-        background: @theme-edit-light;
+        background: @gray-08;
       }
 
       .title-name {

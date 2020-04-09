@@ -1,83 +1,93 @@
-/*
- * 主题颜色设置
-*/
-// 主题灰色
-@theme-gray: #E6E6E6;
-// 主题色
-@theme-color: #00A1B2;
-// 主题深色
+/**
+  不在调色盘中的通用颜色
+ */
 @theme-dark: #535353;
-// 浅紫色
-@theme-purple-light: #A972CC;
-// 深紫色
-@theme-purple-dark: #7C38A1;
-// 编辑添加导航栏  深色
-@theme-edit-dark: #353535;
-// 编辑添加导航栏  浅色
-@theme-edit-light: #525252;
-// 默认灰色背景
-@default-gray: #F2F2F2;
 
-
-// 功能主题色
-
-@theme-function-app: #7C38A1;
-@theme-function-service: #526CFF;
-@theme-function-node: #008CDB;
-@theme-function-deploy-group: #008CDB;
-
-
-// 滑动条默认色
-@slide-color: #14A8F5;
-@slider-color-error: #DC172A;
-@slider-color-success: #2AB06F;
-@slider-color-warning: #FFE11C;
-
-// 警告色
+@success-color: #2AB06F;
 @warning-color: #F5D30F;
 
 
-/* ---- new compute color ----- */
-@red-15 : #93060E;
-@red-11 : #C41425;
+// 调色盘
+@turq-01: #e1f7f9;
+@turq-02: #aeebf0;
+@turq-03: #74dee6;
+@turq-04: #4fd5e0;
+@turq-05: #00b9cc;
+@turq-06: #00a1b2; // 主题色
+@turq-07: #00848e; // 主题色hover
+@turq-08: #006d75; // 主题色 active
+@turq-09: #005559;
 
-@blue-14: #004999;
-@blue-12: #008CDB;
-@blue-6: #14a8f5;
+@blue-01: #e0f4fc;
+@blue-02: #b4e5f9;
+@blue-03: #74cff7;
+@blue-04: #74cff7;
+@blue-05: #14a8f5;
+@blue-06: #008cdb;
+@blue-07: #006bba;
+@blue-08: #004999;
+@blue-09: #003a8a;
 
-@royalblue-15: #31339C;
-@royalblue-12: #4556d7;
-@royalblue-10: #526cff;
-@royalblue-8: #748cff;
+@royalblue-01: #e6eaff;
+@royalblue-02: #b9c5ff;
+@royalblue-03: #97a9ff;
+@royalblue-04: #748cff;
+@royalblue-05: #526cff;
+@royalblue-06: #4556d7;
+@royalblue-07: #393db0;
+@royalblue-08: #31339c;
+@royalblue-09: #31339c;
 
-@purple-15 : #522273;
-@purple-12 : #7C38A1;
-@purple-8: #A972CC;
+@green-01: #e8f9dc;
+@green-02: #d2efbe;
+@green-03: #bee5a3;
+@green-04: #9cd575;
+@green-05: #7dc540;
+@green-06: #5ead35;
+@green-07: #3f962a;
+@green-08: #3f962a;
+@green-09: #006613;
 
-@gray-15 : #353535;
-@gray-11 : #6D6D6D;
-@gray-10 : #898989;
-@gray-8 : #B7B7B7;
+@purple-01: #eedbfd;
+@purple-02: #debbf3;
+@purple-03: #c396e0;
+@purple-04: #a972cc;
+@purple-05: #9355b7;
+@purple-06: #7C38A1;
+@purple-07: #612c85;
+@purple-08: #522273;
+@purple-09: #471e64;
 
+@red-01: #ffeaea;
+@red-02: #f9acaf;
+@red-03: #f28289;
+@red-04: #f28289;
+@red-05: #dc172a;
+@red-06: #c41425;
+@red-07: #ab0c17;
+@red-08: #93060e;
+@red-09: #7a0004;
 
-/* 计算 theme-blue 的派生色 */
-//.theme-blue(@number) when() {
-//
-//}
+@shamrock-01: #e1f7dc;
+@shamrock-02: #bbeac0;
+@shamrock-03: #99dea8;
+@shamrock-04: #6bcb8b;
+@shamrock-05: #54c27d;
+@shamrock-06: #54c27d;
+@shamrock-07: #009e60;
+@shamrock-08: #009e60;
+@shamrock-09: #087249;
 
-// javascript 用于计算hsl 衍生色阶 ！！👻
-.function-test() {
-  @functions: ~`(function() {
-    var color = 'red'
-
-    this.getColor = function () {
-      return color
-    }
-  })()`
-}
-
-.function-test();
-
-.bg-red {
-  background: ~`getColor()`;
-}
+@gray-00: #ffffff;
+@gray-01: #f8f8f8;
+@gray-02: #f2f2f2; // 默认灰色背景
+@gray-03: #e6e6e6; // 主题灰色
+@gray-04: #cccccc;
+@gray-05: #b7b7b7;
+@gray-06: #898989;
+@gray-07: #6d6d6d;
+@gray-08: #525252;
+@gray-09: #454646; // 默认字体颜色
+@gray-10: #353535;
+@gray-11: #242424;
+@gray-12: #191919;

@@ -2,12 +2,12 @@
   <div class="dy-input">
     <div class="set_input_value el-input">
       <input  type="text" ref="input" v-model="dyValue" autocomplete="off" :placeholder="placeholder" onkeyup="if(! /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/.test(this.dyValue)){this.dyValue='';}" class="el-input__inner">
-      <span class="el-input__suffix" v-if="dyValue">
-        <span class="el-input__suffix-inner" @click="saveValue">
-          <i class="el-input__icon iconfont iconcheckOK el-input__clear"></i>
+      <span class="el-input__suffix flex-center" v-if="dyValue">
+        <span class="el-input__suffix-inner el-input__icon iconfont el-input__clear flex-center" @click="saveValue">
+          <DYIcon type="checkOK"></DYIcon>
         </span>
-        <span class="el-input__suffix-inner" @click="deleteValue">
-          <i class="el-input__icon iconfont icondelete el-input__clear"></i>
+        <span class="el-input__suffix-inner el-input__icon iconfont el-input__clear flex-center" @click="deleteValue">
+          <DYIcon type="delete"></DYIcon>
         </span>
       </span>
     </div>
@@ -67,7 +67,7 @@ export default {
 @import "~common/style/variable";
 .dy-input {
   .iconfont {
-    color: #00A1B2;
+    color: @turq-06;
     font-size: 24px;
   }
   input {

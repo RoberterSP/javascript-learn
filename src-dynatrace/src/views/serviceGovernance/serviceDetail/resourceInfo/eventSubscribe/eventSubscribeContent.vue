@@ -29,11 +29,12 @@
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="例如：{'brand':['HLM','hl_hlm'], 'is_new': False}"
+          resize="none"
           v-model="ruleForm.filter_conditions">
         </el-input>
       </el-form-item>
-      <p v-show="ruleForm.subscribe_code" class="tilte">自定义请求头</p>
-      <div v-show="ruleForm.subscribe_code" class="headerList">
+      <p v-show="ruleForm.subscribe_code" class="el-form-item__label">自定义请求头</p>
+      <div v-show="ruleForm.subscribe_code && ruleForm.headers && ruleForm.headers.length" class="headerList">
         <div class="flex-start header" v-for="(header, index) in ruleForm.headers" :key="'header'+index">
           <el-input class="headTitle" v-model="header.key" placeholder="键"></el-input>
           <span class="headmid">:</span>
@@ -41,12 +42,15 @@
           <img @click="deleteHeader(index)" src="@/assets/image/icon-delete.svg" alt="">
         </div>
       </div>
-      <el-button v-show="ruleForm.subscribe_code" @click="addHeader">添加</el-button>
-      <el-form-item v-show="ruleForm.subscribe_code" label="自定义返回验证脚本" class="mt-47" prop="response_statement">
+      <div class="el-button-form-item" v-show="ruleForm.subscribe_code">
+        <DYButton @click="addHeader">添加</DYButton>
+      </div>
+      <el-form-item v-show="ruleForm.subscribe_code" label="自定义返回验证脚本" prop="response_statement">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5}"
+          resize="none"
           placeholder="例如：if response.get('message').lower() != 'success':
                 result.update({
                     'status': False
@@ -79,14 +83,18 @@
                     prop="response_statement">
         <el-input v-model="ruleForm.password" type="text" placeholder="请输入用户密码"></el-input>
       </el-form-item>
-      <nt-switch v-show="ruleForm.subscribe_code && editMode" @dyClick="switchChange" :title="'激活事件订阅'"
-                 v-model="ruleForm.state"></nt-switch>
-      <!-- <div v-show="ruleForm.subscribe_code" class="fullWidth mt-23 default-label">
+      <div class="switch_form_item" v-show="ruleForm.subscribe_code && editMode">
+        <nt-switch @dyClick="switchChange" :title="'激活事件订阅'"
+                   v-model="ruleForm.state"></nt-switch>
+      </div>
+      <!-- <div v-show="ruleForm.subscribe_code" class="full-width mt-23 default-label">
         这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明
       </div> -->
-      <div class="btns" v-permission="'serviceCenter_serviceDetail_filterRuleEdit'">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
+      <div class="btns" v-permission="'serviceCenter_serviceDetail_eventSubscribeList_edit'">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -133,7 +141,10 @@ export default {
   },
   computed: {
     _category () {
-      if (this.clientDetails && this.clientDetails.category) { return this.clientDetails.category } else return this.category
+      if (this.clientDetails && this.clientDetails.category) {
+        return this.clientDetails.category
+      }
+      return this.category
     }
   },
   methods: {
@@ -172,7 +183,7 @@ export default {
         }]
       }
 
-      const detailData = this.$route.params.detailData
+      const {detailData} = this.$route.params
 
       let extendData = {}
 
@@ -199,7 +210,7 @@ export default {
         record_list: [this.ruleForm]
       }
 
-      const detailData = this.$route.params.detailData
+      const {detailData} = this.$route.params
 
       let extendData = {}
 
@@ -280,7 +291,7 @@ export default {
     },
     subscribe_event_get (data) {
       SUBSCRIBE_EVENT_GET(data).then(res => {
-        res.data.subscribe_list.map(item => {
+        res.data.subscribe_list.forEach(item => {
           item.label = item.subscribe_name
           item.value = item.subscribe_code
         })
@@ -313,51 +324,24 @@ export default {
     width: @default-width;
   }
 
-  .mt-23 {
-    margin-top: 23px;
-  }
-
-  .mt-47 {
-    margin-top: 47px;
-  }
-
-  // .mb-37 {
-  //   margin-bottom: 37px;
-  // }
-  // .mb-30 {
-  //   margin-bottom: 30px;
-  // }
-
   .editPanel {
     .tilte {
-      font-family: @default-font;
-      font-size: @default-font-size;
-      color: @default-font-color;
-      font-weight: @default-font-weight;
-      line-height: @default-line-height;
       margin-bottom: 10px;
     }
 
     .eventTitle {
-      font-family: @default-font;
       font-size: 20px;
-      color: @default-font-color;
       font-weight: 500;
       line-height: 29px;
       margin-bottom: 26px;
     }
 
     .eventSubTitle {
-      font-family: @default-font;
-      font-size: @default-font-size;
-      color: @default-font-color;
-      font-weight: @default-font-weight;
-      line-height: @default-line-height;
       margin-bottom: 28px;
     }
 
     .headerList {
-      margin-bottom: 42px;
+      margin-bottom: 16px;
 
       .header {
         margin-bottom: 4px;

@@ -16,6 +16,7 @@
 <script>
 
 import * as d3 from 'd3-hexbin'
+import {forEach} from 'lodash'
 
 /* eslint-disable */
 // Defaults
@@ -135,14 +136,14 @@ let HexTile = function(centerX, centerY, sideRadius, vertexRadius, hexColor) {
 let createHexBoard = function(master, maxCounts, errorNum) {
   // Pull the options off of the master.
   let options = [];
-  options.id = master.attr("id");
-  options.height = master.attr("height");
-  options.width = master.attr("width");
-  options.boardRadius = master.attr("data-boardRadius");
-  options.hexColor = master.attr("data-hexColor");
+  options.id = master.getAttribute("id");
+  options.height = master.getAttribute("height");
+  options.width = master.getAttribute("width");
+  options.boardRadius = master.getAttribute("data-boardRadius");
+  options.hexColor = master.getAttribute("data-hexColor");
 
   // Create hex board and shove it in the array.
-  let newHexBoard = new HexBoard(options, master[0], maxCounts, errorNum);
+  let newHexBoard = new HexBoard(options, master, maxCounts, errorNum);
   activeHexBoards[newHexBoard.id] = newHexBoard;
   activeHexBoardKeys[activeHexBoardKeys.length] = newHexBoard.id;
 };
@@ -158,7 +159,7 @@ let drawPolygon = function(sides, vertexRadius, centerX, centerY, angleOffset, c
     let toX = vertexRadius * Math.cos((2 * Math.PI / sides) * vertexI + angleOffset) + centerX;
     let toY = vertexRadius * Math.sin((2 * Math.PI / sides) * vertexI + angleOffset) + centerY;
 
-    if (vertexI == 1) {
+    if (vertexI === 1) {
       ctx.moveTo(toX, toY);
     } else {
       ctx.lineTo(toX, toY);
@@ -214,10 +215,9 @@ export default {
       let _this = this
       let hexbin = d3.hexbin()
 
-      createHexBoard($('#'+ _this.canvasId), hexbinData.total_num, hexbinData.error_num)
-      $.each(
-        activeHexBoardKeys,
-        function(index, value) {
+      createHexBoard(document.querySelector('#'+ _this.canvasId), hexbinData.total_num, hexbinData.error_num)
+
+      forEach(activeHexBoardKeys, value => {
           activeHexBoards[value].build()
           activeHexBoards[value].draw()
         }
@@ -244,11 +244,9 @@ export default {
       font-size:14px !important;
       font-weight:500;
       line-height:20px!important;
-      font-family:SourceHanSansSC-Medium,SourceHanSansSC;
     }
     .dC-b{
       font-size: 14px!important;
-      font-family: SourceHanSansSC-Light,SourceHanSansSC;
       font-weight: 300;
       line-height: 20px!important;
     }
@@ -256,7 +254,6 @@ export default {
       font-size:14px !important;
       font-weight:500;
       line-height:20px!important;
-      font-family:SourceHanSansSC-Medium,SourceHanSansSC;
     }
   }
 }

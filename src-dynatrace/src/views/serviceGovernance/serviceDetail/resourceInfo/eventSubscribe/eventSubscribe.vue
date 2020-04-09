@@ -1,35 +1,43 @@
 <template>
-  <div class="eventSub">
-    <div class="flex-between head-title">
-      <h2>事件订阅</h2>
-      <ntPopover :show.sync="showSecondSurePopup" type="small" width="160">
-        <el-button class="head-btn" slot="reference" @click="showSecondSurePopup = true" v-permission= "'serviceCenter_serviceDetail_filterRuleUpdateCache'">更新缓存</el-button>
+  <div>
+
+    <DYHeader class="row-title" title="事件订阅" type="small" no-gap>
+      <DYPopover slot="actions" :show.sync="showSecondSurePopup" type="small">
+        <DYButton slot="reference" @click="showSecondSurePopup = true"
+                  v-permission="'serviceCenter_serviceDetail_eventSubscribeUpdateCache'">更新缓存
+        </DYButton>
         <!-- 二次确认popup -->
-        <div class="mb10 flex-center">确认更新缓存?</div>
-        <div>
-          <el-button type="primary" @click="yesClick()">是</el-button>
-          <el-button type="primary" @click="showSecondSurePopup = false">否</el-button>
-        </div>
-      </ntPopover>
+        <div class="mb10 flex-center no-warp">确认更新缓存?</div>
+        <DYButtonGroup>
+          <DYButton theme="dark" type="primary" @click="yesClick()">是</DYButton>
+          <DYButton theme="dark" @click="showSecondSurePopup = false">否</DYButton>
+        </DYButtonGroup>
+      </DYPopover>
+    </DYHeader>
+
+    <div v-if="showNew" class="add-panel row-action">
+      <event-subscribe-content
+        :category="category"
+        :editMode="true"
+        @onCreate="onCreate"
+        @close="showNew = false"/>
     </div>
 
-    <div v-if="showNew" class="addPanel">
-      <event-subscribe-content :category="category" :editMode="true" @onCreate="onCreate"
-                               @close="showNew = false"></event-subscribe-content>
+    <div v-else class="row-action">
+      <DYButton type="primary" @click="add" v-permission="'serviceCenter_serviceDetail_eventSubscribeList_add'">添加订阅
+      </DYButton>
     </div>
 
-    <div v-else class="mb30 mt30">
-      <el-button @click="add" type="primary" v-permission= "'serviceCenter_serviceDetail_eventSubscribeList_add'">添加订阅</el-button>
+    <div class="query row-action">
+      <search-bar
+        v-model.trim="query"
+        @search="queryTable"
+        :placeholder="'请输入搜索内容'"
+      />
     </div>
 
-    <el-input
-      class="query"
-      @change="queryTable"
-      v-model="query"
-      placeholder="请输入搜索内容"
-      suffix-icon="el-icon-search">
-    </el-input>
     <nt-table
+      class="row-content"
       ref="table"
       :tableData="tableData"
       :columns="columns"
@@ -42,11 +50,12 @@
 </template>
 
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
+
 import ntSwitch from 'components/base/switch.vue'
-import eventSubscribeContent from '@/views/serviceGovernance/serviceDetail/resourceInfo/eventSubscribe/eventSubscribeContent.vue'
+import eventSubscribeContent
+  from '@/views/serviceGovernance/serviceDetail/resourceInfo/eventSubscribe/eventSubscribeContent.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
-import ntPopover from 'components/base/popover.vue'
+import searchBar from 'components/searchBar/searchBar.vue'
 
 import {
   NXMC_SUBSCRIBE_CACHE_UPDATE_POST,
@@ -82,7 +91,7 @@ export default {
           name: '事件名称', // 表头名
           code: 'subscribe_name', // 表身
           type: 'text',
-          icon_url: 'iconevents',
+          icon_url: 'events',
           width: 130
         },
         {
@@ -93,22 +102,24 @@ export default {
         {
           name: '过滤条件',
           type: 'icon',
-          icon_url: 'icontext',
-          width: 100
+          icon_url: 'filter_text',
+          width: 100,
+          textAlign: 'center'
         },
         {
           name: '启用/禁用', // 表头名字
           code: 'state', // 表身显示的值
           type: 'switch',
-          disable: false
+          disable: false,
+          textAlign: 'right'
         },
         {
           name: '删除', // 表头名字
           code: 'name', // 表身
-          width: 50,
+          width: 60,
           type: 'delete',
           disable: false,
-          textAlign: 'right' // 头部排序
+          textAlign: 'center' // 头部排序
         }
       ]
     }
@@ -213,106 +224,15 @@ export default {
     }
   },
   components: {
-    splitTitle,
     ntSwitch,
-    ntPopover,
     eventSubscribeContent,
-    ntTable
+    ntTable,
+    searchBar
   }
 }
 </script>
 <style scoped lang="less">
-  @import "~common/style/variable";
-
-  @default-width: 425px;
-  .default-width {
-    width: @default-width;
-  }
-
-  .ml-20 {
-    margin-left: 20px;
-  }
-
-  .mt-23 {
-    margin-top: 23px;
-  }
-
-  .mt-8 {
-    margin-top: 8px;
-  }
-
-  .mt-47 {
-    margin-top: 47px;
-  }
-
-  // .mb-37 {
-  //   margin-bottom: 37px;
-  // }
-  .mb-30 {
-    margin-bottom: 30px;
-  }
-
-  .eventSub {
-    padding: 10px;
-
-    .query {
-      width: 80%;
-      margin-bottom: 20px;
-      // margin-left: 12px;
-    }
-
-    .addPanel {
-      padding: 20px 0 30px 12px;
-      background-color: @default-gray;
-      margin-bottom: 28px;
-
-      .tilte {
-        font-family: @default-font;
-        font-size: @default-font-size;
-        color: @default-font-color;
-        font-weight: @default-font-weight;
-        line-height: @default-line-height;
-        margin-bottom: 10px;
-      }
-
-      .headerList {
-        margin-bottom: 42px;
-
-        .header {
-          margin-bottom: 4px;
-
-          .headTitle {
-            width: 107px;
-          }
-
-          .headmid {
-            width: 14px;
-            margin-left: 17px;
-            margin-right: 9px;
-          }
-
-          .headBody {
-            width: 238px;
-          }
-
-          img {
-            width: 12px;
-            height: 12px;
-            margin-left: 14px;
-            cursor: pointer;
-          }
-        }
-      }
-
-      .select {
-        margin-bottom: 30px;
-        width: @default-width;
-      }
-
-      .filterCondition {
-        margin-bottom: 30px;
-        width: @default-width;
-      }
-    }
+  .query {
+    width: 80%;
   }
 </style>

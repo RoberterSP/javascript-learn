@@ -1,82 +1,79 @@
 <template>
-  <div class="filterBox">
-    <h2>接口组</h2>
-    <!-- <split-title :title="'接口组'"></split-title> -->
-    <div class="desc">已添加 {{tableData.data.length}} 个接口组</div>
-    <div class="addBtn">
-      <div v-show="tableData.data.length > 0">
-        <nt-tabs
-          theme="purple"
-          :tabList="tabList"
-          @tabsClick="tabsClick"
-        ></nt-tabs>
-        <div v-show="showAddGroup">
-          <div class="search-bar-box">
-            <search-bar
-              v-model.trim="queryAdd"
-              @change="changequeryAdd"
-              :placeholder="'搜索接口组名称'"
-            ></search-bar>
-          </div>
-          <div class="add-title">
-            <!-- 该应用添加的接口组 -->
-            <nt-table
-              :tableData="tableData.data"
-              :columns="tableData.columns"
-              :tableSet="tableData.tableSet"
-              @deleteOne="deleteOne"
-            ></nt-table>
-          </div>
-        </div>
-        <div v-show="!showAddGroup">
-          <!-- 该应用添加的接口组的接口数量 -->
-          <div class="add-title">
-            <nt-table
-              :tableData="tableDataEndpoints.data"
-              :columns="tableDataEndpoints.columns"
-              :tableSet="tableDataEndpoints.tableSet"
-            ></nt-table>
-          </div>
-        </div>
-      </div>
+  <div>
+    <DYHeader title="接口组" type="small" no-gap/>
+
+    <div class="row-desc">已添加 {{tableData.data.length}} 个接口组</div>
+
+    <div v-show="tableData.data.length > 0 || queryAdd">
+
+      <DYTabs
+        class="row-action"
+        theme="purple"
+        :tabList="tabList"
+        @onClick="tabsClick"
+      ></DYTabs>
+
       <div v-show="showAddGroup">
-        <div class="search-bar-box">
+        <div class="search-bar-box row-action">
           <search-bar
-            v-model.trim="query"
-            @change="change"
+            v-model.trim="queryAdd"
+            @search="changeQueryAdd"
             :placeholder="'搜索接口组名称'"
           ></search-bar>
         </div>
-        <div class="add-title">
-          <!-- 所有的接口组 -->
+
+        <div class="row-content">
+          <!-- 该应用添加的接口组 -->
           <nt-table
-            :tableData="tableListData.data"
-            :columns="tableListData.columns"
-            :tableSet="tableListData.tableSet"
-            @addColumn="addColumn"
+            :tableData="tableData.data"
+            :columns="tableData.columns"
+            :tableSet="tableData.tableSet"
+            @deleteOne="deleteOne"
           ></nt-table>
         </div>
+      </div>
+
+      <div v-show="!showAddGroup">
+        <!-- 该应用添加的接口组的接口数量 -->
+        <div class="row-content">
+          <nt-table
+            :tableData="tableDataEndpoints.data"
+            :columns="tableDataEndpoints.columns"
+            :tableSet="tableDataEndpoints.tableSet"
+          ></nt-table>
+        </div>
+      </div>
+    </div>
+
+    <div v-show="showAddGroup">
+      <div class="search-bar-box row-action">
+        <search-bar
+          v-model.trim="query"
+          @search="change"
+          :placeholder="'搜索接口组名称'"
+        ></search-bar>
+      </div>
+      <div class="row-content">
+        <!-- 所有的接口组 -->
+        <nt-table
+          :tableData="tableListData.data"
+          :columns="tableListData.columns"
+          :tableSet="tableListData.tableSet"
+          @addColumn="addColumn"
+        ></nt-table>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import dyButton from 'components/base/button.vue'
 import dySwitch from 'components/base/switch.vue'
-import ntTabs from 'components/base/tabs.vue'
 import searchBar from 'components/searchBar/searchBar.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
-import { PAGESIZE } from 'common/util/common.js'
+import {PAGESIZE} from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
-
-import {
-  APP_SCOPE_LIST_GET,
-  SCOPE_LIST_GET,
-  APP_SCOPE_UPDATE_POST,
-  NXMC_METRICS_APP_GET
-} from '@/api'
+import {clone} from 'lodash'
+import {APP_SCOPE_LIST_GET, APP_SCOPE_UPDATE_POST, NXMC_METRICS_APP_GET, SCOPE_LIST_GET} from '@/api'
 
 export default {
   data () {
@@ -92,29 +89,33 @@ export default {
       }],
       tableData: {
         data: [],
+        dataCache: [],
         columns: [
           {
             name: '已添加接口组', // 表头名
             code: 'name', // 表身
             type: 'text',
+            width: 400,
             showicon: 'iconfont',
-            icon_url: 'iconAPIgroup1'
+            icon_url: 'APIgroup1'
           },
           {
             name: '接口数', // 表头名
             code: 'endpoint_num', // 表身
             type: 'text',
             sortAbled: true, // 是否显示排序
-            sortOrder: 'none' // 排序方式
+            sortOrder: 'none', // 排序方式
+            textAlign: 'right',
+            textAiignWithoutIcon: true // 右对齐但是不希望和sort icon对齐仅和文字右对齐
           },
           {
             name: '删除', // 表头名字
             code: '', // 表身
             type: 'delete',
             showDel: true, // 删除
-            textAlign: 'right',
+            textAlign: 'center',
             disable: false,
-            width: 50
+            width: 80
           }
         ],
         tableSet: {
@@ -137,7 +138,8 @@ export default {
             name: '已添加接口', // 表头名
             code: 'endpoint', // 表身
             type: 'text',
-            icon_url: 'iconAPI',
+            icon_url: 'API',
+            width: 400,
             hasSort: false, // 排序
             showDel: false // 删除
           },
@@ -158,8 +160,9 @@ export default {
           {
             name: '公共接口', // 表头名字
             code: 'public_status', // 表身显示值
-            icon_urls: ['iconpublic', 'iconprivate'],
-            type: 'idxIcon'
+            icon_urls: ['public', 'private'],
+            type: 'idxIcon',
+            textAlign: 'center'
           },
           {
             name: '发布', // 表头名字
@@ -182,20 +185,24 @@ export default {
       },
       tableListData: {
         data: [],
+        dataCache: [],
         columns: [
           {
             name: '接口组', // 表头名
             code: 'name', // 表身
             type: 'text',
+            width: 400,
             showicon: 'iconfont',
-            icon_url: 'iconAPIgroup1'
+            icon_url: 'APIgroup1'
           },
           {
             name: '接口数', // 表头名
             code: 'endpoint_num', // 表身
             type: 'text',
             sortAbled: true, // 是否显示排序
-            sortOrder: 'none' // 排序方式
+            sortOrder: 'none', // 排序方式
+            textAlign: 'right',
+            textAiignWithoutIcon: true // 右对齐但是不希望和sort icon对齐仅和文字右对齐
           },
           {
             name: '添加', // 表头名字
@@ -206,7 +213,7 @@ export default {
             hasSort: false, // 排
             width: 80,
             disable: false,
-            textAlign: 'right' // 头
+            textAlign: 'center' // 头
           }
         ],
         tableSet: {
@@ -233,18 +240,12 @@ export default {
 
       this.nxmc_metrice_app_get()
     },
-    addApiFilter () {
-      console.log('添加接口滤')
-    },
     // input 框输入
     change () {
-      console.log('change')
+      this.tableListData.data = this.tableListData.dataCache.filter(item => item.name.includes(this.query))
     },
-    changequeryAdd () {
-      if (this.queryAdd) {
-        // todo 这里有bug，filter 没有副作用, 会导致搜索无效
-        this.tableData.data.filter(item => item.name.includes(this.queryAdd))
-      }
+    changeQueryAdd () {
+      this.tableData.data = this.tableData.dataCache.filter(item => item.name.includes(this.queryAdd))
     },
     // 是否展示接口组
     addColumn (row) {
@@ -292,7 +293,7 @@ export default {
       })
     },
     // 获取已添加的接口组
-    app_scope_list_get: function () {
+    app_scope_list_get () {
       let post = {
         id: this.detailData.id
       }
@@ -301,11 +302,12 @@ export default {
           this.$set(this.tableData.columns[2], 'disable', true)
         }
         this.tableData.data = res.data.scope_list
+        this.tableData.dataCache = clone(res.data.scope_list)
         this.tableData.tableSet.paginationConfig.total = res.data.total
       })
     },
     // 获取所有接口组
-    scope_list_get: function () {
+    scope_list_get () {
       const data = {
         page: 1,
         page_size: PAGESIZE
@@ -318,11 +320,13 @@ export default {
         }
         this.tableListData.data = (res.data.scope_list && res.data.scope_list.filter(item => !addedIds.includes(item.id))) || []
 
+        this.tableListData.dataCache = clone(this.tableListData.data)
+
         this.tableListData.tableSet.paginationConfig.total = res.data.total
       })
     },
     // 获取该应用下的所有接口
-    nxmc_metrice_app_get: function () {
+    nxmc_metrice_app_get () {
       let post = {
         id: this.detailData.id,
         page: 1,
@@ -332,7 +336,7 @@ export default {
         this.tableDataEndpoints.data = res.data.api
         this.tableDataEndpoints.tableSet.paginationConfig.total = res.data.total
         this.tabList[1].title = `包含(${this.tableDataEndpoints.data.length})个接口（含公共接口）`
-        this.tableDataEndpoints.data.map(item => {
+        this.tableDataEndpoints.data.forEach(item => {
           if (item.state === 'deployed') {
             item.stateStr = '已发布'
           } else {
@@ -353,12 +357,10 @@ export default {
       this.fetchAllList()
     }
   },
-  created () {},
+  created () {
+  },
   components: {
-    splitTitle,
-    dyButton,
     dySwitch,
-    ntTabs,
     searchBar,
     // slotTable,
     ntTable
@@ -366,34 +368,19 @@ export default {
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
-.filterBox {
-  padding: 10px;
-  .desc {
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(69,70,70,1);
-    line-height: 20px;
-    // margin-left: 20px;
-    margin-top: 8px;
+  @import "~common/style/variable";
+
+  .search-bar-box {
+    width: 80%;
   }
-  .addBtn {
-    margin-top: 32px;
-    .search-bar-box {
-      width: 80%;
-      margin-top: 32px;
-    }
-    .add-title {
-      padding-top: 20px;
-      .splitTitle {
-        padding: initial !important;
-      }
-    }
-    .form {
-      .url-name {
-        padding: 14px;
-      }
+
+  .splitTitle {
+    padding: initial !important;
+  }
+
+  .form {
+    .url-name {
+      padding: 14px;
     }
   }
-}
 </style>

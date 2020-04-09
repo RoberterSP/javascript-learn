@@ -1,9 +1,9 @@
 <template>
 <div class="blank_page p20">
   <div class="btn_handle" v-if="blankObj.btnPositon === 'top'">
-    <el-button type="primary" @click="handleBtn">{{blankObj.btnName}}</el-button>
+    <DYButton type="primary" @click="handleBtn">{{blankObj.btnName}}</DYButton>
   </div>
-  <div :class="blankObj.btnPositon === 'top' ? 'm15 p24': ''">
+  <div :class="blankObj.btnPositon === 'top' ? 'm16 p24': ''">
     <h1 class="mb10" v-html="blankObj.title"></h1>
     <div class="sub_title mb20" v-html="blankObj.subTitle"></div>
     <div class="blank_content">
@@ -17,7 +17,7 @@
     </div>
   </div>
   <div class="btn_handle" v-if="blankObj.btnPositon === 'bottom' || !blankObj.btnPositon">
-    <el-button type="primary" @click="handleBtn">{{blankObj.btnName}}</el-button>
+    <DYButton type="primary" @click="handleBtn">{{blankObj.btnName}}</DYButton>
   </div>
 </div>
 </template>
@@ -26,7 +26,7 @@ export default {
   props: {
     blankObj: {
       type: Object,
-      default: function () {
+      default () {
         return {
           btnPositon: 'bottom',
           btnName: '创建',
@@ -117,7 +117,7 @@ export default {
 .blank_content{
   .detail_content{
     .link_url{
-        color: @theme-color;
+        color: @turq-06;
       }
   }
 }

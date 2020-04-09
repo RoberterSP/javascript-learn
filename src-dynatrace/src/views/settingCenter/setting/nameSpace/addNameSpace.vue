@@ -13,16 +13,24 @@
       <el-form-item label="K8S NameSpace" prop="k8s_namespace_code">
         <el-input v-model="ruleForm.k8s_namespace_code" placeholder="例如：nexttao_dev"></el-input>
       </el-form-item>
-      <el-form-item class="mb-30">
+      <div class="switch_form_item">
         <nt-switch
           :value="switchValue"
           :title="'启用'"
           @dyClick="switchChange"
         ></nt-switch>
-      </el-form-item>
-      <div class="btns" v-permission="'settingCenter_namespaceList_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
-        <el-button @click="cancleForm('ruleForm')">取消</el-button>
+      </div>
+      <div class="btns" v-permission="'settingCenter_namespaceList_edit'" v-if="!ruleForm.id">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_namespaceList_add'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="cancleForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -34,14 +42,12 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-          name: '', // 角色名称
-          consul_namespace_code: '',
-          code: '',
-          k8s_namespace_code: ''
-        }
-      }
+      default: () => ({
+        name: '', // 角色名称
+        consul_namespace_code: '',
+        code: '',
+        k8s_namespace_code: ''
+      })
     }
   },
   data () {
@@ -127,9 +133,6 @@ export default {
 .add-box {
   .default-width {
     width: 425px;
-    .mb-30 {
-      margin-bottom: 30px;
-    }
     .empower_btn{
       margin-left: 16px;
     }

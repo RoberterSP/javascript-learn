@@ -1,64 +1,68 @@
 <template>
   <div>
-    <div class="filterBox p10" v-if="isShowLogList">
-      <h2>日志设置</h2>
+    <div class="filterBox" v-if="isShowLogList">
+      <DYHeader class="row-title" title="日志设置" type="small" no-gap />
       <!-- <div class="desc">{{detailData.name || '文字描述'}}</div> -->
-      <div class="addBtn-content">
-        <div v-show="showGroup">
-          <nt-tabs
-            :tabList="tabList"
-            @tabsClick="tabsClick"
-          ></nt-tabs>
 
-          <div class="mb30 mt30" v-show="showAddGroup">
-            <div v-if="showNew" class="addPanel mt30">
-              <addLogSetting :editMode="true" @close="showNew = false"></addLogSetting>
-            </div>
+      <template v-if="showGroup">
+        <DYTabs
+          class="row-action"
+          :tabList="tabList"
+          @onClick="tabsClick"
+        />
 
-            <div v-else>
-              <el-button @click="add" type="primary" v-permission="'settingCenter_logSetting_add'">添加配置</el-button>
-            </div>
-
+        <div v-if="showAddGroup" class="row-action">
+          <div v-if="showNew" class="add-panel">
+            <addLogSetting :editMode="true" @refresh="refresh(0)" @close="showNew = false" />
           </div>
-          <div v-show="!showAddGroup">
-            <!-- 该应用添加的接口组的接口数量 -->
-            <div class="add-title">
-              <nt-table
-                :tableData="tableDataInternal.data"
-                :columns="tableDataInternal.columns"
-                :tableSet="tableDataInternal.tableSet"
-                @changeSwitch="changeSwitch"
-                :componentsName="'addLogSetting'"
-                @refresh="refresh(1)"
-              ></nt-table>
-            </div>
+
+          <div v-else>
+            <DYButton @click="add" type="primary" v-permission="'settingCenter_logSetting_add'">添加配置</DYButton>
           </div>
+
         </div>
-        <div v-show="showAddGroup">
-          <div class="search-bar-box" style="width: 80%;">
-            <search-bar
-              v-model.trim="query"
-              @change="config_log_list_get(false)"
-              :placeholder="'请输入日志名称'"
-              clearable
-            ></search-bar>
-          </div>
+
+        <div v-if="!showAddGroup">
+          <!-- 该应用添加的接口组的接口数量 -->
           <div class="add-title">
-            <!-- 所有的接口组 -->
             <nt-table
-              :tableData="tableListData.data"
-              :columns="tableListData.columns"
-              :tableSet="tableListData.tableSet"
-              :componentsName="'addLogSetting'"
+              :tableData="tableDataInternal.data"
+              :columns="tableDataInternal.columns"
+              :tableSet="tableDataInternal.tableSet"
               @changeSwitch="changeSwitch"
-              @iconClick="iconClick"
-              @deleteOne="deleteOne"
-              @readDetail="readDetail"
-              @refresh="refresh(0)"
+              :componentsName="'addLogSetting'"
+              @refresh="refresh(1)"
             ></nt-table>
           </div>
         </div>
-      </div>
+      </template>
+
+      <template v-if="showAddGroup">
+        <div style="width: 80%;" class="row-action">
+          <search-bar
+            v-model.trim="query"
+            @search="config_log_list_get(false)"
+            :placeholder="'请输入日志名称'"
+            clearable
+          />
+        </div>
+
+        <div class="add-title row-action">
+          <!-- 所有的接口组 -->
+          <nt-table
+            :tableData="tableListData.data"
+            :columns="tableListData.columns"
+            :tableSet="tableListData.tableSet"
+            :componentsName="'addLogSetting'"
+            @changeSwitch="changeSwitch"
+            @iconClick="iconClick"
+            @deleteOne="deleteOne"
+            @readDetail="readDetail"
+            @refresh="refresh(0)"
+          ></nt-table>
+        </div>
+      </template>
+
     </div>
     <div v-else>
       <logDeployDetail :detailDeloy="detailDeloy"></logDeployDetail>
@@ -68,20 +72,14 @@
 </template>
 
 <script>
-import dyButton from 'components/base/button.vue'
 import dySwitch from 'components/base/switch.vue'
-import ntTabs from 'components/base/tabs.vue'
 import searchBar from 'components/searchBar/searchBar.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
 import addLogSetting from './addLogSetting.vue'
 import logDeployDetail from './logDeployDetail.vue'
-import { PAGESIZE } from 'common/util/common.js'
+import {PAGESIZE} from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
-import {
-  CONFIG_LOG_LIST_POST,
-  CONFIG_LOG_STATUS_UPDATE_LIST,
-  CONFIG_LOG_DELETE_POST
-} from '@/api'
+import {CONFIG_LOG_DELETE_POST, CONFIG_LOG_LIST_POST, CONFIG_LOG_STATUS_UPDATE_LIST} from '@/api'
 
 export default {
   data () {
@@ -122,7 +120,8 @@ export default {
           {
             name: '查询状态', // 表头名
             code: 'query_state', // 表身
-            type: 'switch'
+            type: 'switch',
+            textAlign: 'right'
           }
         ],
         tableSet: {
@@ -142,8 +141,7 @@ export default {
           {
             name: '名称', // 表头名
             code: 'name', // 表身
-            type: 'text',
-            width: 100
+            type: 'text'
           },
           {
             name: '标识', // 表头名
@@ -160,22 +158,25 @@ export default {
             name: '查询状态', // 表头名
             code: 'query_state', // 表身
             type: 'switch',
-            disable: false
+            disable: false,
+            textAlign: 'right'
           },
           {
             name: '分发', // 表头名
             code: '', // 表身
             type: 'icon',
-            icon_url: 'icondistributiontruck service-config',
+            icon_url: 'distributiontruck',
+            icon_action: true,
             width: 60,
-            disable: false
+            disable: false,
+            textAlign: 'center'
           },
           {
             name: '删除', // 表头名
             code: '', // 表身
             type: 'delete',
-            textAlign: 'right',
-            width: 50,
+            textAlign: 'center',
+            width: 60,
             disable: false
           }
         ],
@@ -195,13 +196,11 @@ export default {
   props: {
     detailData: {
       type: Object,
-      default: () => {
-        return {
-          name: '',
-          code: '',
-          id: ''
-        }
-      }
+      default: () => ({
+        name: '',
+        code: '',
+        id: ''
+      })
     }
   },
   methods: {
@@ -235,7 +234,7 @@ export default {
           name: detailData.name,
           type: 'edit'
           // routerTo: 'logSetting',
-          // myCoutomRouter: true
+          // myCustomRouter: true
         },
         {
           name: '发布',
@@ -243,7 +242,7 @@ export default {
         }
       ]
       bus.$emit('addRouter', obj)
-      this.$router.push({name: 'logDeployDetail', params: {detailData: detailData}})
+      this.$router.push({name: 'logDeployDetail', params: {detailData}})
     },
     readDetail (row) {
       this.isShowLogList = false
@@ -255,7 +254,7 @@ export default {
     },
     tabsClick (item, index) {
       // eslint-disable-next-line no-unneeded-ternary
-      this.showAddGroup = index === 0 ? true : false
+      this.showAddGroup = index === 0
       if (index === 0) {
         this.config_log_list_get(false)
       } else {
@@ -276,7 +275,7 @@ export default {
         })
       })
     },
-    config_log_list_get: function (flag) {
+    config_log_list_get (flag) {
       let data = {
         page: 1,
         page_size: PAGESIZE
@@ -286,11 +285,8 @@ export default {
         this.tableListData.tableSet.paginationConfig.currentPage = 1
       }
 
-      if (!flag) {
-        data.internal_state = false
-      } else {
-        data.internal_state = true
-      }
+      data.internal_state = !!flag
+
       CONFIG_LOG_LIST_POST(data).then(res => {
         if (!data.internal_state) {
           if (!this.$_accessRoutes('settingCenter_logSetting_delete')) {
@@ -301,7 +297,7 @@ export default {
           }
           this.tableListData.data = res.data.log_configs
           this.tableListData.tableSet.paginationConfig.total = res.data.total
-          this.tableListData.data.map(item => {
+          this.tableListData.data.forEach(item => {
             if (item.state === 'deployed') {
               item.stateStr = '已发布'
             } else {
@@ -314,7 +310,7 @@ export default {
           }
           this.tableDataInternal.data = res.data.log_configs
           this.tableDataInternal.tableSet.paginationConfig.total = res.data.total
-          this.tableDataInternal.data.map(item => {
+          this.tableDataInternal.data.forEach(item => {
             if (item.state === 'deployed') {
               item.stateStr = '已发布'
             } else {
@@ -328,11 +324,10 @@ export default {
   mounted () {
     this.config_log_list_get()
   },
-  created () {},
+  created () {
+  },
   components: {
-    dyButton,
     dySwitch,
-    ntTabs,
     searchBar,
     addLogSetting,
     logDeployDetail,
@@ -340,75 +335,3 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-@default-width: 425px;
-.default-width {
-  width: @default-width;
-}
-
-.ml-20 {
-  margin-left: 20px;
-}
-.mt-23 {
-  margin-top: 23px;
-}
-.mt-8 {
-  margin-top: 8px;
-}
-.mt-47 {
-  margin-top: 47px;
-}
-.mb-30 {
-  margin-bottom: 30px;
-}
-
-.filterBox {
-  .desc {
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(69,70,70,1);
-    line-height: 20px;
-    // margin-left: 20px;
-    margin-top: 8px;
-  }
-  .addBtn-content {
-    margin-top: 20px;
-  }
-
-  .addBtn {
-
-    .add-title {
-      padding-top: 20px;
-      .splitTitle {
-        padding: initial !important;
-      }
-    }
-    .form {
-      .url-name {
-        padding: 14px;
-      }
-    }
-  }
-}
-.addPanel {
-  margin-bottom: 20px;
-
-  .tilte {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
-    margin-bottom: 10px;
-  }
-  .select {
-    margin-bottom: 30px;
-    width: @default-width;
-  }
-  .filterCondition {
-    margin-bottom: 30px;
-    width: @default-width;
-  }
-}
-</style>

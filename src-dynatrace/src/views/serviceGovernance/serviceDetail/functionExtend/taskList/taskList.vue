@@ -1,15 +1,21 @@
 <template>
-  <div class="role_container p10">
-    <h2>计划任务</h2>
-    <!-- <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div> -->
-    <el-input class="search" suffix-icon="el-icon-search" v-model="name" placeholder="请输入任务名称" clearable @change="readMeshEndpointList()"></el-input>
-    <div class="user_list">
+  <div>
+    <DYHeader class="row-title" title="计划任务" type="small" no-gap />
+    <div class="search row-action">
+      <search-bar
+        v-model.trim="name"
+        @search="readMeshEndpointList"
+        :placeholder="'请输入任务名称'"
+      />
+    </div>
+    <div class="row-content">
       <nt-table :tableData="tableData" :columns="columns" :tableSet="faultTableSet" :componentsName="'taskListContent'" @componentSaveContent="saveContent"></nt-table>
     </div>
   </div>
 </template>
 <script>
 import ntTable from 'components/ntTable/ntTable.vue'
+import searchBar from 'components/searchBar/searchBar.vue'
 import { PAGESIZE } from 'common/util/common.js'
 import { CRON_LIST_GET } from '@/api'
 export default {
@@ -43,7 +49,7 @@ export default {
           name: '名称', // 表头名
           code: 'name',
           showicon: 'iconfont',
-          icon_url: 'iconplantask',
+          icon_url: 'plantask',
           type: 'text',
           width: 300
         },
@@ -54,26 +60,27 @@ export default {
         // },
         {
           name: '执行周期', // 表头名
-          code: 'interval_number',
+          code: 'interval_number_text',
+          type: 'text'
+        },
+        {
+          name: '下次执行时间', // 表头名
+          code: 'nextcall',
           type: 'text',
-          textAlign: 'center'
+          width: 110
         },
         {
           name: '调用次数', // 表头名
           code: 'numbercall',
           type: 'text',
-          textAlign: 'center'
-        },
-        {
-          name: '下次执行时间', // 表头名
-          code: 'nextcall',
-          type: 'text'
+          textAlign: 'right'
         },
         {
           name: '启用/禁用', // 表头名
           code: 'active',
           type: 'switch',
-          textAlign: 'center'
+          disable: true,
+          textAlign: 'right'
         }],
       tableData: [], // 角色列表
       page: 1, // 第几页
@@ -105,7 +112,7 @@ export default {
                 item.interval_type_text = x.label
               }
             })
-            item.interval_number = item.interval_number + item.interval_type_text
+            item.interval_number_text = item.interval_number + item.interval_type_text
             item.mesh_code = this.meshCode
             if (item.type === 'call') {
               item.typeText = '调用方法'
@@ -129,44 +136,15 @@ export default {
     }
   },
   components: {
-    ntTable
+    ntTable,
+    searchBar
   }
 }
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
 @import "~common/style/variable";
-.role_container {
-  position: relative;
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .empower_btn{
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
-  // .user_list{
-  //   margin-top: 20px;
-  // }
-  .source_name{
-    display: flex;
-    align-items: center;
-    .name{
-      width: 68px;
-    }
-    .line{
-      flex: 1;
-      background-color: #E6E6E6;
-      height: 1px;
-    }
-  }
-}
 .search {
   width: 80%;
-  margin-top: 32px;
-  margin-bottom: 20px;
 }
 </style>

@@ -11,13 +11,18 @@ import './plugins/plugins.css'
 import 'common/style/common.less'
 import 'common/style/reset.less'
 import 'font-awesome/css/font-awesome.css'
-import 'common/style/theme/theme/index.css'
+import 'common/style/theme/theme/index.less'
 import './assets/iconfont/iconfont.css'
 import 'common/style/resetElement.less'
 import VueI18n from 'vue-i18n'
 import './directives/permission.js'
 import './directives/onlyNumber.js'
+import './directives/hintMask.js' // 全局注入提示
 import VueClipboards from 'vue-clipboard2'
+
+// 安装全局基础组件
+import baseComponents from 'components/base/index'
+Vue.use(baseComponents)
 
 // import * as fundebug from 'fundebug-javascript'
 // import fundebugVue from 'fundebug-vue'
@@ -32,6 +37,7 @@ Vue.use(ElementUI)
 Vue.use(Loading)
 Vue.use(VueI18n)
 Vue.use(VueClipboards)
+
 
 Vue.config.productionTip = false
 Vue.directive('title', {

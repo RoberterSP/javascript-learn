@@ -1,331 +1,257 @@
 @import "~common/style/variable";
-.filter_div{
-  margin-top: 20px;
-  margin-bottom: 35px;
-}
-.policDetail {
-  font-size:14px;
-  font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-  font-weight:400;
-  color:rgba(69,70,70,1) !important;
-  line-height:14px;
-  .popper__arrow {
-    display: block !important;
-  }
-}
-.alarmsList{
+
+.alarmsList {
   .panel_box {
-    min-height: calc(100vh - 74px);
+    // min-height: calc(100vh - 74px);
     position: relative;
     padding: 0 0 16px;
+
     .panel-left {
       width: 238px;
-      position: absolute;
-      left: 0;
-      right: 0;
+
       .nav {
         padding-top: 20px;
+
         button {
           width: 118px;
           margin: 24px 0 24px 6px;
+
           &:first-child {
             margin-left: 25px;
           }
+
           .box-center {
             display: flex;
             justify-content: center;
             align-items: center;
           }
+
           .iconlist, .icongrid {
             width: 16px;
             height: 16px;
           }
         }
       }
-      .filter {
-        .filter-item {
-          min-height: 71px;
-          border-bottom:1px solid rgba(230,230,230,1);
-          &.select {
-            background: @theme-gray;
+    }
+
+
+    .filter_list_div {
+      margin: 27px 0 0px 0px;
+    }
+
+    .head_title {
+      font-size: 20px;
+      font-weight: 500;
+      color: rgba(69, 70, 70, 1);
+      line-height: 29px;
+    }
+
+    .no-alarms {
+      padding: 84px 30px 48px 30px;
+    }
+
+    .no-alarms-tips {
+      font-size: 24px;
+      margin-bottom: 48px;
+    }
+
+    .no-alarms-pics img {
+      flex: 1;
+      width: 0;
+      flex-shrink: 0;
+    }
+
+    .sf_chart_legend {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+
+      .legend_item {
+        display: flex;
+        align-items: center;
+
+        & + .legend_item {
+          margin-left: 25px;
+        }
+
+        .legend_item_icon {
+          svg {
+            width: 16px;
+            height: 16px;
           }
-          .up {
-            padding: 14px 0 6px 0;
-            margin-left: 16px;
-            margin-right: 8px;
-            font-size: 18px;
-            font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-            font-weight: 400;
-            color: @default-font-color;
-            line-height: 26px;
+
+          img {
+            width: 16px;
+            height: 16px;
+            margin-top: -6px;
           }
-          .down {
-            display: flex;
-            margin-left: 16px;
-            margin-right: 16px;
-            font-size: 14px;
-            font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-            font-weight: 400;
-            color: @default-font-color;
-            line-height: 20px;
-            div:first-child {
-              word-break: break-all;
-              padding-right: 10px;
-            }
-            div:last-child {
-              margin-left: auto;
-              margin-right: 0;
-              color: @theme-color;
-              white-space: nowrap;
-            }
-          }
+        }
+
+        .legent_item_tit {
+          margin-left: 6px;
+          font-size: 12px;
+          white-space: nowrap;
+          color: rgb(51, 51, 51);
+          font-weight: normal;
+          text-overflow: ellipsis;
         }
       }
     }
-    .panel-right {
-      padding: 0 16px 0 0;
-      width: 100%;
-      padding-left: 238px;
-      background: rgba(255, 255, 255, 1);
-      background-clip: content-box;
-      .filter_list_div{
-        margin: 27px 0 0px 0px;
+
+    .show_total_num {
+      font-size: 20px;
+      color: #2d2d2d;
+
+      span {
+        color: #727272;
+        font-weight: normal;
       }
-      .head_title{
-        font-size: 20px;
-        font-family: SourceHanSansSC-Medium,SourceHanSansSC;
-        font-weight: 500;
-        color:rgba(69,70,70,1);
-        line-height: 29px;
-      }
-      .app-list-title{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        .head{
-          font-size: 28px;
-          font-weight: 500;
-          line-height: 40px;
+    }
+
+    .grid-list {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .sure {
+        &:hover {
+          border: 1px solid #545353;
+
+          &::before {
+            border: 2px solid #545353;
+          }
         }
       }
 
-      .no-alarms {
-        padding: 84px 30px 48px 30px;
+      .nosure {
+        &:hover {
+          border: 1px solid rgba(0, 0, 0, 0);
+
+          &::before {
+            border: 2px solid rgb(220, 23, 42);
+          }
+        }
       }
 
-      .no-alarms-tips {
-        font-size: 24px;
-        margin-bottom: 48px;
-      }
+      .grid {
+        // border-radius: 3px;
+        // border:1px solid @gray-03;
+        // flex: 1;
+        flex: 0 0 calc(50% - 22px);
+        margin-bottom: 20px;
+        cursor: pointer;
+        position: relative;
+        // &::before{
+        //   content: "";
+        //   position: absolute;
+        //   top: 0;
+        //   bottom: 0;
+        //   left: 0;
+        //   right: 0;
+        //   border: 2px solid rgba(0, 0, 0, 0);
+        //   border-radius: 3px;
+        // }
+        &:nth-child(even) {
+          margin-left: 24px;
+        }
 
-      .no-alarms-pics img {
-        flex: 1;
-        width: 0;
-        flex-shrink: 0;
-      }
-
-      .sf_chart_legend{
-        display: flex;
-        width: 100%;
-        align-items: center;
-        justify-content: center;
-        .legend_item{
+        .gg_up {
+          background: @gray-02;
           display: flex;
           align-items: center;
-          &+.legend_item{
-            margin-left: 25px;
-          }
-          .legend_item_icon{
-            svg{
-              width: 16px;
-              height: 16px;
-            }
-            img{
-              width: 16px;
-              height: 16px;
-              margin-top: -6px;
-            }
-          }
-          .legent_item_tit{
-            margin-left: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            color: rgb(51, 51, 51);
-            font-weight: normal;
-            text-overflow: ellipsis;
-            color: rgb(51, 51, 51);
-          }
-        }
-      }
-      .show_total_num{
-        font-weight: 400;
-        font-size: 20px;
-        color: #2d2d2d;
-        font-family: @default-font;
-        span{
-          font-size: 14px;
-          color: #727272;
-          font-weight: normal;
-        }
-      }
-      .grid-list {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        padding: 0 20px;
-        .sure {
-          &:hover {
-            border:1px solid #545353;
-            &::before{
-              border: 2px solid #545353;
-            }
-          }
-        }
-        .nosure {
-          &:hover {
-            border:1px solid rgba(0, 0, 0, 0);
-            &::before{
-              border: 2px solid  rgb(220, 23, 42);
-            }
-          }
-        }
-        .grid {
-          border-radius: 3px;
-          border:1px solid @theme-gray;
-          // flex: 1;
-          flex: 0 0 calc(50% - 22px);
-          margin-bottom: 20px;
-          cursor: pointer;
-          position: relative;
-          &::before{
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            border: 2px solid rgba(0, 0, 0, 0);
-            border-radius: 3px;
-          }
-          &:nth-child(even){
-            margin-left: 24px;
-          }
-          .gg_up {
-            background: @default-gray;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid @theme-gray;
-            &.sured{
-              .ggu_left {
-                background: #545353;
-              }
-              .ggu_right .state_label{
-                color: #898989;
-              }
-            }
-            &.noSured{
-              .ggu_left {
-                background: rgb(220, 23, 42);
-              }
-              .ggu_right .state_label{
-                color: rgb(220, 23, 42);
-              }
-            }
-            .ggu_left {
-              width: 56px;
-              height: 53px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              img{
-                width: 36px;
-                height: 36px;
-              }
-              .iconplaceholder {
-                font-size: 24px;
-                color: #fff;
-              }
-            }
-            .ggu_right {
-              padding: 0 10px;
-              display: flex;
-              align-items: flex-start;
-              justify-content: space-between;
-              flex:1;
-              .state_label{
-                font-size: 12px;
-                font-size:12px;
-                font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-                font-weight:400;
-                line-height:17px;
-              }
-              .ggur_title {
-                margin-top: 0;
-                font-size:15px;
-                font-family:SourceHanSansSC-Medium,SourceHanSansSC;
-                font-weight:500;
-                color:rgba(69,70,70,1);
-                line-height:21px;
-              }
-              .ggur_appid {
-                font-size:12px;
-                font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-                font-weight:400;
-                color:rgba(137,137,137,1);
-                line-height:17px;
-              }
-            }
-          }
-          .gg_down {
-            padding: 10px 15px;
-            .ggd_line {
-              &+.ggd_line{
-                margin-top: 5px;
-              }
-              .ggdl_value {
-                font-size:12px;
-                font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-                font-weight:400;
-                color:rgba(137,137,137,1);
-                line-height:17px;
-              }
-              .ggdl_name {
-                font-size:15px;
-                font-family:SourceHanSansSC-Medium,SourceHanSansSC;
-                font-weight:500;
-                color:rgba(69,70,70,1);
-                line-height:21px;
-              }
-            }
-          }
-        }
-      }
+          border-bottom: 1px solid @gray-03;
 
-      .iconmore::before {
-        font-size: 20px;
-        line-height: 14px;
-      }
-      .footer {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding-right: 20px;
-        height: 56px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        background: @default-font-color;
-        .tag {
-          color: #FFFFFF;
-          padding-right: 40px;
+          &.sured {
+            .ggu_left {
+              background: #545353;
+            }
+
+            .ggu_right .state_label {
+              color: @gray-06;
+            }
+          }
+
+          &.noSured {
+            .ggu_left {
+              background: rgb(220, 23, 42);
+            }
+
+            .ggu_right .state_label {
+              color: rgb(220, 23, 42);
+            }
+          }
+
+          .ggu_left {
+            width: 56px;
+            height: 53px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            img {
+              width: 36px;
+              height: 36px;
+            }
+
+            .iconplaceholder {
+              font-size: 24px;
+              color: #fff;
+            }
+          }
+
+          .ggu_right {
+            padding: 0 10px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex: 1;
+
+            .state_label {
+              font-size: 12px;
+              line-height: 17px;
+            }
+
+            .ggur_title {
+              margin-top: 0;
+              font-size: 15px;
+              font-weight: 500;
+              color: rgba(69, 70, 70, 1);
+              line-height: 21px;
+            }
+
+            .ggur_appid {
+              font-size: 12px;
+              color: rgba(137, 137, 137, 1);
+              line-height: 17px;
+            }
+          }
         }
-        .btn-cancel {
-          color: #FFFFFF;
-          border: 1px solid rgba(255,255,255,1);
-          background: @default-font-color;
+
+        .gg_down {
+          padding: 10px 15px;
+
+          .ggd_line {
+            & + .ggd_line {
+              margin-top: 5px;
+            }
+
+            .ggdl_value {
+              font-size: 12px;
+              color: rgba(137, 137, 137, 1);
+              line-height: 17px;
+            }
+
+            .ggdl_name {
+              font-size: 15px;
+              font-weight: 500;
+              color: rgba(69, 70, 70, 1);
+              line-height: 21px;
+            }
+          }
         }
       }
     }
+
   }
 }

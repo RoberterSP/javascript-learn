@@ -1,11 +1,25 @@
 <template>
-  <div class="role_container p10">
-    <h2 class="mb30">命名空间</h2>
-    <div class="add-content mb20" v-if="!isShowBtn" >
+  <div class="role_container">
+    <DYHeader class="row-title" title="命名空间" type="small" no-gap>
+      <DYButtonGroup slot="actions">
+        <DYButton type="primary" @click="addNameSpace" v-permission="'settingCenter_namespaceList_add'">添加命名空间</DYButton>
+        <DYPopover :show.sync="showPopup" type="small">
+          <DYButton slot="reference" @click="showPopup = true" v-permission="'settingCenter_namespaceList_updateCache'">更新缓存</DYButton>
+          <p class="mb10 text-center no-warp">确认更新缓存？</p>
+
+          <DYButtonGroup between>
+            <DYButton type="primary" theme="dark" @click="updateCache">是</DYButton>
+            <DYButton theme="dark" @click="showPopup = false">否</DYButton>
+          </DYButtonGroup>
+        </DYPopover>
+      </DYButtonGroup>
+
+    </DYHeader>
+    <div class="add-panel row-action" v-if="!isShowBtn" >
       <add-name-space @addHandle="addHandle" @cancelContent="cancleHandle"></add-name-space>
     </div>
-    <el-button v-else type="primary" class="mb30" @click="addNameSpace" v-permission="'settingCenter_namespaceList_add'">添加命名空间</el-button>
-    <div class="user_list">
+
+    <div class="row-content">
       <nt-table :tableData="nameSpaceList" :columns="columns" :tableSet="nameSpaceListTableSet" :componentsName="'addNameSpace'" @changeSwitch="changeSwitch" @componentSaveContent="saveContent"></nt-table>
     </div>
   </div>
@@ -13,12 +27,14 @@
 <script>
 import ntTable from 'components/ntTable/ntTable.vue'
 import addNameSpace from './addNameSpace'
-import { NAME_SPACE_LIST_GET, GET_NAME_SPACE_INFO, UPDATE_NAME_SPACE_STATE } from '@/api'
+import {NAME_SPACE_LIST_GET, GET_NAME_SPACE_INFO, UPDATE_NAME_SPACE_STATE, UPDATE_NAME_SPACE_CACHE} from '@/api'
 import { PAGESIZE } from '@/common/util/common.js'
 import bus from '@/assets/eventBus.js'
+
 export default {
   data () {
     return {
+      showPopup: false,
       isShowBtn: true,
       columns: [{
         name: '名称', // 表头名
@@ -33,18 +49,21 @@ export default {
       {
         name: '服务数量', // 表头名
         code: 'total_mesh_num',
-        type: 'text'
+        type: 'text',
+        textAlign: 'right'
       },
       {
         name: '节点数量', // 表头名
         code: 'total_node_num',
-        type: 'text'
+        type: 'text',
+        textAlign: 'right'
       },
       {
         name: '启用/禁用', // 表头名
         code: 'state',
         disable: false,
-        type: 'switch'
+        type: 'switch',
+        textAlign: 'right'
       }],
       nameSpaceList: [], // 角色列表
       page: 1, // 第几页
@@ -58,6 +77,20 @@ export default {
   computed: {
   },
   methods: {
+    // 刷新配置
+    updateCache () {
+      this.showPopup = false
+
+      UPDATE_NAME_SPACE_CACHE().then(res => {
+        if (res.code === 0) {
+          bus.$emit('openMessage', {
+            message: res.data.result,
+            type: 'success'
+          })
+        }
+      })
+    },
+
     // 点击添加按钮
     addNameSpace () {
       this.isShowBtn = false
@@ -126,25 +159,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
-.role_container {
-  position: relative;
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .empower_btn{
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
-
-  .add-content {
-    padding: 21px 0 10px 12px;
-    background: @default-gray;
-  }
-}
-</style>

@@ -3,13 +3,13 @@
     <div class="nx_board_item ">
       <div class="chart_r">
         <div class="bar-chart" style="transform: scale(1);">
-          <div :id="chartId" :option="chartOptions" ></div>
+          <div :id="chartId" :option="chartOptions"></div>
         </div>
       </div>
     </div>
-    <div class="flex bottom" v-if="chartOptions.sflegends&&chartOptions.sflegends.length">
+    <div class="flex bottom" v-if="chartOptions.sflegends && chartOptions.sflegends.length">
       <div class="fl_item" v-for="(item, index) in chartOptions.sflegends" :key="index">
-        <div class="circle_huan" :style="{'background-color': item.color}"></div>
+        <DYIcon :type="item.icon" :style="{'color': item.color}" class="mr5" size="10"/>
         <div>{{item.name}}</div>
       </div>
     </div>
@@ -17,6 +17,7 @@
 </template>
 <script>
 import HighCharts from 'highcharts'
+
 export default {
   data () {
     return {
@@ -121,20 +122,18 @@ export default {
   props: {
     chartId: {
       type: String,
-      default: function () {
+      default () {
         return ''
       }
     },
     comData: {
       type: Object,
-      default: function () {
-        return {
-        }
+      default () {
+        return {}
       }
     }
   },
-  watch: {
-  },
+  watch: {},
   created () {
     this.lineColumnChartData = this.comData
   },
@@ -175,50 +174,32 @@ export default {
       HighCharts.chart(this.chartId, this.chartOptions)
     }
   },
-  components: {
-  }
+  components: {}
 }
 </script>
 <style lang="less" scoped>
-.nx_board_item{
-  min-height: 115px;
-}
-.bottom{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: -8px;
-  margin-bottom: 15px;
-  padding-left: 5px;
-  .fl_item{
-    flex: 1;
-    font-size: 11px;
-    font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-    font-weight: 400;
-    color:rgba(137,137,137,1);
-    line-height: 9px;
+  @import "~common/style/variable";
+
+  .nx_board_item {
+    min-height: 115px;
+  }
+
+  .bottom {
     display: flex;
     align-items: center;
-    justify-content: center;
-    .circle_huan{
-      margin-right: 5px;
-      background-color: #A972CC;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      position: relative;
-      &:after{
-        content: " ";
-        display: block;
-        position: absolute;
-        left: 2px;
-        top: 2px;
-        background-color: #353535;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-      }
+    justify-content: space-between;
+    margin-top: -8px;
+    margin-bottom: 15px;
+    padding-left: 5px;
+
+    .fl_item {
+      flex: 1;
+      font-size: 11px;
+      color: rgba(137, 137, 137, 1);
+      line-height: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
-}
 </style>

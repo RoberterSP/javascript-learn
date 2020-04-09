@@ -16,11 +16,17 @@
       <el-form-item label="域名" prop="domain_name">
         <el-input v-model="detail.domain_name" placeholder="例如：order.nexttao.com"></el-input>
       </el-form-item>
-      <div v-permission="'settingCenter_singleSignOn_edit'">
-        <el-button
-          type="primary"
-          @click="saveForm('addForm')">保存</el-button>
-        <el-button @click="cancelForm('addForm')">取消</el-button>
+      <div class="btns" v-permission="'settingCenter_singleSignOn_edit'" v-if="!isAdd">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="saveForm('addForm')">保存</DYButton>
+          <DYButton @click="cancelForm('addForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_singleSignOn_add'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="saveForm('addForm')">保存</DYButton>
+          <DYButton @click="cancelForm('addForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -40,13 +46,11 @@ export default {
     clientDetails: {
       required: true,
       type: Object,
-      default: () => {
-        return {
-          name: '',
-          service_name: '',
-          domain_name: ''
-        }
-      }
+      default: () => ({
+        name: '',
+        service_name: '',
+        domain_name: ''
+      })
     }
   },
   data () {
@@ -111,10 +115,12 @@ export default {
 </script>
 <style lang="less" scoped>
   @default-width: 425px;
+
   .default-width {
     width: @default-width;
   }
   .add-single-sign-on-container {
+
     height: auto;
     .el-form-item {
       width: 425px;

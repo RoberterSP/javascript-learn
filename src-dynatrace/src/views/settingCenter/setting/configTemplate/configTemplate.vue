@@ -1,13 +1,16 @@
 <template>
   <div>
-    <div class="p10">
-      <h2 class="mb30">配置模板</h2>
-      <div class="addPanel mb30" v-if="showContent">
+    <div>
+      <DYHeader class="row-title" title="配置模板" type="small" no-gap />
+      <div class="add-panel row-action" v-if="showContent">
         <add-template @update="getList" :create="true" @close="showContent = false"></add-template>
       </div>
-      <el-button v-else @click="showContent = true" class="mb30" type="primary" v-permission="'settingCenter_configTemplate_add'">添加模板</el-button>
+
+      <DYButton v-else @click="showContent = true" class="row-action" type="primary" v-permission="'settingCenter_configTemplate_add'">添加模板</DYButton>
+
       <nt-table
         ref="table"
+        class="row-content"
         :tableData="tableData"
         :columns="columns"
         :tableSet="tableSet"
@@ -73,9 +76,9 @@ export default {
           name: '删除',
           code: '',
           type: 'delete',
-          textAlign: 'right',
+          textAlign: 'center',
           showDel: true, // 删除
-          width: 50,
+          width: 60,
           disable: false
         }
       ]
@@ -97,7 +100,7 @@ export default {
       CONFIG_TEMPLATE_DELETE(data).then(res => {
         // this.$message('删除成功')
         bus.$emit('openMessage', {
-          message: '删除成功',
+          message: res.data.result,
           type: 'success'
         })
         this.getList()
@@ -131,16 +134,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="less">
-@import "~common/style/variable";
-.blank {
-  margin: 0 !important
-}
-.w425 {
-  width: 42.5%;
-}
-.w45 {
-  width: 45%;
-}
-</style>

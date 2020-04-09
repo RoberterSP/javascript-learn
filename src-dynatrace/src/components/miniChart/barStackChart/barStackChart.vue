@@ -2,14 +2,15 @@
   <div class="nx_board_item ">
     <div class="chart_r">
       <div class="bar-chart" style="transform: scale(1);">
-        <div :id="chartId" :option="chartOptions" ></div>
+        <div :id="chartId" :option="chartOptions"></div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import HighCharts from 'highcharts'
-var dataArr = []
+
+let dataArr = []
 
 export default {
   data () {
@@ -70,7 +71,7 @@ export default {
           stackLabels: { // 堆叠数据标签
             enabled: true,
             inside: false,
-            x: 2,
+            x: 3,
             verticalAlign: 'middle',
             textAlign: 'left',
             style: {
@@ -80,9 +81,6 @@ export default {
               color: 'rgba(255,255,255,1)',
               lineHeight: '16px',
               textOutline: 'none'
-            },
-            formatter: function () {
-              return dataArr[this.x]
             }
           }
         },
@@ -105,11 +103,11 @@ export default {
                 fontSize: '11px',
                 fontFamily: 'SourceHanSansSC-Medium,SourceHanSansSC',
                 fontWeight: 400,
-                color: 'rgba(255,255,255,1)',
+                color: '#fff',
                 lineHeight: '16px',
                 textOutline: 'none'
               },
-              formatter: function () {
+              formatter () {
                 return this.x
               }
             }
@@ -135,20 +133,18 @@ export default {
   props: {
     chartId: {
       type: String,
-      default: function () {
+      default () {
         return ''
       }
     },
     comData: {
       type: Object,
-      default: function () {
-        return {
-        }
+      default () {
+        return {}
       }
     }
   },
-  watch: {
-  },
+  watch: {},
   created () {
     this.barStackChartData = this.comData
   },
@@ -162,7 +158,8 @@ export default {
     },
     // 画图
     drawFunc (barStackChartData) {
-      let _this = this
+      this.unit = barStackChartData.unit
+
       this.defaultOptions.series = []
       let chartOptions = this.defaultOptions
       if (barStackChartData.barStackChartOptions) {
@@ -174,14 +171,27 @@ export default {
           // 拿到总值 sumTotal
           let newdata = []
           // console.log(chartOptions.series, this.chartId)
-          dataArr.forEach(sonItem => {
-            let itemVal = Math.round(sonItem / sumTotal * 100)
-            // 计算占比 重新组data数组
-            newdata.push(itemVal)
-            // 按占比
-            // 塞other柱子的值
-            totalDataArr.push(100 - itemVal)
-          })
+
+          // 单独处理错误率， 错误率需要显示自身的占比
+          if (barStackChartData.type === 'error_rate') {
+            dataArr.forEach(sonItem => {
+              // 计算占比 重新组data数组
+              newdata.push(sonItem)
+              // 按占比
+              // 塞other柱子的值
+              totalDataArr.push(100 - sonItem)
+            })
+          } else {
+            dataArr.forEach(sonItem => {
+              let itemVal = Math.round(sonItem / sumTotal * 100)
+              // 计算占比 重新组data数组
+              newdata.push(itemVal)
+              // 按占比
+              // 塞other柱子的值
+              totalDataArr.push(100 - itemVal)
+            })
+          }
+
           chartOptions.series.push({data: newdata})
 
           // other柱子的集合
@@ -205,7 +215,7 @@ export default {
           chartOptions.chart.height = barStackChartData.barStackChartOptions.chartHeight
         }
         if (barStackChartData.barStackChartOptions.noYAxis) {
-          chartOptions.xAxis.labels = { enabled: false }
+          chartOptions.xAxis.labels = {enabled: false}
           chartOptions.xAxis.offset = 0
         }
         // 柱子的颜色
@@ -213,18 +223,36 @@ export default {
           chartOptions.series[1].color = barStackChartData.barStackChartOptions.themeColor
         }
       }
+
+      // 如果data 不足三个，就补上空值
+      const defaultData = {
+        data: 0
+      }
+
+      if (chartOptions.series[0] && chartOptions.series[0].data.length < 3) {
+        // 直接添加3个， 然后限制成 3个
+        for (let i = 0; i < 3; i++) {
+          chartOptions.series[0].data.push(defaultData)
+        }
+
+        chartOptions.series[0].data.length = 3
+      }
+
+      // 使用闭包 计算 formatter， 以传入 当前上下文
+      chartOptions.yAxis.stackLabels.formatter = (function (vueScope) {
+        return function () {
+          return dataArr[this.x] + (vueScope.unit || '')
+        }
+      })(this)
+
       this.chartOptions = chartOptions
       this.chart = HighCharts.chart(this.chartId, this.chartOptions)
     },
     sumArr (value) {
-      let sum = value.reduce(function (prev, cur, index, array) {
-        return prev + cur
-      })
-      return sum
+      return value.reduce((prev, cur) => prev + cur, 0)
     }
   },
-  components: {
-  }
+  components: {}
 }
 </script>
 <style lang="less" scoped>

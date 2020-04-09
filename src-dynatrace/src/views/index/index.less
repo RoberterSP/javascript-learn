@@ -1,6 +1,5 @@
-.is_open_menu .index_main .dCj-a {
-  left: 236px;
-}
+@import "~common/style/variable";
+
 .index_main{
   .dCj-a{
     min-width: 100%;
@@ -20,8 +19,6 @@
       flex-wrap: nowrap;
       box-sizing: content-box;
       font-size:24px;
-      font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-      font-weight:400;
       color:rgba(255,255,255,1);
       line-height:35px;
       .dwd-A {
@@ -73,7 +70,6 @@
         }
         .grid-dashboard{
           position: relative;
-          transform-origin: top left;
           -webkit-touch-callout: none;
           user-select: none;
           box-sizing: content-box;
@@ -130,7 +126,7 @@
                     &>div{
                       height: 100%;
                       width: 100%;
-                      background-color: #353535;
+                      background-color: @gray-10;
                       border-radius: .3rem;
                       box-sizing: border-box;
                       overflow: hidden;
@@ -176,7 +172,7 @@
                             opacity: .5;
                             position: absolute;
                             left: 21px;
-                            background-color: #fff;
+                            background-color: @gray-00;
                             -webkit-transition: background-color 1s,opacity 1s;
                             transition: background-color 1s,opacity 1s;
                             width: 49px;
@@ -201,10 +197,10 @@
                           .dC-ob {
                             font-size: 11px;
                             font-weight: 400;
-                            color: #fff;
+                            color: @gray-00;
                             margin-bottom: -3.2px;
                             &.dC-x{
-                              color: #898989;
+                              color: @gray-06;
                               margin-bottom: 8px;
                             }
                           }
@@ -255,8 +251,9 @@
                           left: 0;
                           text-align: left;
                           font-size: 11px;
+                          line-height: 11px;
                           font-weight: 400;
-                          color: #fff;
+                          color: @gray-00;
                         }
                         .dC-e.dC-db.dC-T {
                           margin-bottom: -11px;
@@ -265,21 +262,18 @@
                           right: 0;
                           text-align: right;
                           font-size:36px;
-                          font-family:SourceHanSansSC-Light,SourceHanSansSC;
                           font-weight:300;
                           color:rgba(255,255,255,1);
                           line-height:52px;
                           .dC-b{
                             margin-right: -10px;
                             font-size:36px;
-                            font-family:SourceHanSansSC-Light,SourceHanSansSC;
                             font-weight:300;
                             color:rgba(220,23,42,1);
                             line-height:52px;
                           }
                           .dC-fb{
                             font-size: 14px;
-                            font-family:SourceHanSansSC-Medium,SourceHanSansSC;
                             font-weight: 500;
                             color:rgba(255,255,255,1);
                             line-height:20px;
@@ -297,7 +291,7 @@
                         letter-spacing: .01em;
                         &>.dC-sb {
                           font-weight: 400;
-                          color: #fff;
+                          color: @gray-00;
                           position: relative;
                           overflow: hidden;
                           text-overflow: ellipsis;
@@ -326,7 +320,6 @@
                           width:60px;
                           height:68px;
                           font-size:36px;
-                          font-family: SourceHanSansSC-Medium,SourceHanSansSC;
                           font-weight:500;
                           line-height:52px;
                           vertical-align: middle;
@@ -341,7 +334,7 @@
                     }
                     .dK-a.dK-b{
                       padding: 2px;
-                      color: #fff;
+                      color: @gray-00;
                       font-weight: 600!important;
                       font-size: 20px!important;
                       line-height: 28px!important;
@@ -370,7 +363,7 @@
                     }
                   }
                   .iconfont{
-                    &.iconplaceholder{
+                    &.icon_placeholder{
                       margin-bottom: -4px;
                       margin-right: 3px;
                       font-size: 12px;
@@ -391,8 +384,6 @@
                   }
                   .dN-n {
                     display: flex;
-                    align-items: center;
-                    justify-content: center;
                     position: absolute;
                     top: 35px;
                     padding: 0 12px;
@@ -405,7 +396,7 @@
                     align-items: center;
                     justify-content: center;
                     overflow: hidden;
-                    background-color: #353535;
+                    background-color: @gray-10;
                     pointer-events: none;
                     &.isHexbin{
                       img.dN-h {
@@ -421,8 +412,6 @@
                     }
                     .dN-k {
                       font-size:12px;
-                      font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-                      font-weight:400;
                       color:rgba(109,109,109,1);
                       line-height:17px;
                     }
@@ -552,21 +541,47 @@
     touch-action: auto;
   }
   // 服务治理
-  [data-layer="1"] .dhb-h>:nth-child(1) {
-    background-color: #14A8F5 !important;
+  [data-layer] {
     opacity: .9 !important;
   }
-  [data-layer="2"] .dhb-h>:nth-child(2) {
-    background-color: #008CDB !important;
-    opacity: .9 !important;
+
+  [data-layer="1"] {
+    .dhb-h>:nth-child(1) {
+      background-color: @blue-05 !important;
+    }
+
+    i {
+      color: @blue-05;
+    }
   }
-  [data-layer="3"] .dhb-h>:nth-child(3) {
-    background-color: #4556D7 !important;
-    opacity: .9 !important;
+
+  [data-layer="2"] {
+    .dhb-h>:nth-child(2) {
+      background-color: @blue-06 !important;
+    }
+
+    i {
+      color: @blue-06;
+    }
   }
-  [data-layer="4"] .dhb-h>:nth-child(4) {
-    background-color: #7c38a1 !important;
-    opacity: .9 !important;
+  [data-layer="3"] {
+    .dhb-h>:nth-child(3) {
+      background-color: @royalblue-06 !important;
+    }
+
+    i {
+      color: @royalblue-06;
+    }
+  }
+
+  [data-layer="4"] {
+    .dhb-h>:nth-child(4) {
+      background-color: @purple-06 !important;
+    }
+
+    i {
+      color: @purple-06;
+    }
   }
 }
 

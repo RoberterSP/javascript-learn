@@ -1,28 +1,29 @@
 <template>
   <div>
     <stepper :stepper="stepper" theme="purple"></stepper>
-    <div class="p24">
-        <div class="tableContent pt16 pr17 pb40 pl16">
-            <div class="flex-between head">
-                <div>
-                    <h2>{{detailData.name}}</h2>
-                    <h4>共{{apiTotal}}个接口</h4>
-                </div>
-                <div class="btnGroup">
-                    <el-button type="primary" @click="goScopeCreate(2)" v-permission= "'gatewayCenter_scopeDetail_scopeGroup_apiAdd'">添加接口</el-button>
-                </div>
-            </div>
-            <nt-table
-                class="scopeTable"
-                ref="table"
-                :tableData="tableData"
-                :columns="columns"
-                :tableSet="tableSet"
-                @deleteOne="deleteOne"
-                @changeSwitch="changeSwitch"
-                @readDetail="readDetail"
-            ></nt-table>
-        </div>
+    <div class="p20">
+      <DYCard class="margin-card">
+        <DYHeader
+          class="row-title"
+          no-gap
+          :title="detailData.name"
+          :sub-title="`共${apiTotal}个接口`"
+        >
+          <DYButton slot="actions" type="primary" @click="goScopeCreate(2)"
+                    v-permission="'gatewayCenter_scopeDetail_scopeGroup_apiAdd'">添加接口
+          </DYButton>
+        </DYHeader>
+
+        <nt-table
+          class="row-content"
+          ref="table"
+          :tableData="tableData"
+          :columns="columns"
+          :tableSet="tableSet"
+          @deleteOne="deleteOne"
+          @readDetail="readDetail"
+        ></nt-table>
+      </DYCard>
     </div>
   </div>
 </template>
@@ -30,9 +31,8 @@
 <script>
 import stepper from 'components/stepper/stepper.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
-import { SCOPE_API_GET, SCOPE_API_UPDATE, API_UPDATE_POST } from '@/api'
-import { PAGESIZE } from 'common/util/common.js'
-import bus from '@/assets/eventBus.js'
+import {SCOPE_API_GET, SCOPE_API_UPDATE} from '@/api'
+import {PAGESIZE} from 'common/util/common.js'
 
 export default {
   data () {
@@ -55,7 +55,7 @@ export default {
           name: '接口', // 表头名
           code: 'endpoint', // 表身
           type: 'edit',
-          icon_url: 'iconAPI'
+          icon_url: 'API'
         },
         {
           name: '名称', // 表头名字
@@ -66,19 +66,13 @@ export default {
           name: '服务', // 表头名字
           code: 'mesh_code_list', // 表身显示值
           type: 'tags'
-          // icon_url: 'iconplaceholder'
+          // icon_url: 'placeholder'
         },
         // {
         //   name: '公共接口', // 表头名字
-        //   icon_urls: ['iconpositive', 'iconnegative'],
+        //   icon_urls: ['positive', 'negative'],
         //   type: 'idxIcon'
         // },
-        {
-          name: '详细日志', // 表头名字
-          code: 'log_enable', // 表身显示值
-          type: 'switch',
-          disable: false
-        },
         {
           name: '发布', // 表头名字
           code: 'stateStr', // 表身显示值
@@ -86,12 +80,19 @@ export default {
           width: '80'
         },
         {
+          name: '详细日志', // 表头名字
+          code: 'log_enable', // 表身显示值
+          type: 'switch',
+          disable: true,
+          textAlign: 'right'
+        },
+        {
           name: '删除', // 表头名字
           code: 'name', // 表身
           type: 'delete',
           disable: false,
-          textAlign: 'right',
-          width: 50
+          textAlign: 'center',
+          width: 60
         }
       ]
     }
@@ -115,28 +116,13 @@ export default {
       }
       let items = JSON.parse(JSON.stringify(this.tableDataBk))
       items.splice(index, 1)
-      items.map(item => {
-        data.items.push(item.id)
-      })
+      data.items = items.map(item => item.id)
+
       this.scope_api_update(data)
     },
     scope_api_update (data) {
       SCOPE_API_UPDATE(data).then(res => {
         this.scope_api_get({id: this.detailData.id, page_size: PAGESIZE, page: 1})
-      })
-    },
-    changeSwitch (code, row, val) {
-      let that = this
-      let params = {
-        endpoint_id: row.id,
-        log_enable: !val
-      }
-      API_UPDATE_POST(params).then(res => {
-        bus.$emit('openMessage', {
-          message: res.data.result,
-          type: 'success'
-        })
-        that.scope_api_get({id: this.detailData.id, page_size: PAGESIZE, page: 1})
       })
     },
     scope_api_get (data) {
@@ -147,7 +133,6 @@ export default {
         this.tableData = res.data.api
         if (!this.$_hasRoute('apiDetail')) {
           this.$set(this.columns[0], 'type', 'text')
-          this.$set(this.columns[3], 'disable', true)
         }
         if (!this.$_accessRoutes('gatewayCenter_scopeDetail_scopeGroup_apiDelete')) {
           this.$set(this.columns[5], 'disable', true)
@@ -155,7 +140,8 @@ export default {
         this.tableDataBk = JSON.parse(JSON.stringify(res.data.api))
         this.apiTotal = res.data.total
         this.tableSet.paginationConfig.total = res.data.total
-        this.tableData.map(item => {
+
+        this.tableData.forEach(item => {
           if (item.state === 'deployed') {
             item.stateStr = '已发布'
           } else {
@@ -173,26 +159,33 @@ export default {
       switch (tag) {
         case 1:
           // 基本信息
-          this.$router.push({name: 'scopeBaseInfo', params: {detailData: this.detailData, showComponent: {name: '基本信息', code: 'scopeBaseInfo'}}})
+          this.$router.push({
+            name: 'scopeBaseInfo',
+            params: {detailData: this.detailData, showComponent: {name: '基本信息', code: 'scopeBaseInfo'}}
+          })
           break
         case 2:
           // 接口组
-          this.$router.push({name: 'scopeGroup', params: {detailData: this.detailData, showComponent: {name: '添加接口', code: 'scopeGroup'}}})
+          this.$router.push({
+            name: 'scopeGroup',
+            params: {detailData: this.detailData, showComponent: {name: '添加接口', code: 'scopeGroup'}}
+          })
           break
         default:
           break
       }
     }
   },
-  mounted () {},
+  mounted () {
+  },
   created () {
     console.log(this.$route.params)
     if (this.$route.params && this.$route.params.id) {
       this.detailData = this.$route.params
-      this.stepper.push({name: this.detailData.name, routerTo: 'scopeDetail', myCoutomRouter: true})
+      this.stepper.push({name: this.detailData.name, routerTo: 'scopeDetail', myCustomRouter: true})
       this.scope_api_get({id: this.detailData.id, page_size: PAGESIZE, page: 1})
     } else {
-      this.$router.push({ name: 'scopeList' })
+      this.$router.push({name: 'scopeList'})
     }
   },
   components: {
@@ -201,20 +194,3 @@ export default {
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-
-.tableContent {
-    width: 100%;
-    background-color: #fff;
-    // .btnGroup {
-    //     padding-right: 277px;
-    // }
-    .scopeTable {
-      margin-top: 20px;
-    }
-    .head {
-      align-items: flex-start;
-    }
-}
-</style>

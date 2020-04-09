@@ -1,34 +1,4 @@
 /* eslint-disable camelcase */
-
-// 将对象元素转换成字符串以作比较
-function obj2key (obj, keys) {
-  var n = keys.length
-  var key = []
-  while (n--) {
-    key.push(obj[keys[n]])
-  }
-  return key.join('|')
-}
-
-// 对象去重
-export function uniqeByKeys (array, keys) {
-  var arr = []
-  var hash = {}
-  for (var i = 0, j = array.length; i < j; i++) {
-    var k = obj2key(array[i], keys)
-    if (!(k in hash)) {
-      hash[k] = true
-      arr.push(array[i])
-    }
-  }
-  return arr
-}
-
-// 数组去重
-export function dedupe (array) {
-  return Array.from(new Set(array))
-}
-
 export function getData (data) {
   let newArr = []
   let newObj = {}
@@ -37,7 +7,7 @@ export function getData (data) {
   let parentTimestamp
   let parentduration
   let endTimeList = []
-  data.map(item => {
+  data.forEach(item => {
     item.collapse = false
     item.toShow = true
     endTimeList.push(item.timestamp + item.duration)
@@ -48,7 +18,8 @@ export function getData (data) {
   })
   // 父节点的耗时
   parentduration = endTimeList[endTimeList.indexOf(Math.max.apply(Math, endTimeList))] - parentTimestamp
-  data.map(item => {
+
+  data.forEach(item => {
     // 过滤client
     if (item.kind === 'SERVER') {
       if (item.parent_id === '-') {
@@ -104,8 +75,8 @@ export function getData (data) {
   while (safeBreak < data.length) {
     let hasPush = false
     let nextIds = []
-    parentIds.map(parent_id => {
-      data.map(item => {
+    parentIds.forEach(parent_id => {
+      data.forEach(item => {
         if (item.parent_id === parent_id && item.kind === 'SERVER') {
           item.level = levelTag
           item.delayPercent = Math.abs((((item.timestamp - parentTimestamp) / parentduration) * 100))
@@ -132,31 +103,34 @@ export function getData (data) {
   return {
     arr: secondArr,
     maxlevel: levelTag - 1,
-    timeArr: timeArr,
+    timeArr,
     obj: newObj,
-    servicesList: servicesList,
+    servicesList,
     wholeList: data
   }
 }
 
 function sortList (newArr, secondArr, newObj) {
-  newArr.map(item => {
+  newArr.forEach(item => {
     secondArr.push(item)
     if (newObj[item.id]) {
       sortList(newObj[item.id], secondArr, newObj)
     }
   })
 }
+
 function getServicesList (list) {
   let arr = []
   let nameList = []
-  list.map(item => {
+  list.forEach(item => {
+    // check_flag_begin
     if (!(nameList.indexOf(item.name) > -1)) {
+      // check_flag_end
       item.usedTimes = 1
       arr.push(item)
       nameList.push(item.name)
     } else {
-      arr.map(newItem => {
+      arr.forEach(newItem => {
         if (newItem.name === item.name) {
           newItem.usedTimes += 1
         }
@@ -166,102 +140,8 @@ function getServicesList (list) {
   return arr
 }
 
-export function getDialogData (data, item) {
-  let secondTable = [{
-    key: 'traceId',
-    value: item.traceId
-  },
-  {
-    key: 'spanId',
-    value: item.id
-  },
-  {
-    key: 'parent_id',
-    value: item.parent_id
-  }
-  ]
-  let startTimestamp
-  let _data = []
-  data.map(span => {
-    if (item.parent_id === span.parent_id) {
-      _data.push(span)
-    }
-  })
-
-  _data.map(span => {
-    if (span.kind === 'CLIENT') {
-      startTimestamp = span.timestamp
-    }
-  })
-  let firstTable = []
-  _data.map(span => {
-    // if (span.id === item.id) {
-    if (span.kind === 'SERVER') {
-      let obj1 = {
-        Address: span.localEndpoint.ipv4 + ':' + span.localEndpoint.port,
-        Date: DateFormat(new Date(Math.floor((span.timestamp - span.duration) / 1000)), 'yyyy/MM/dd/ hh:mm:ss')
-      }
-      let obj2 = {
-        Address: span.localEndpoint.ipv4 + ':' + span.localEndpoint.port,
-        Date: DateFormat(new Date(Math.floor(span.timestamp / 1000)), 'yyyy/MM/dd/ hh:mm:ss')
-      }
-      obj1.Annotation = 'Server Send'
-      obj2.Annotation = 'Server Receive'
-      obj1.Relative = (span.timestamp - span.duration - startTimestamp)
-      if (Math.abs(obj1.Relative) > 1000) {
-        obj1.Relative = Math.abs((obj1.Relative / 1000).toFixed(3)) + 'ms'
-      } else {
-        obj1.Relative = Math.abs(obj1.Relative) + 'μs'
-      }
-      obj2.Relative = (span.timestamp - startTimestamp)
-      if (Math.abs(obj2.Relative) > 1000) {
-        obj2.Relative = Math.abs((obj2.Relative / 1000).toFixed(3)) + 'ms'
-      } else {
-        obj2.Relative = Math.abs(obj2.Relative) + 'μs'
-      }
-    } else {
-      // eslint-disable-next-line no-redeclare
-      var obj1 = {
-        Address: span.localEndpoint.ipv4 + ':' + span.localEndpoint.port,
-        Date: DateFormat(new Date(Math.floor((span.timestamp - span.duration) / 1000)), 'yyyy/MM/dd/ hh:mm:ss')
-      }
-      // eslint-disable-next-line no-redeclare
-      var obj2 = {
-        Address: span.localEndpoint.ipv4 + ':' + span.localEndpoint.port,
-        Date: DateFormat(new Date(Math.floor(span.timestamp / 1000)), 'yyyy/MM/dd/ hh:mm:ss')
-      }
-      obj1.Annotation = 'Client Send'
-      obj2.Annotation = 'Client Receive'
-      obj1.Relative = 0
-      obj2.Relative = span.duration
-      if (obj1.Relative > 1000) {
-        obj1.Relative = (obj1.Relative / 1000).toFixed(3) + 'ms'
-      } else {
-        obj1.Relative = obj1.Relative + 'μs'
-      }
-      if (obj2.Relative > 1000) {
-        obj2.Relative = (obj2.Relative / 1000).toFixed(3) + 'ms'
-      } else {
-        obj2.Relative = obj2.Relative + 'μs'
-      }
-    }
-    firstTable.push(obj1)
-    firstTable.push(obj2)
-    // }
-  })
-  // 返回
-  firstTable.sort(function (a, b) {
-    var order = ['Client Send', 'Server Receive', 'Server Send', 'Client Receive']
-    return order.indexOf(a.Annotation) - order.indexOf(b.Annotation)
-  })
-  return {
-    secondTable: secondTable,
-    firstTable: firstTable
-  }
-}
-
 function DateFormat (date, fmt) {
-  var o = {
+  const o = {
     'M+': date.getMonth() + 1, // 月份
     'd+': date.getDate(), // 日
     'h+': date.getHours(), // 小时
@@ -270,88 +150,18 @@ function DateFormat (date, fmt) {
     'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
     'S': date.getMilliseconds() // 毫秒
   }
+
+  let newFmt
+
   if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+    newFmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
   }
-  for (var k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+  for (let k in o) {
+    if (new RegExp('(' + k + ')').test(newFmt)) {
+      newFmt = newFmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
     }
   }
-  return fmt
-}
-// 接口追踪
-export function trackList (arr, filterArr, list) {
-  list = []
-  if (arr && arr.length > 0) {
-    arr.map((items) => {
-      let item = getData(items)
-      console.log('item', item)
-      let obj = {}
-      obj.timeArr = item.timeArr
-      obj.spans = item.arr.length
-      if (filterArr && filterArr.length > 0) {
-        let flag = true
-        filterArr.map((val) => {
-          item.servicesList.map((service) => {
-            let _cur = item.servicesList.find((_val) => {
-              return _val.localEndpoint.serviceName === val
-            })
-            if (!_cur) {
-              flag = false
-              return false
-            }
-          })
-        })
-        if (flag) {
-          obj.servicesList = item.servicesList
-          obj.currentObj = item.wholeList
-          let _obj = {}
-          items.map((data) => {
-            if (data.parent_id === '-') {
-              obj.rootNote = data.localEndpoint.serviceName
-              obj.time = DateFormat(new Date(parseInt(data.timestamp / 1000)), 'yyyy-MM-dd hh:mm:ss')
-              if (data.kind === 'SERVER') {
-                _obj = data
-              }
-            }
-          })
-          if (_obj) {
-            let _percentTotal = 0
-            obj.servicesList.map((_val) => {
-              _percentTotal = _percentTotal + _val.duration * _val.usedTimes
-            })
-            let _time = parseInt(_obj.duration * _obj.usedTimes / 1000)
-            obj.percent = parseInt((_time / (_percentTotal / 1000)) * 100) + '%'
-            list.push(obj)
-          }
-        }
-      } else {
-        obj.servicesList = item.servicesList
-        obj.currentObj = item.wholeList
-        let _obj = {}
-        items.map((data) => {
-          if (data.parent_id === '-') {
-            obj.rootNote = data.localEndpoint.serviceName
-            obj.time = DateFormat(new Date(parseInt(data.timestamp / 1000)), 'yyyy-MM-dd hh:mm:ss')
-            if (data.kind === 'SERVER') {
-              _obj = data
-            }
-          }
-        })
-        if (_obj) {
-          let _percentTotal = 0
-          obj.servicesList.map((_val) => {
-            _percentTotal = _percentTotal + _val.duration * _val.usedTimes
-          })
-          let _time = parseInt(_obj.duration * _obj.usedTimes / 1000)
-          obj.percent = parseInt((_time / (_percentTotal / 1000)) * 100) + '%'
-          list.push(obj)
-        }
-      }
-    })
-  }
-  return list
+  return newFmt
 }
 
 // 以下新写的函数
@@ -369,6 +179,7 @@ export function trackHandleList (arr) {
     element.forEach((data) => {
       endTimeList.push(data.timestamp + data.duration)
     })
+
     if (firstCLIENTLeval < 0 && firstSERVERLeval < 0) {
       // 说明第一跳 未返回
       element.forEach((data, index) => {
@@ -386,32 +197,39 @@ export function trackHandleList (arr) {
         }
         try {
           that.$forceUpdate()
-        } catch (err) {}
+        } catch (err) {
+        }
       })
+
       try {
         firstCLIENTLeval = element.findIndex(row => row && row.parent_id === '-' && row.kind === 'CLIENT')
         firstSERVERLeval = element.findIndex(row => row && row.parent_id === '-' && row.kind === 'SERVER')
-      } catch (err) {}
+      } catch (err) {
+      }
     }
+
     try {
       let firstTime
+
       if (firstCLIENTLeval > -1) {
         firstDuration = element[firstCLIENTLeval].duration
         firstTime = element[firstCLIENTLeval].timestamp
         element[firstCLIENTLeval].level = 0
       } else if (firstSERVERLeval > -1) {
         firstDuration = element[firstSERVERLeval].duration
-        firstTime = element[firstCLIENTLeval].timestamp
+        firstTime = element[firstSERVERLeval].timestamp
       }
+
       if (firstSERVERLeval > -1) {
         element[firstSERVERLeval].level = 0
       }
+
       element.forEach(data => {
         if (data.parent_id && data.parent_id !== '-' && parentIds.indexOf(data.parent_id) < 0) {
           parentIds.push(data.parent_id)
         }
-        data.time = DateFormat(new Date(parseInt(data.timestamp / 1000)), 'yyyy-MM-dd hh:mm:ss')
-        let serviceName = data.localEndpoint.serviceName
+        data.time = DateFormat(new Date(parseInt(data.timestamp / 1000)), 'yyyy/MM/dd hh:mm:ss')
+        let {serviceName} = data.localEndpoint
         let servicesIndex = servicesList.findIndex(item => item.localEndpoint && item.localEndpoint.serviceName === serviceName)
         if (servicesIndex > -1) {
           servicesList[servicesIndex].usedTimes++
@@ -434,19 +252,23 @@ export function trackHandleList (arr) {
       }
       timeArr.push((parentduration / 1000000).toFixed(3) + 's')
 
-      // element 赋值数组， 当前id， 等级levelTag
-      let levelClass = firstSERVERLeval > -1 ? firstSERVERLeval : firstCLIENTLeval
+      // element 赋值数组， 当前id， 等级levelTag, 优先使用 client 的
+      let levelClass = firstCLIENTLeval > -1 ? firstCLIENTLeval : firstSERVERLeval
+
       levelFunc(element, element[levelClass].id, 0)
+
       list.push({
         spansCount: element.length,
         servicesList: servicesList.reverse(),
         currentObjList: element,
         duration: firstDuration,
         wholeList: element,
-        timeArr: timeArr,
+        timeArr,
         maxlevel: parentIds.length + 1
       })
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
     /// ////////////
   })
   return list
@@ -454,9 +276,12 @@ export function trackHandleList (arr) {
 
 // element 赋值数组， 当前id， 等级levelTag
 function levelFunc (arr, id, levelTag) {
+  if (arr.length > 10000) {
+    return
+  }
   // LEVEL 逐级往上赋值
   arr.forEach(data => {
-    if (data.parent_id === id) {
+    if (data.parent_id === id && !data.level) {
       data.level = levelTag + 1
       levelFunc(arr, data.id, data.level)
     }
@@ -499,8 +324,8 @@ export function getData3 (arr) {
     data.toShow = true
 
     let findObj = arr.find(rowItem => (rowItem.id === data.id && rowItem.kind === 'SERVER'))
-    if (findObj) {
-    } else {
+
+    if (!findObj) {
       findObj = arr.find(rowItem => rowItem.id === data.id && rowItem.kind === 'CLIENT')
     }
     let isExit = tempArr.findIndex(rowItem => rowItem.id === data.id)
@@ -533,11 +358,7 @@ function IteratedArray (testarr, secondArr, id) {
 
 // 数组排序
 function compareSort (property) {
-  return function (a, b) {
-    var value1 = a[property]
-    var value2 = b[property]
-    return value1 - value2
-  }
+  return (a, b) => a[property] - b[property]
 }
 
 //  调用跟踪详情 行点击 table数据 改装
@@ -562,15 +383,16 @@ export function getDialogSpansData (data, item) {
   // let startTimestamp
   let _data = []
   console.log('data!!!', data)
-  data.map(span => {
+  data.forEach(span => {
     if (item.id === span.id) {
       _data.push(span)
     }
   })
 
   let firstTable = []
-  console.log('_data@@@', _data)
-  _data.map(span => {
+  // console.log('_data@@@', _data)
+  // check_flag_start
+  _data.forEach(span => {
     // if (span.id === item.id) {
     let obj1 = {}
     let obj2 = {}
@@ -644,10 +466,11 @@ export function getDialogSpansData (data, item) {
     firstTable.push(obj1)
     firstTable.push(obj2)
   })
+  // check_flag_end
 
   // 返回
   firstTable.sort(function (a, b) {
-    var order = ['Client Send', 'Server Receive', 'Server Send', 'Client Receive']
+    let order = ['Client Send', 'Server Receive', 'Server Send', 'Client Receive']
     return order.indexOf(a.Annotation) - order.indexOf(b.Annotation)
   })
   let startSite = 0 // 初始化的位置: 10%  坐标轴
@@ -656,7 +479,7 @@ export function getDialogSpansData (data, item) {
 
     firstTable[0].left = startSite
 
-    firstTable.forEach((item, index) => {
+    firstTable.forEach((_, index) => {
       if (index !== 0) {
         firstTable[index].left = Math.abs(((firstTable[index].RelativeCur) / totalTime) * 100 - startSite * 2) > 100 ? 90 : Math.abs(((firstTable[index].RelativeCur) / totalTime) * 100 - startSite * 2)
       }
@@ -666,7 +489,7 @@ export function getDialogSpansData (data, item) {
     // firstTable[3].left = Math.abs(((firstTable[3].RelativeCur) / totalTime) * 100 - startSite * 2) > 100 ? 90 : Math.abs(((firstTable[3].RelativeCur) / totalTime) * 100 - startSite * 2)
   }
   return {
-    secondTable: secondTable,
-    firstTable: firstTable
+    secondTable,
+    firstTable
   }
 }

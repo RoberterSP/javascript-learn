@@ -10,11 +10,16 @@
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入备注"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
       <el-button class="empower_btn" @click="empower('ruleForm')" v-if="ruleForm.id" v-permission="'settingCenter_roleList_auth'">授权</el-button>
-      <div class="btns" v-permission="'settingCenter_roleList_edit'">
+      <div class="btns" v-if="ruleForm.id" v-permission="'settingCenter_roleList_edit1'">
+        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
+        <el-button @click="cancleForm('ruleForm')">取消</el-button>
+      </div>
+      <div class="btns" v-else v-permission="'settingCenter_roleList_add1'">
         <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
         <el-button @click="cancleForm('ruleForm')">取消</el-button>
       </div>
@@ -29,12 +34,10 @@ export default {
   props: {
     clientDetails: {
       type: Object,
-      default: () => {
-        return {
-          name: '', // 角色名称
-          info: '' // 备注
-        }
-      }
+      default: () => ({
+        name: '', // 角色名称
+        info: '' // 备注
+      })
     }
   },
   data () {
@@ -58,7 +61,7 @@ export default {
           let obj = [
             {
               name: this.ruleForm.name,
-              // myCoutomRouter: true,
+              // myCustomRouter: true,
               type: 'edit'
             },
             {

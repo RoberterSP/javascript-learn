@@ -1,34 +1,47 @@
 <template>
-  <div class="message_container p10">
-    <h2>消息队列</h2>
-    <!-- <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div> -->
-    <div class="empower_btn">
-      <el-button @click="batchEdit" type="primary" v-if="isShowEle('batchEditMessageQueue')">批量编辑</el-button>
+  <div class="message_container">
+    <DYHeader class="row-title" title="消息队列" type="small" no-gap>
+      <div slot="actions">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="batchEdit" v-if="isShowEle('batchEditMessageQueue')">批量编辑</DYButton>
+          <dialogCompontent :isEdit="isEdit" :workerProcessTagList="workerProcessTagList"
+                            :dialogFormTagsVisible.sync="dialogFormTagsVisible">
+            <DYButton slot="reference" @click="resourcesAllocation"
+                      v-permission="'serviceCenter_serviceDetail_messageQueueShowResource'">资源分配
+            </DYButton>
+          </dialogCompontent>
+        </DYButtonGroup>
 
-      <dialogCompontent :isEdit ="isEdit" :workerProcessTagList="workerProcessTagList" :dialogFormTagsVisible.sync="dialogFormTagsVisible">
-        <el-button @click="resourcesAllocation" slot="reference" v-permission="'serviceCenter_serviceDetail_messageQueueShowResource'">资源分配</el-button>
-      </dialogCompontent>
-
-    </div>
-    <div class="search">
+      </div>
+    </DYHeader>
+    <div class="search row-action">
       <el-input
         placeholder="请输入名称"
         v-model.trim="query" @change="searchData">
-        <i slot="suffix" class="el-input__icon el-icon-search" @click="searchData"></i>
+        <i slot="suffix" class="el-input__icon" @click="searchData">
+          <DYIcon type="search" />
+        </i>
       </el-input>
     </div>
-    <div class="user_list">
-      <nt-table :tableData="messageList" :columns="columns" :tableSet="messageListTableSet" @changeSwitch="changeSwitch" @checkAll="checkAll" @checkOne="checkOne"></nt-table>
-    </div>
+
+    <nt-table
+      class="row-content"
+      :tableData="messageList"
+      :columns="columns"
+      :tableSet="messageListTableSet"
+      @changeSwitch="changeSwitch"
+      @checkAll="checkAll"
+      @checkOne="checkOne"/>
 
   </div>
 </template>
 <script>
 import ntTable from 'components/ntTable/ntTable.vue'
-import { MESSAGE_QUEUE_LIST, NXMC_MESSAGE_PROCESS_TAG_RESOURCE } from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import {MESSAGE_QUEUE_LIST, NXMC_MESSAGE_PROCESS_TAG_RESOURCE} from '@/api'
+import {PAGESIZE} from '@/common/util/common.js'
 import bus from '@/assets/eventBus.js'
 import dialogCompontent from './dialogCompontent'
+
 export default {
   data () {
     return {
@@ -36,7 +49,7 @@ export default {
         name: '名称', // 表头名
         code: 'name',
         showicon: 'iconfont',
-        icon_url: 'iconmessagequeue',
+        icon_url: 'messagequeue',
         type: 'text',
         width: 300
       },
@@ -57,21 +70,24 @@ export default {
         code: 'priority',
         type: 'text'
       },
-      // {
-      //   name: '消息优先级最大值', // 表头名
-      //   width: 150,
-      //   code: 'priority_num',
-      //   type: 'text'
-      // },
-      {
-        name: '启用消费', // 表头名
-        code: 'enable',
-        type: 'switch'
-      },
+        // {
+        //   name: '消息优先级最大值', // 表头名
+        //   width: 150,
+        //   code: 'priority_num',
+        //   type: 'text'
+        // },
       {
         name: '优先级队列', // 表头名
         code: 'enable_priority_queue_bak',
-        type: 'text'
+        type: 'text',
+        width: 100
+      },
+      {
+        name: '启用消费', // 表头名
+        code: 'enable',
+        type: 'switch',
+        disable: true,
+        textAlign: 'right'
       },
       {
         name: '全选', // 表头名字
@@ -102,9 +118,7 @@ export default {
   },
   computed: {
     isShowEle () {
-      return key => {
-        return this.$_hasRoute(key)
-      }
+      return key => this.$_hasRoute(key)
     }
   },
   methods: {
@@ -122,7 +136,14 @@ export default {
       } else {
         window.sessionStorage.setItem('messageQueueChooseList', JSON.stringify(this.chooseList))
         window.sessionStorage.setItem('serviceDetail', JSON.stringify(this.detailData))
-        this.$router.push({name: 'batchEditMessageQueue'})
+
+        // 传入未选择的 messageList
+        this.$router.push({
+          name: 'batchEditMessageQueue',
+          params: {
+            messageList: this.messageList.filter(item => !item.check)
+          }
+        })
       }
     },
     // 资源分配
@@ -131,7 +152,7 @@ export default {
       this.workerProcessTagList = []
       NXMC_MESSAGE_PROCESS_TAG_RESOURCE({mesh_code: this.meshCode}).then(res => {
         if (res.code === 0) {
-          res.data.message_process_tag_resource.map((item) => {
+          res.data.message_process_tag_resource.forEach((item) => {
             item.process_num = item.worker_process_num
           })
           this.workerProcessTagList = res.data.message_process_tag_resource
@@ -196,27 +217,13 @@ export default {
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
-.message_container {
-  position: relative;
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
+  @import "~common/style/variable";
+
+  .message_container {
+    position: relative;
+
+    .search {
+      width: 80%;
+    }
   }
-  .empower_btn{
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
-  .search{
-    width: 80%;
-    // margin-top: 57px;
-    margin-top: 32px;
-    margin-bottom: 20px;
-  }
-  // .user_list{
-  //   margin-top: 44px;
-  // }
-}
 </style>

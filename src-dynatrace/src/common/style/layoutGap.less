@@ -1,0 +1,62 @@
+// 定义使用到的边距
+// 如 pb10: padding-bottom: 10
+
+// 定义变量转换函数
+.functionFactory() {
+  @functions: ~`(function () {
+
+    var map = {
+      m: 'margin',
+      p: 'padding',
+      t: '-top',
+      r: '-right',
+      b: '-bottom',
+      l: '-left',
+    }
+
+    this.getFullAttr = function (str) {
+      if (str.length === 1) {
+        return map[str]
+      }
+
+      var newStr = str.replace(/([a-z])([a-z])/g, function ($0, $1, $2) {
+        return map[$1] + map[$2]
+      })
+      return newStr
+    }
+  })()`
+}
+
+.functionFactory();
+
+
+// 定义循环构造体
+.eachFactory(@list) {
+  each(@list, .(@value) {
+    each(@types, .(@type) {
+      @fullType: ~`getFullAttr("@{type}")`;
+
+      .@{type}@{value} {
+          @{fullType}: ~"@{value}px";
+      }
+    })
+  })
+}
+
+;
+
+
+// 定义的边距类型
+@types: pt, pr, pb, pl, mt, mr, mb, ml, p, m;
+
+// 10 以下者皆定义,
+@baseGapList: range(1, 10, 1);
+
+// 除此之外，余则加之
+@expandGapList: 12, 16, 20, 24, 30, 32, 36, 50, 80, 100;
+
+.eachFactory(@baseGapList);
+.eachFactory(@expandGapList);
+
+
+

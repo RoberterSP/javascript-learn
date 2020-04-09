@@ -7,9 +7,9 @@
           <div class="side-title">功能扩展</div>
           <div class="side-nav-title" v-for="(item, index) in sideList" :key="index" :class="{'side-nav-active': item.active, 'side-nav-disable': item.locked}" @click="clickSide(item)">{{item.name}}</div>
         </div>
-        <div class="right-content p10">
+        <DYCard class="overflow-x-hidden">
           <router-view></router-view>
-        </div>
+        </DYCard>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@ export default {
         }, {
           name: '',
           routerTo: 'serviceDetail',
-          myCoutomRouter: true
+          myCustomRouter: true
         }, {
           name: '功能扩展',
           routerTo: '',
@@ -131,9 +131,7 @@ export default {
         .side-title {
           padding: 20px 0 20px 24px;
           font-size: 28px;
-          font-family: PingFangSC-Medium, PingFang SC;
           font-weight: 500;
-          color: @default-font-color;
         }
         .side-nav-title {
           cursor: pointer;
@@ -141,26 +139,19 @@ export default {
           padding-left: 24px;
           line-height: 60px;
           font-size: 15px;
-          font-family: SourceHanSansSC-Medium, SourceHanSansSC;
           font-weight: 500;
-          color: @default-font-color;
           &:hover {
-            background: @theme-gray;
-            color: @theme-color
+            background: @gray-03;
+            color: @turq-06
           }
         }
         .side-nav-active {
-          color: @theme-color;
-          background: @theme-gray !important;
+          color: @turq-06;
+          background: @gray-03 !important;
         }
         .side-nav-disable {
           color: rgba(204, 204, 204, 1);
         }
-      }
-      .right-content {
-        background: #ffffff;
-        display: inline-block;
-        width: calc(100% - 284px);
       }
     }
   }

@@ -1,14 +1,15 @@
 <template>
-  <div class="strategy p10">
-    <h2 class="mb30">预警策略</h2>
+  <div class="strategy">
+    <DYHeader class="row-title" title="预警策略" type="small" no-gap />
 
-    <div class="addPanel" v-if="showContent">
+    <div class="add-panel row-action" v-if="showContent">
       <addRule :create="true" @close="showContent = false" @create="onItemCreate"></addRule>
     </div>
 
-    <el-button class="mb30" v-else @click="showContent = true" type="primary" v-permission="'settingCenter_warningStrategy_add'">添加预警策略</el-button>
+    <DYButton class="row-action" v-else @click="showContent = true" type="primary" v-permission="'settingCenter_warningStrategy_add'">添加预警策略</DYButton>
 
     <nt-table
+      class="row-content"
       ref="table"
       :tableData="tableData"
       :columns="columns"
@@ -25,9 +26,16 @@
 import ntSwitch from 'components/base/switch.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
 import addRule from 'views/settingCenter/setting/warningStrategy/addRule.vue'
-import { ALERT_RULE_LIST_GET, ALERT_RULE_DELETE, ALERT_RULE_UPDATE, ALERT_RULE_INFO, ALERT_RULE_STATUS_UPDATE_INFO } from '@/api'
-import { PAGESIZE } from 'common/util/common.js'
+import {
+  ALERT_RULE_DELETE,
+  ALERT_RULE_INFO,
+  ALERT_RULE_LIST_GET,
+  ALERT_RULE_STATUS_UPDATE_INFO,
+  ALERT_RULE_UPDATE
+} from '@/api'
+import {PAGESIZE} from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
+
 export default {
   data () {
     return {
@@ -58,15 +66,16 @@ export default {
           code: 'state', // 表身
           type: 'switch',
           disable: false,
-          width: '120'
+          width: '120',
+          textAlign: 'right'
         },
         {
           name: '删除', // 表头名字
           code: 'name', // 表身
           type: 'delete',
           disable: false,
-          textAlign: 'right',
-          width: 50
+          textAlign: 'center',
+          width: 60
         }
       ]
     }
@@ -77,9 +86,10 @@ export default {
   },
   methods: {
     onItemCreate () {
-      console.log(22)
       let data = {page: 1, page_size: PAGESIZE}
       this.alert_rule_list_get(data)
+
+      this.showContent = false
     },
     deleteRow (row) {
       this.alert_rule_delete({alert_rule_id: row.alert_rule_id})
@@ -104,11 +114,9 @@ export default {
       ALERT_RULE_INFO(data).then(res => {
         let postData = res.data
         postData.state = !postData.state
-        let arr = []
-        res.data.notification_user.map(item => {
-          arr.push({user_id: item.user_id})
-        })
-        postData.notification_user = arr
+
+        postData.notification_user = res.data.notification_user.map(item => ({user_id: item.user_id}))
+
         this.alert_rule_update(postData)
       })
     },
@@ -161,14 +169,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="less">
-@import "~common/style/variable";
-
-.w425 {
-  width: 42.5%;
-}
-.w45 {
-  width: 45%;
-}
-</style>

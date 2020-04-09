@@ -1,28 +1,35 @@
 <template>
-  <div class="tag-container p10">
-      <h2 class="mb30">标签</h2>
-
-      <div class="add-content addPanel" v-if="isAdd">
-        <addTag
-          :isAdd="true"
-          :clientDetails="tagForm"
-          @cancelForm="cancelForm"
-          @saveForm="saveForm"></addTag>
-      </div>
-
-    <div v-else class="mb30">
-      <el-button type="primary" @click="isAdd = true" v-permission="'settingCenter_tagList_add'">添加标签</el-button>
+  <div class="tag-container">
+    <DYHeader class="row-title" title="标签" type="small" no-gap />
+    <div class="add-content row-action add-panel" v-if="isAdd">
+      <addTag
+        :isAdd="true"
+        :clientDetails="tagForm"
+        @cancelForm="cancelForm"
+        @saveForm="saveForm"></addTag>
     </div>
 
-      <div class="select-content">
-        <el-input
-          class="search"
-          @change="searchTable"
-          v-model.trim="search"
-          placeholder="请输入标签名称"
-          suffix-icon="el-icon-search"></el-input>
-      </div>
-    <div class="table-content">
+    <div v-else class="row-action">
+      <DYButton type="primary" @click="isAdd = true" v-permission="'settingCenter_tagList_add'">添加标签</DYButton>
+    </div>
+
+    <div class="select-content row-action">
+      <!-- <el-input
+        class="search"
+        @change="searchTable"
+        v-model.trim="search"
+        placeholder="请输入标签名称"
+        suffix-icon="el-icon-search"></el-input> -->
+        <div class="search" style="width:80%">
+          <search-bar
+            v-model.trim="search"
+            @search="searchTable"
+            :placeholder="'请输入标签名称'"
+          />
+        </div>
+    </div>
+
+    <div class="row-content">
       <nt-table
         :tableData="tableData"
         :columns="columns"
@@ -36,14 +43,15 @@
 
 <script>
 import ntTable from 'components/ntTable/ntTable.vue'
+import searchBar from 'components/searchBar/searchBar.vue'
 import addTag from '@/views/settingCenter/setting/tag/addTag.vue'
 import {
-  NXMC_SETTING_TAG_LIST_GET, // 查
-  NXMC_SETTING_TAG_DELETE_POST, // 删
-  NXMC_SETTING_TAG_UPLOAD_POST, // 改
-  NXMC_SETTING_TAG_UPDATE_POST // 增
+  NXMC_SETTING_TAG_DELETE_POST,
+  NXMC_SETTING_TAG_LIST_GET,
+  NXMC_SETTING_TAG_UPDATE_POST,
+  NXMC_SETTING_TAG_UPLOAD_POST
 } from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import {PAGESIZE} from '@/common/util/common.js'
 import bus from '@/assets/eventBus.js'
 
 export default {
@@ -110,20 +118,21 @@ export default {
           name: '已添加对象', // 表头名字
           code: 'relation_object_num', // 表身显示值
           type: 'text',
-          textAlign: 'center',
+          textAlign: 'right',
           width: 110,
           hasSort: true, // 排序
           sortAbled: true,
-          sortOrder: 'none' // 排序
+          sortOrder: 'none', // 排序
+          textAiignWithoutIcon: true
         },
         {
           name: '删除',
           code: '',
           type: 'delete',
           disable: false,
-          textAlign: 'right',
+          textAlign: 'center',
           showDel: true, // 删除
-          width: 50
+          width: 60
         }
       ],
       tagForm: {}
@@ -216,39 +225,38 @@ export default {
   },
   components: {
     ntTable,
-    addTag
+    addTag,
+    searchBar
   }
 }
 </script>
 
 <style lang="less" scoped>
-@import "~common/style/variable";
+  @import "~common/style/variable";
 
-.tag-container {
+  .tag-container {
 
-  .add-content {
-    .el-input {
-      width: 300px;
+    .add-content {
+      .el-input {
+        width: 300px;
+      }
+    }
+
+    .select-content {
+      .el-input {
+        width: 80%;
+      }
+
+      .label {
+        font-size: 13px;
+        height: 18px;
+        line-height: 18px;
+      }
+
+      .mb7 {
+        margin-bottom: 7px;
+      }
     }
   }
-  .select-content {
-    margin-top: 32px;
-    margin-bottom: 20px;
-    .el-input {
-      width: 80%;
-    }
-    .label {
-      font-size: 13px;
-      height: 18px;
-      line-height: 18px;
-    }
-    .mb7 {
-      margin-bottom: 7px;
-    }
-  }
-  .table-content {
-    margin-top: 22px;
-  }
-}
 
 </style>

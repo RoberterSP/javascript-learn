@@ -6,7 +6,7 @@ import Vue from 'vue'
 import bus from '@/assets/eventBus.js'
 
 // POST/GET/PUT/DELETE 请求
-function Request(url, method, params, data, visible = true, errcb) {
+function Request(url, method, params, data, visible = true, errcb = false) {
   if (visible) {
     Vue.prototype.$loading()
   }
@@ -22,6 +22,23 @@ function Request(url, method, params, data, visible = true, errcb) {
       if (visible) Vue.prototype.$loading.close()
       if (res.data.code === ERR_OK) {
         resolve(res.data)
+      } else if (res.data.code === 100003) {
+        Vue.prototype.$loading.close()
+        // Vue.prototype.$alert(res.data.message, '提示', {
+        //   confirmButtonText: '确定',
+        //   callback: action => {
+        //     // Cookies.remove('NXDF_TOKEN')
+        //     let url = window.location.protocol + '//' + window.location.host
+        //     window.location = url
+        //   }
+        // })
+
+        window.location = window.location.protocol + '//' + window.location.host
+        bus.$emit('openMessage', {
+          message: res.data.message,
+          type: 'warning',
+          duration: 1500
+        })
       } else if (errcb) {
         // 对于错误信息，都展示在message 中
         bus.$emit('openMessage', {
@@ -33,22 +50,6 @@ function Request(url, method, params, data, visible = true, errcb) {
 
         resolve(res.data)
 
-      } else if (res.data.code === 100003) {
-        Vue.prototype.$loading.close()
-        // Vue.prototype.$alert(res.data.message, '提示', {
-        //   confirmButtonText: '确定',
-        //   callback: action => {
-        //     // Cookies.remove('NXDF_TOKEN')
-        //     let url = window.location.protocol + '//' + window.location.host
-        //     window.location = url
-        //   }
-        // })
-        window.location = window.location.protocol + '//' + window.location.host
-        bus.$emit('openMessage', {
-          message: res.data.message,
-          type: 'warning',
-          duration: 1500
-        })
       } else {
         // Vue.prototype.$alert(res.data.message, '提示', {
         //     confirmButtonText: '确定'
@@ -186,6 +187,12 @@ export function APP_CATEGORY_LIST_GET(data) {
 export function APP_INFO_GET(data) {
   return Request('/api/v6/data/app/info/get', 'post', undefined, data, true)
 }
+
+// 删除应用
+export function APP_DEL(data) {
+  return Request('/api/v6/data/app/delete/post', 'post', undefined, data, true)
+}
+
 // 应用监控详情
 export function APP_MONITOR_INFO_GET(data) {
   return Request('/api/v6/data/app/monitor/info/get', 'post', undefined, data, true)
@@ -294,7 +301,7 @@ export function SUBSCRIBE_RECORD_EDIT_STATUS(data) {
   return Request('/api/v6/data/nxmc/subscribe_record_status_edit/post', 'post', undefined, data, true)
 }
 
-// 订阅事件列表
+// 事件订阅列表
 export function SUBSCRIBE_EVENT_GET(data) {
   return Request('/api/v6/data/nxmc/subscribe_event/get', 'post', undefined, data, true)
 }
@@ -354,6 +361,11 @@ export function SCOPE_UPDATE_POST(data) {
 // 接口组创建
 export function SCOPE_CREATE_POST(data) {
   return Request('/api/v6/data/scope/create/post', 'post', undefined, data, true)
+}
+
+// 接口组删除
+export function SCOPE_DELETE_POST(data) {
+  return Request('/api/v6/data/scope/delete/post', 'POST', undefined, data, true)
 }
 // 区域Api获取 --更新
 export function SCOPE_API_UPDATE(data) {
@@ -446,7 +458,7 @@ export function APP_API_RULE_UPDATE_POST(data) {
 export function API_INFO_GET(data) {
   return Request('/api/v6/data/api/info/get', 'post', undefined, data, true)
 }
-// 获取接口详情
+// 获取接口监控详情
 export function API_MONITOR_INFO_GET(data) {
   return Request('/api/v6/data/api/monitor/info/get', 'post', undefined, data, true)
 }
@@ -475,10 +487,19 @@ export function CONFIG_LOG_STATUS_UPDATE_LIST(data) {
   return Request('/api/v6/data/nxmc/config/log/status/update/post', 'post', undefined, data, true)
 }
 
-
 // 获取节点列表
 export function MESH_NODE_LIST(data) {
   return Request('/api/v6/data/nxmc/mesh/node/list/get', 'post', undefined, data, true)
+}
+
+// 节点批量上线
+export function MESH_NODE_ONLINE(data) {
+  return Request('/api/v6/data/nxmc/mesh/node/online/post', 'post', undefined, data, true)
+}
+
+// 节点批量下线
+export function MESH_NODE_OFFLINE(data) {
+  return Request('/api/v6/data/nxmc/mesh/node/offline/post', 'post', undefined, data, true)
 }
 
 // 获取节点详情
@@ -496,7 +517,7 @@ export function API_RULE_CACHE_UPDATE_CHECK(data) {
   return Request('/api/v6/data/app/api_rule/cache/update/post', 'post', undefined, data, true)
 }
 
-// 更新订阅事件缓存数据
+// 更新事件订阅缓存数据
 export function NXMC_SUBSCRIBE_CACHE_UPDATE_POST(data) {
   return Request('/api/v6/data/nxmc/subscribe_event_cache/update/post', 'post', undefined, data, true)
 }
@@ -519,6 +540,9 @@ export function MESH_DEPLOY_GROUP_LIST(data) {
 // 获取部署组信息
 export function MESH_DEPLOY_GROUP_INFO(data) {
   return Request('/api/v6/data/nxmc/mesh/deploy_group/info/get', 'post', undefined, data, true)
+}
+export function MESH_DEPLOY_GROUP_MONITOR_INFO(data) {
+  return Request('/api/v6/data/nxmc/mesh/deploy_group/monitor/info/get', 'post', undefined, data, true)
 }
 // 获取部署组停止
 export function MESH_DEPLOY_GROUP_STOP_POST(data) {
@@ -738,6 +762,12 @@ export function GET_NAME_SPACE_INFO(data) {
 export function UPDATE_NAME_SPACE_STATE(data) {
   return Request('/api/v6/data/nxmc/namespace/status/update/post', 'post', undefined, data, true)
 }
+
+// 更新命名空间缓存
+export function UPDATE_NAME_SPACE_CACHE(data) {
+  return Request('/api/v6/data/nxmc/namespace/cache/update/post', 'post', undefined, data, true)
+}
+
 // 上传资源菜单数据
 export function NXMC_AUTH_RESOURCE_UPLOAD(data) {
   return Request('/api/v6/data/nxmc/auth_resource/upload/post', 'post', undefined, data, true)
@@ -758,6 +788,9 @@ export function NXMC_AUTH_RESOURCE_DELETE(data) {
 // 删除资源菜单数据
 export function NXMC_MESH_INFO_GET(data) {
   return Request('/api/v6/data/nxmc/mesh/info/get', 'post', undefined, data, true)
+}
+export function NXMC_MESH_MONITOR_INFO_GET(data) {
+  return Request('/api/v6/data/nxmc/mesh/monitor/info/get', 'post', undefined, data, true)
 }
 // 获取程序包语言列表
 export function NXMC_MESH_LANG_GET(data) {
@@ -1011,6 +1044,12 @@ export function TRACE_OVERVIEW_GET(data) {
 export function TRACE_LIST_GET(data) {
   return Request('/api/v6/data/nxmc/trace/list/get', 'post', undefined, data, true)
 }
+
+// 查询调用跟踪详情
+export function TRACE_DETAIL_GET(data) {
+  return Request('/api/v6/data/nxmc/trace/info/get', 'post', undefined, data, true)
+}
+
 // 接口健康指数
 export function INTERFACE_HEALTH_INDEX(data) {
   return Request('/api/v6/data/nxmc/metrics/interface_health_index/get', 'post', undefined, data, true)
@@ -1127,10 +1166,10 @@ export function NXMC_ALERT_DEAL_POST(data) {
 
 // 拓扑图数据
 export function NXMC_TOPOLOGY_INFO_POST(data = {}) {
-  return Request('api/v6/data/nxmc/dashboard/service_relation/get', 'post', {}, data, true)
+  return Request('api/v6/data/nxmc/service_relation/get', 'post', {}, data, true)
 }
 
 // 二级拓扑图数据
 export function NXMC_TOPOLOGY_LEVEL2_INFO_POST(data = {}) {
-  return Request('api/v6/data/nxmc/dashboard/topology_relation/get', 'post', {}, data, true)
+  return Request('api/v6/data/nxmc/topology_relation/get', 'post', {}, data, true)
 }

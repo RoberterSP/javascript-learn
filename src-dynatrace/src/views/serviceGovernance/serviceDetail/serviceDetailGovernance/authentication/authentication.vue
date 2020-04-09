@@ -1,16 +1,23 @@
 <template>
-  <div class="eventSub">
-    <h2 class="mb30">服务鉴权</h2>
-    <div v-if="showNew" class="addPanel">
-      <authentication-content :editMode="true" @close="autn_rule_list_get" :clientDetails="detailData" @cancelContent="cancelContent"></authentication-content>
+  <div>
+    <DYHeader class="row-title" title="服务鉴权" type="small" no-gap/>
+
+    <div v-if="showNew" class="add-panel row-action">
+      <authentication-content :editMode="true" @close="autn_rule_list_get" :clientDetails="detailData"
+                              :mesh-code='meshCode'
+                              @cancelContent="cancelContent"></authentication-content>
     </div>
-    <el-button v-else @click="add" class="mb30" type="primary" v-permission="'serviceCenter_serviceDetail_authRuleList_add'">添加规则</el-button>
+
+    <DYButton v-else class="row-action" type="primary" @click="add" v-permission="'serviceCenter_serviceDetail_authRuleList_add'">添加规则</DYButton>
+
     <nt-table
+      class="row-content"
       ref="table"
       :tableData="tableData"
       :columns="columns"
       :tableSet="tableSet"
       :componentsName="'authenticationContent'"
+      :componentProps="{meshCode: meshCode}"
       @componentSaveContent="autn_rule_list_get"
       @changeSwitch="changeSwitch"
       @deleteOne="deleteRow"
@@ -19,11 +26,17 @@
 </template>
 
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 import ntSwitch from 'components/base/switch.vue'
-import authenticationContent from '@/views/serviceGovernance/serviceDetail/serviceDetailGovernance/authentication/authenticationContent.vue'
+import authenticationContent
+  from '@/views/serviceGovernance/serviceDetail/serviceDetailGovernance/authentication/authenticationContent.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
-import { AUTH_RULE_LIST_GET, SUBSCRIBE_RECORD_DELETE, SUBSCRIBE_RECORD_EDIT, AUTH_STATUS_UPDATE_POST, AUTH_RULE_DELETE_POST } from '@/api'
+import {
+  AUTH_RULE_DELETE_POST,
+  AUTH_RULE_LIST_GET,
+  AUTH_STATUS_UPDATE_POST,
+  SUBSCRIBE_RECORD_DELETE,
+  SUBSCRIBE_RECORD_EDIT
+} from '@/api'
 import bus from '@/assets/eventBus.js'
 
 export default {
@@ -46,7 +59,7 @@ export default {
           name: '名称', // 表头名
           code: 'name', // 表身
           showicon: 'iconfont',
-          icon_url: 'iconauthentication',
+          icon_url: 'authentication',
           type: 'text'
         },
         {
@@ -57,28 +70,32 @@ export default {
         {
           name: '鉴权方式',
           type: 'icon',
-          icon_url: 'icontext'
+          icon_url: 'text',
+          textAlign: 'center'
         },
         {
           name: '优先级',
           code: 'priority',
-          type: 'text'
+          type: 'text',
+          textAlign: 'right'
         },
         {
           name: '启用/禁用', // 表头名字
           code: 'state', // 表身显示的值
           type: 'switch',
-          disable: false
+          disable: false,
+          textAlign: 'right'
         },
         {
           name: '删除', // 表头名字
           code: '', // 表身显示的值
           type: 'delete',
-          textAlign: 'right',
-          width: 50,
+          textAlign: 'center',
+          width: 60,
           disable: false
         }
-      ]
+      ],
+      meshCode: ''
     }
   },
   computed: {},
@@ -154,8 +171,7 @@ export default {
       })
     }
   },
-  mounted () {},
-  created () {
+  mounted () {
     if (this.$route.params && this.$route.params.detailData) {
       this.detailData = this.$route.params.detailData
       console.log('tag', this.detailData)
@@ -164,7 +180,6 @@ export default {
     }
   },
   components: {
-    splitTitle,
     ntSwitch,
     authenticationContent,
     ntTable
@@ -172,40 +187,8 @@ export default {
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
-
-@default-width: 425px;
-.default-width {
-  width: @default-width;
-}
-
-.ml-20 {
-  margin-left: 20px;
-}
-.mt-23 {
-  margin-top: 23px;
-}
-.mt-8 {
-  margin-top: 8px;
-}
-.mt-47 {
-  margin-top: 47px;
-}
-// .mb-37 {
-//   margin-bottom: 37px;
-// }
-.mb-30 {
-  margin-bottom: 30px;
-}
-
-.eventSub {
-  padding: 10px;
 
   .query {
     width: 80%;
-    margin-top: 76px;
-    margin-bottom: 20px;
-    margin-left: 15px;
   }
-}
 </style>

@@ -7,8 +7,10 @@
         <div class="flex head-title">
           <h2 class="h2-title">{{this.detailData.name}}</h2>
           <div class="head-btn">
-            <el-button @click="cancelApp">取消</el-button>
-            <el-button type="primary" @click="sureApp">重新分发</el-button>
+            <DYButtonGroup>
+              <DYButton @click="cancelApp">取消</DYButton>
+              <DYButton type="primary" @click="sureApp">重新分发</DYButton>
+            </DYButtonGroup>
           </div>
         </div>
         <div class="default-lable desc">文字描述文字描述文字描述文字描述文字描述文字描述文字描述文字描述文字描述</div>
@@ -32,7 +34,6 @@
 
 <script>
 import stepper from 'components/stepper/stepper.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
 import { PAGESIZE } from 'common/util/common.js'
 import {
@@ -133,7 +134,6 @@ export default {
   },
   created () {},
   components: {
-    splitTitle,
     stepper,
     ntTable
   }

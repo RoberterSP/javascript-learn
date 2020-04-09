@@ -16,9 +16,10 @@ const webpackConfig = require('./webpack.prod.conf')
 
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err
-  webpack(webpackConfig, (err, stats) => {
+
+  webpack(webpackConfig, (errWebpack, stats) => {
     // spinner.stop()
-    if (err) throw err
+    if (errWebpack) throw errWebpack
     process.stdout.write(stats.toString({
       colors: true,
       modules: false,

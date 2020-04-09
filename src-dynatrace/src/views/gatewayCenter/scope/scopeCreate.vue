@@ -1,17 +1,15 @@
 <template>
-  <div class="wrapper">
-    <div class="app-list">
+  <div>
       <stepper :stepper="stepper" @goRouter="goRouter"></stepper>
-      <div class="content flex">
+      <div class="content flex full-height">
         <div class="left-content">
           <div class="side-title">接口组设置</div>
           <div class="side-nav-title" v-if="!item.isHide" v-for="(item,index) in sideList" :key="index" :class="{'side-nav-active': (item.active && !item.lock), 'side-nav-disable': item.lock}" @click="clickSide(item)">{{item.name}}</div>
         </div>
-        <div class="right-content p10">
+        <DYCard class="overflow-x-hidden">
           <router-view></router-view>
-        </div>
+        </DYCard>
       </div>
-    </div>
   </div>
 </template>
 
@@ -60,8 +58,10 @@ export default {
     clickSide (obj) {
       if (obj.lock) return
       this.sideList.forEach(item => {
-        let active = item.active
+        let {active} = item
+
         item.active = false
+
         if (item.code === obj.code) item.active = !active
       })
       this.isShowComponent = obj.code
@@ -90,10 +90,10 @@ export default {
   mounted () {},
   created () {
     let accessRoutes = this.$store.getters.access_routes
-    let superuser = this.$store.getters.superuser
+    let superUser = this.$store.getters.superuser
     this.sideList.forEach(items => {
       items.isHide = false
-      if (accessRoutes.indexOf(items.code) === -1 && !superuser) {
+      if (accessRoutes.indexOf(items.code) === -1 && !superUser) {
         items.isHide = true
       }
     })
@@ -102,7 +102,7 @@ export default {
       let params = {
         name: this.detailData.name,
         routerTo: 'scopeDetail',
-        myCoutomRouter: true
+        myCustomRouter: true
       }
       this.stepper.splice(1, 1, params)
     } else {
@@ -133,7 +133,7 @@ export default {
         let params = {
           name: this.detailData.name,
           routerTo: 'scopeDetail',
-          myCoutomRouter: true
+          myCustomRouter: true
         }
         this.stepper.splice(1, 1, params)
       })
@@ -155,52 +155,40 @@ export default {
 </script>
 <style scoped lang="less">
 @import "~common/style/variable";
-.wrapper {
-  .app-list {
-    height: calc(100% - 30px);
-    .content {
-      width: 100%;
-      height: 100%;
-      padding: 24px 24px 23px 0;
-      .left-content {
-        width: 284px;
-        flex-shrink:0;
-        .side-title {
-          padding: 20px 0 20px 24px;
-          font-size: 28px;
-          font-family: PingFangSC-Medium, PingFang SC;
-          font-weight: 500;
-          color: @default-font-color;
-        }
-        .side-nav-title {
-          cursor: pointer;
-          height: 60px;
-          padding-left: 24px;
-          line-height: 60px;
-          font-size: 15px;
-          font-family: SourceHanSansSC-Medium, SourceHanSansSC;
-          font-weight: 500;
-          &:hover {
-            background: @theme-gray;
-            color: @theme-color
-          }
-        }
-        .side-nav-active {
-          color: @theme-color;
-          background: @theme-gray !important;
-        }
-        .side-nav-disable {
-          color: rgba(204, 204, 204, 1);
-          &:hover {
-            color: rgba(204, 204, 204, 1);
-            background: @default-gray;
-          }
-        }
+.content {
+  width: 100%;
+  height: 100%;
+  padding: 24px 24px 23px 0;
+
+  .left-content {
+    width: 284px;
+    flex-shrink:0;
+    .side-title {
+      padding: 20px 0 20px 24px;
+      font-size: 28px;
+      font-weight: 500;
+    }
+    .side-nav-title {
+      cursor: pointer;
+      height: 60px;
+      padding-left: 24px;
+      line-height: 60px;
+      font-size: 15px;
+      font-weight: 500;
+      &:hover {
+        background: @gray-03;
+        color: @turq-06
       }
-      .right-content {
-        background: #ffffff;
-        display: inline-block;
-        width: calc(100% - 284px);
+    }
+    .side-nav-active {
+      color: @turq-06;
+      background: @gray-03 !important;
+    }
+    .side-nav-disable {
+      color: rgba(204, 204, 204, 1);
+      &:hover {
+        color: rgba(204, 204, 204, 1);
+        background: @gray-02;
       }
     }
   }

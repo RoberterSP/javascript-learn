@@ -5,11 +5,11 @@
       <div class="label">接口过滤条件修改</div>
       <div class="input-box">
         <div class="tit">请求字段</div>
-        <el-input type="textarea" v-model="ruleForm.request_fields" :rows="4" placeholder="例如：{'brand_id':[4571,4570],'store_id':3}"></el-input>
+        <el-input type="textarea" v-model="ruleForm.request_fields" :rows="4" resize="none" placeholder="例如：{'brand_id':[4571,4570],'store_id':3}"></el-input>
       </div>
       <div class="input-box">
         <div class="tit">结果字段</div>
-        <el-input type="textarea" v-model="ruleForm.response_fields" :rows="4" placeholder="例如：{'brand_id':[4571,4570],'store_id':3}"></el-input>
+        <el-input type="textarea" v-model="ruleForm.response_fields" :rows="4" resize="none" placeholder="例如：['count','list:store_id,vip_no']"></el-input>
       </div>
       <div class="input-box">
         <nt-switch
@@ -18,9 +18,17 @@
           @dyClick="ruleForm.state=!ruleForm.state"
         ></nt-switch>
       </div>
-      <div class="btn" v-permission="'gatewayCenter_appDetail_filterRuleDelete'">
-        <el-button type="primary" @click="submitForm()">保存</el-button>
-        <el-button @click="resetForm()">取消</el-button>
+      <div class="btn" v-permission="'gatewayCenter_appDetail_filterRuleEdit'" v-if="!ruleForm.id">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm()">保存</DYButton>
+          <DYButton @click="resetForm()">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btn" v-permission="'gatewayCenter_appDetail_filterRuleAdd'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm()">保存</DYButton>
+          <DYButton @click="resetForm()">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </div>
   </div>
@@ -87,7 +95,6 @@ export default {
 <style scoped lang="less">
  .form-open {
     .title {
-      font-family:SourceHanSansSC-Medium,SourceHanSansSC;
       font-weight:500;
       color:rgba(69,70,70,1);
       line-height:55px;
@@ -95,7 +102,6 @@ export default {
     }
     .label {
       font-size:14px;
-      font-family:SourceHanSansSC-Regular,SourceHanSansSC;
       font-weight:400;
       color:rgba(69,70,70,1);
       line-height:20px;
@@ -105,10 +111,6 @@ export default {
     }
     .input-box {
       .tit {
-        font-size:14px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
-        color:rgba(69,70,70,1);
         line-height:46px;
       }
       .el-textarea {

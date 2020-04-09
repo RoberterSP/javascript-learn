@@ -2,22 +2,24 @@
   <div class="wrapper">
     <stepper :stepper="stepper"></stepper>
     <div class="down p20">
-      <div class="role_container p15">
+      <div class="role_container p16">
         <h2>{{dataDetail.name}}</h2>
         <div class="desc default-label">共{{configList.length}}个配置</div>
-        <el-button type="primary" class="add-btn" @click="addServiceConfig" v-if="isShowAddBtn && isShowImportBtn">添加配置</el-button>
-        <el-button class="add-btn" @click="importSetTemplate" v-if="isShowAddBtn && isShowImportBtn">导入设置模版</el-button>
-        <div class="add-content" v-if="!isShowAddBtn">
+        <DYButtonGroup>
+          <DYButton style="margin-top:62px;margin-bottom:64px;" type="primary" v-if="isShowAddBtn && isShowImportBtn" @click="addServiceConfig">添加配置</DYButton>
+          <DYButton style="margin-top:62px;margin-bottom:64px;" @click="importSetTemplate" v-if="isShowAddBtn && isShowImportBtn">导入设置模版</DYButton>
+        </DYButtonGroup>
+        <div class="add-content p10" v-if="!isShowAddBtn">
           <add-config-list @addHandle="addHandle" @cancelContent="cancleHandle" @againCheck="againCheck" :groupId="dataDetail.group_id" :clientDetails="clientDetails" :selectedTemplate="showAgainBtn"></add-config-list>
         </div>
-        <div class="add-content" v-if="!isShowImportBtn">
+        <div class="add-content p10" v-if="!isShowImportBtn">
           <nt-table :tableData="templateList" :columns="templateColumns" :tableSet="templateTableSet" @readDetail="readDetail"></nt-table>
         </div>
         <div class="search">
           <el-input
             placeholder="请输入名称"
             v-model.trim="query" @change="searchData">
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="searchData"></i>
+            <i slot="suffix" class="el-input__icon" @click="searchData"><DYIcon type="search"></DYIcon></i>
           </el-input>
         </div>
         <div class="user_list">
@@ -73,7 +75,7 @@ export default {
         code: '',
         disable: false,
         type: 'icon',
-        icon_url: 'icondistributiontruck service-config'
+        icon_url: 'distributiontruck service-config'
       },
       {
         name: '删除', // 表头名
@@ -244,7 +246,7 @@ export default {
     margin-bottom: 42px;
   }
   .down {
-    background-color: @default-gray;
+    background-color: @gray-02;
     .role_container {
       position: relative;
       background-color: #fff;
@@ -258,7 +260,7 @@ export default {
       }
       .add-content {
         padding: 21px 0 10px 12px;
-        background: @default-gray;
+        background: @gray-02;
       }
       .search{
         width: 80%;

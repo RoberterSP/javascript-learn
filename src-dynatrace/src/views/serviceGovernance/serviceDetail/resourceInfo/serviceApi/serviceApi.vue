@@ -1,54 +1,69 @@
 <template>
-  <div class="page p10">
-    <div class="p10t6">
-      <div class="flex head-title">
-        <h2 class="h2-title">{{lise_count + '个服务接口'}}</h2>
-        <div class="head_title_r">
-          <el-button type="primary" class="mr10" @click="goSimulationRequest" v-if="isShowEle('simulationRequest')">模拟请求</el-button>
+  <div>
+    <DYHeader class="row-title" :title="`${lise_count}个服务接口`" type="small" no-gap>
 
-          <!-- 更多popup -->
-          <ntPopover :show.sync="showMorePopup" type="small">
-            <el-button icon="el-icon-more" slot="reference" @click="showMorePopup = true" v-if="isShowPrimission"></el-button>
-            <div class="footer">
-              <div class="second_sure_footer" v-if="confirmBatchRegister && !confirmBatchCancelRegister">
-                <div class="popup-title default-label">确认批量注册？</div>
-                <div class="btnsArray flex-between">
-                  <el-button type="primary" class="mr10" @click="sureBatchRegister()" :disabled="chooseList && !chooseList.length">
-                    是
-                  </el-button>
-                  <el-button  type="primary" @click="cancelSure()">否</el-button>
-                </div>
-              </div>
-              <el-button v-permission="'serviceCenter_serviceDetail_apiList_patchReg'" @click="batchRegister" type="primary" v-show="!confirmBatchRegister && !confirmBatchCancelRegister">批量注册</el-button>
-              <el-button v-permission="'serviceCenter_serviceDetail_apiList_patchUnReg'" @click="cancelRegister" type="primary" v-show="!confirmBatchRegister && !confirmBatchCancelRegister">取消注册</el-button>
+      <div slot="actions">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="goSimulationRequest" v-if="isShowEle('simulationRequest')">模拟请求</DYButton>
 
-              <div class="second_sure_footer" v-if="confirmBatchCancelRegister && !confirmBatchRegister">
-                <div class="popup-title default-label">确认取消注册？</div>
-                <div class="btnsArray flex-between">
-                  <el-button type="primary" @click="sureBatchCancelRegister()"
-                             class="mr10"
-                             :disabled="chooseList && !chooseList.length">是
-                  </el-button>
-                  <el-button type="primary" @click="cancelSure()">否</el-button>
-                </div>
-              </div>
+          <DYPopover :show.sync="showMorePopup" type="small">
+            <DYButton slot="reference" @click="showMorePopup = true" v-if="isShowPermission">
+              <DYIcon type="more" size="14"/>
+            </DYButton>
+
+            <div v-if="confirmBatchRegister && !confirmBatchCancelRegister">
+              <p class="no-warp mb10">确认批量注册？</p>
+
+              <DYButtonGroup between>
+                <DYButton theme="dark" type="primary" @click="sureBatchRegister()"
+                          :disabled="chooseList && !chooseList.length">是
+                </DYButton>
+                <DYButton theme="dark" @click="cancelSure()">否</DYButton>
+              </DYButtonGroup>
             </div>
-          </ntPopover>
-        </div>
+
+            <DYButtonGroup direction="column">
+              <DYButton theme="dark" @click="batchRegister"
+                        v-permission="'serviceCenter_serviceDetail_apiList_patchReg'"
+                        v-show="!confirmBatchRegister && !confirmBatchCancelRegister">批量注册
+              </DYButton>
+              <DYButton theme="dark" @click="cancelRegister"
+                        v-permission="'serviceCenter_serviceDetail_apiList_patchUnReg'"
+                        v-show="!confirmBatchRegister && !confirmBatchCancelRegister">取消注册
+              </DYButton>
+            </DYButtonGroup>
+
+            <div v-if="confirmBatchCancelRegister && !confirmBatchRegister">
+              <p class="no-warp mb10">确认取消注册？</p>
+
+              <DYButtonGroup between>
+                <DYButton theme="dark" type="primary" @click="sureBatchCancelRegister()"
+                          :disabled="chooseList && !chooseList.length">是
+                </DYButton>
+                <DYButton theme="dark" @click="cancelSure()">否</DYButton>
+              </DYButtonGroup>
+            </div>
+          </DYPopover>
+        </DYButtonGroup>
       </div>
-      <!-- <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明</div> -->
-      <el-input class="search" suffix-icon="el-icon-search" v-model="select_name" placeholder="请输入接口api" clearable
-                @change="readMeshEndpointList()"></el-input>
-      <nt-table class="table-list"
-                ref="tableList"
-                :tableData="endpoint_list||[]"
-                :columns="columns"
-                :tableSet="tableSet"
-                @readDetail="readDetail"
-                @checkAll="checkAll"
-                @checkOne="checkOne"
-      ></nt-table>
+    </DYHeader>
+
+    <div class="search row-action">
+      <search-bar
+        v-model.trim="select_name"
+        @search="readMeshEndpointList"
+        :placeholder="'请输入接口api'"
+      />
     </div>
+    <nt-table class="row-content"
+              ref="tableList"
+              :tableData="endpoint_list||[]"
+              :columns="columns"
+              :tableSet="tableSet"
+              @readDetail="readDetail"
+              @checkAll="checkAll"
+              @checkOne="checkOne"
+    ></nt-table>
   </div>
 </template>
 
@@ -56,9 +71,8 @@
 import {API_REGISTER, API_UNREGISTER, MESH_ENDPOINT_LIST} from '@/api/index.js'
 import {PAGESIZE} from 'common/util/common.js'
 import ntTable from 'components/ntTable/ntTable.vue'
-import ntPopover from 'components/base/popover.vue'
+import searchBar from 'components/searchBar/searchBar.vue'
 
-import {setTimeout} from 'timers'
 import bus from '@/assets/eventBus.js'
 
 export default {
@@ -76,7 +90,7 @@ export default {
           code: 'endpoint', // 表身
           type: 'edit',
           showicon: 'iconfont',
-          icon_url: 'iconAPI'
+          icon_url: 'API'
         }, {
           name: '名称', // 表头名字
           code: 'name', // 表身显示值
@@ -129,13 +143,11 @@ export default {
     }
   },
   computed: {
-    isShowPrimission () {
+    isShowPermission () {
       return !(!this.$_hasPermissions('serviceCenter_serviceDetail_apiList_patchReg') && !this.$_hasPermissions('serviceCenter_serviceDetail_apiList_patchUnReg'))
     },
     isShowEle () {
-      return key => {
-        return this.$_hasRoute(key)
-      }
+      return key => this.$_hasRoute(key)
     }
   },
   methods: {
@@ -147,7 +159,7 @@ export default {
         })
         return
       }
-      this.$set(this.stepper[2], 'myCoutomRouter', true)
+      this.$set(this.stepper[2], 'myCustomRouter', true)
       this.$set(this.stepper[2], 'routerTo', 'serviceApi')
       this.$router.push({
         name: 'simulationRequest',
@@ -188,7 +200,7 @@ export default {
         if (!this.$_hasRoute('serviceApiDetail')) {
           this.$set(this.columns[0], 'type', 'text')
         }
-        let endpoints = res.data.endpoints
+        let {endpoints} = res.data
         this.lise_count = res.data.total || 0
         this.$set(this.tableSet.paginationConfig, 'total', res.data.total || 0)
         this.endpoint_list = endpoints
@@ -221,10 +233,8 @@ export default {
         this.chooseList = []
         setTimeout(() => {
           if (that.endpointRouterList.length > 0) {
-            that.endpoint_list.map((item, index) => {
-              let _b = that.endpointRouterList.find((items) => {
-                return items.endpoint === item.endpoint
-              })
+            that.endpoint_list.forEach((item, index) => {
+              let _b = that.endpointRouterList.find((items) => items.endpoint === item.endpoint)
               if (_b) {
                 that.$refs.tableList.checkOne(index)
               }
@@ -232,14 +242,6 @@ export default {
           }
         }, 500)
       })
-    },
-    showBatchRegister () {
-      this.confirmBatchRegister = true
-      this.confirmBatchCancelRegister = false
-    },
-    showBatchCancelRegister () {
-      this.confirmBatchRegister = false
-      this.confirmBatchCancelRegister = true
     },
     cancelSure () {
       this.confirmBatchRegister = false
@@ -249,7 +251,7 @@ export default {
       if (!this.chooseList) {
         return
       }
-      var endpointIds = this.chooseList.map(x => x.id) || []
+      let endpointIds = this.chooseList.map(x => x.id) || []
       if (endpointIds.length <= 0) {
         return
       }
@@ -265,20 +267,23 @@ export default {
       if (!this.chooseList) {
         return
       }
-      var endpointIds = this.chooseList.map(x => x.id) || []
+      let endpointIds = this.chooseList.map(x => x.id) || []
       if (endpointIds.length <= 0) {
         return
       }
       API_UNREGISTER({
         endpoint_ids: endpointIds
-      }).then(res => {
+      }).then(() => {
         this.confirmBatchCancelRegister = false
         this.endpointRouterList = []
         this.readMeshEndpointList()
       })
     },
     readDetail (row) {
-      this.$router.push({name: 'serviceApiDetail', params: {detailData: this.detailData, detailApi: row, showComponent: {setFirstOpen: true}}})
+      this.$router.push({
+        name: 'serviceApiDetail',
+        params: {detailData: this.detailData, detailApi: row, showComponent: {setFirstOpen: true}}
+      })
     },
     checkAll (list) {
       this.chooseList = list
@@ -305,126 +310,12 @@ export default {
   },
   components: {
     ntTable,
-    ntPopover
+    searchBar
   }
 }
 </script>
 <style scoped lang="less">
-  @import "~common/style/variable";
-
-  .head_title_r {
-    display: flex;
-
-    .surePopup {
-      width: 180px;
-      z-index: 11;
-      right: 63px;
-      top: 0px;
-      background: rgba(69, 70, 70, 1);
-      border-radius: 3px;
-      position: absolute;
-      padding: 20px;
-
-      .title {
-        font-size: 14px;
-        font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-        font-weight: 400;
-        color: rgba(255, 255, 255, 1);
-        line-height: 20px;
-        margin-bottom: 11px;
-      }
-
-      .btn-cancel {
-        color: #FFFFFF;
-        border: 1px solid rgba(255, 255, 255, 1);
-        background: @default-font-color;
-
-        &:hover, &:focus {
-          background: rgba(255, 255, 255, 0.2);
-          border: 1px solid rgba(255, 255, 255, 1);
-        }
-      }
-    }
-
-    .footer {
-      text-align: center;
-
-      .second_sure_footer {
-        .popup-title {
-          margin-top: 10px;
-          margin-bottom: 11px;
-          font-size: 14px;
-          color: rgba(255, 255, 255, 1);
-          line-height: 20px;
-        }
-
-        .btnsArray {
-          .el-button {
-            margin-bottom: 10px;
-
-            & + button {
-              margin-top: 0px;
-            }
-          }
-        }
-      }
-
-      button {
-        margin-left: 0;
-
-        & + button {
-          margin-top: 5px;
-        }
-      }
-    }
-
-    .contain {
-      width: 100%;
-      text-align: center;
-      font-size: 14px;
-      font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 1);
-      line-height: 20px;
-      padding: 11px 0;
-      margin-top: 32px;
-    }
-  }
-
-  .page {
-    .head-title {
-      position: relative;
-      justify-content: flex-end;
-
-      .h2-title {
-        margin-right: auto;
-      }
-
-      .popup {
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding: 20px;
-        width: 344px;
-        background: rgba(69, 70, 70, 1);
-        border-radius: 3px;
-        z-index: 10;
-      }
-    }
-
-    .desc {
-      margin-top: 8px;
-      width: 50%;
-      line-height: 20px;
-    }
-
-    // .table-list {
-    //   margin-top: 20px;
-    // }
-    .search {
-      width: 80%;
-      margin-top: 32px;
-      margin-bottom: 20px;
-    }
+  .search {
+    width: 80%;
   }
 </style>

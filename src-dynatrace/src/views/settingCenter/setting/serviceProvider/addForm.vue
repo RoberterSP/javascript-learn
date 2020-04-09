@@ -14,14 +14,20 @@
         <el-input v-model="pageDetails.contact_phone" placeholder="请输入联系方式"></el-input>
       </el-form-item>
       <el-form-item label="备注" prop="info">
-        <el-input type="textarea" v-model="pageDetails.info" placeholder="请输入备注" :rows="5"></el-input>
+        <el-input type="textarea" v-model="pageDetails.info" resize="none" placeholder="请输入备注" :rows="5"></el-input>
       </el-form-item>
-      <el-form-item v-permission="'settingCenter_serviceProvider_edit'">
-        <el-button
-          type="primary"
-          @click="saveForm('addForm')">保存</el-button>
-        <el-button @click="cancelForm('addForm')">取消</el-button>
-      </el-form-item>
+      <div class="btns" v-permission="'settingCenter_serviceProvider_edit'" v-if="!isAdd">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="saveForm('addForm')">保存</DYButton>
+          <DYButton @click="cancelForm('addForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_serviceProvider_add'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="saveForm('addForm')">保存</DYButton>
+          <DYButton @click="cancelForm('addForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
     </el-form>
   </div>
 </template>
@@ -38,15 +44,13 @@ export default {
     clientDetails: {
       required: true,
       type: Object,
-      default: () => {
-        return {
-          code: '',
-          name: '',
-          contact_user: '',
-          contact_phone: '',
-          info: ''
-        }
-      }
+      default: () => ({
+        code: '',
+        name: '',
+        contact_user: '',
+        contact_phone: '',
+        info: ''
+      })
     }
   },
   data () {

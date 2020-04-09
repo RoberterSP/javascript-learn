@@ -1,15 +1,12 @@
 <template>
-  <div class="page p10">
-    <div class="p10t6">
-      <h2>{{deploy_group_count + '个部署组'}}</h2>
-      <nt-table @readDetail="readDetail" class="table-list" :tableSet="tableSet" :tableData="deploy_groups||[]" :columns="columns"></nt-table>
+    <div >
+      <DYHeader class="row-title" :title="`${deploy_group_count}个部署组`" type="small" no-gap />
+      <nt-table @readDetail="readDetail" class="row-content" :tableSet="tableSet" :tableData="deploy_groups||[]" :columns="columns"></nt-table>
     </div>
-  </div>
 </template>
 
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import { MESH_DEPLOY_GROUP_LIST, MESH_DEPLOY_GROUP_INFO } from '@/api/index.js'
+import { MESH_DEPLOY_GROUP_LIST } from '@/api/index.js'
 import { PAGESIZE } from 'common/util/common.js'
 import ntTable from 'components/ntTable/ntTable.vue'
 
@@ -23,13 +20,13 @@ export default {
           name: '名称', // 表头名
           code: 'name', // 表身
           type: 'edit',
-          width: 200,
+          width: 300,
           showicon: 'iconfont',
           icon_url: 'bylang',
           default_icon: 'Appliance'
         }, {
           name: '服务供应商', // 表头名字
-          code: 'third_party_code', // 表身显示值
+          code: 'third_party_name', // 表身显示值
           type: 'text'
         }, {
           name: '负载均衡', // 表头名字
@@ -43,10 +40,10 @@ export default {
           width: 150
         }, {
           name: '状态', // 表头名字
-          code: 'status_str', // 表身显示值
+          code: 'status', // 表身显示值
           type: 'text',
-          textAlign: 'right',
-          width: 100
+          width: 100,
+          textAlign: 'right'
         }
       ],
       tableSet: {
@@ -98,20 +95,7 @@ export default {
               break
           }
           this.$set(x, 'lb_type_str', lbTypeStr)
-          MESH_DEPLOY_GROUP_INFO({
-            deploy_group_id: x.id
-          }).then(res => {
-            let status = res.data.deploy_group_info.status
-            this.$set(x, 'status', status)
-            let statusStr = '已停止'
-            if (status === 'stop') {
-              statusStr = '已停止'
-            }
-            if (status === 'running') {
-              statusStr = '已启动'
-            }
-            this.$set(x, 'status_str', statusStr)
-          })
+          this.$set(x, 'status', x.status === 'stop' ? '已停止' : '运行中')
         })
       })
     }
@@ -126,22 +110,7 @@ export default {
     }
   },
   components: {
-    splitTitle,
     ntTable
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-
-.page {
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .table-list {
-    margin-top: 20px;
-  }
-}
-</style>

@@ -1,0 +1,66 @@
+@import "variable";
+
+/*---------- 动画效果 ------------*/
+// 基础类
+.transition {
+  transition: all @default-animate-time @default-bezier;
+}
+
+// fade
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s @default-bezier;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0 !important;
+}
+
+// scale
+.scale-enter-active, .scale-leave-active {
+  transition: transform @default-animate-time @default-bezier;
+}
+
+.scale-enter, .scale-leave-to {
+  transform: scale(0);
+}
+
+// 通过宽度的 slider
+.slider-enter-active, .slider-leave-active {
+  transition: width @default-animate-time @default-bezier;
+}
+
+.slider-enter, .slider-leave-to {
+  width: 0 !important;
+}
+
+// rollup
+.rollup-enter-active, .rollup-leave-active {
+  transform-origin: 0 0;
+  transition: transform @default-animate-time @default-bezier, opacity @default-animate-time @default-bezier;
+}
+
+.rollup-enter, .rollup-leave-to {
+  transform: scaleY(0)!important;
+  opacity: 0 !important;
+}
+
+// 从下往上滑出
+.slider-up-enter-active, .slider-up-leave-active {
+  transform-origin: 0 100%;
+  transition: transform @default-animate-time @default-bezier, opacity @default-animate-time @default-bezier;
+}
+
+.slider-up-enter, .slider-up-leave-to {
+  opacity: 0 !important;
+  transform: scaleY(0) !important;
+}
+
+// 从右往左滑出
+.slider-left-enter-active, .slider-left-leave-active {
+  transform-origin: 100% 0;
+  transition: transform @default-animate-time @default-bezier, opacity @default-animate-time @default-bezier;
+}
+
+.slider-left-enter, .slider-left-leave-to {
+  opacity: 0 !important;
+  transform: scaleX(0) !important;
+}

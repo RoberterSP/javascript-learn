@@ -1,13 +1,15 @@
 <template>
-  <div class="health-index p10">
-    <h2>健康水平</h2>
-    <div class="default-label">在指定时间内根据健康规则判定的满意度样本来计算健康指数，计算公式为:</div>
-    <div class="default-label">
-      健康指数 =  ( 满意样本数量 + 0.5 * 容忍数量 ) / 总样本数 *100
-    </div>
+  <div class="health-index">
+    <DYHeader title="健康水平" type="small" no-gap />
+    <div class="row-desc">
+      <p>在指定时间内根据健康规则判定的满意度样本来计算健康指数，计算公式为:</p>
 
-    <!-- <split-title class="title" :title="'健康水平'"></split-title> -->
-    <div class="desc default-label">根据健康指数来划分健康水平等级</div>
+      <p>
+        健康指数 =  ( 满意样本数量 + 0.5 * 容忍数量 ) / 总样本数 *100
+      </p>
+
+      <div>根据健康指数来划分健康水平等级</div>
+    </div>
     <div class="move-box" ref="moveBoxNode">
       <div class="slider-box">
         <ntSlider
@@ -49,9 +51,9 @@
 
           <template slot-scope="scope">
             <div class="tab-title tab-first default-label" v-if="index === 0">
-              <i class="iconfont iconmanyi green" v-if="scope.row.code === 'health_index_normal'"></i>
-              <i class="iconfont iconyiban yellow" v-else-if="scope.row.code === 'health_index_warn'"></i>
-              <i class="iconfont iconshiwang red" v-else></i>
+              <i class="iconfont green" v-if="scope.row.code === 'health_index_normal'"><DYIcon type="manyi"></DYIcon></i>
+              <i class="iconfont yellow" v-else-if="scope.row.code === 'health_index_warn'"><DYIcon type="yiban"></DYIcon></i>
+              <i class="iconfont red" v-else><DYIcon type="shiwang"></DYIcon></i>
               {{scope.row.name}}
             </div>
             <div class="tab-title default-label" v-if="index === 1 && scope.row.code !== 'health_index_error'">
@@ -77,7 +79,7 @@
     <!-- <div class="unit-time default-label">单位响应时间</div>
     <div class="unit-time-content default-label">
       <div v-if="!globalEdit">1T = {{global_setting_info.apdex}}ms
-        <div class="iconfont iconedit2" @click="editGlobal"></div>
+        <div class="iconfont icon_edit2" @click="editGlobal"><DYIcon type="edit2"></DYIcon></div>
       </div>
       <div v-else>1T=
         <el-input class="uc-input" id="uc_input" v-model="global_setting_info.apdex" align="right"></el-input>
@@ -85,13 +87,14 @@
       </div>
     </div> -->
     <div class="footer" v-permission="'settingCenter_healthIndex_edit'">
-      <el-button type="primary" @click="saveForm" :disabled="!isEdit">保存</el-button>
-      <el-button @click="cancel">取消</el-button>
+      <DYButtonGroup>
+        <DYButton type="primary" @click="saveForm" :disabled="!isEdit">保存</DYButton>
+        <DYButton @click="cancel">取消</DYButton>
+      </DYButtonGroup>
     </div>
   </div>
 </template>
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
 import ntSlider from 'components/base/slider/slider.vue'
 import {
@@ -152,13 +155,13 @@ export default {
     readHealthIndexs () {
       NXDF_SETTING_HEALTH_INDEX_INFO_GET().then(res => {
         let healthIndexConfigs = res.data.health_index_configs
-        healthIndexConfigs = healthIndexConfigs.sort((a, b) => {
-          return b.max_value - a.max_value
-        })
+
+        healthIndexConfigs.sort((a, b) => b.max_value - a.max_value)
+
         this.health_index_arr = healthIndexConfigs.map(x => x.min_value)
         this.health_index_arrBk = JSON.parse(JSON.stringify(this.health_index_arr))
         this.health_index_configs = healthIndexConfigs
-        this.health_index_configs_temp = JSON.parse(JSON.stringify(healthIndexConfigs))
+        // this.health_index_configs_temp = JSON.parse(JSON.stringify(healthIndexConfigs))
         this.loaded = true
       })
     },
@@ -219,7 +222,7 @@ export default {
           min_value: parseInt(x.min_value),
           max_value: parseInt(x.max_value)
         }
-        NXDF_SETTING_HEALTH_INDEX_UPDATE_GET(data).then(res => {
+        NXDF_SETTING_HEALTH_INDEX_UPDATE_GET(data).then(() => {
           this.readHealthIndexs()
         })
       })
@@ -275,7 +278,6 @@ export default {
     this.readGlobalSetting()
   },
   components: {
-    splitTitle,
     ntSlider,
     ntTable
   }
@@ -326,15 +328,15 @@ export default {
         }
       }
 
-      .iconedit2 {
+      .icon_edit2 {
         margin: 2px 5px;
         display: inline-block;
-        color: @theme-color
+        color: @turq-06
       }
     }
 
     .footer {
-      margin: 24px 0 20px;
+      margin: 32px 0 20px;
 
       button:not(:first-child) {
         margin-left: 24px;
@@ -351,7 +353,7 @@ export default {
       }
 
       .split {
-        border-bottom: 1px solid #E6E6E6;
+        border-bottom: 1px solid @gray-03;
         -webkit-box-flex: 1;
         -ms-flex-positive: 1;
         flex-grow: 1;
@@ -410,8 +412,8 @@ export default {
         left: 0;
         width: 16px;
         height: 16px;
-        border: 2px solid #00A1B2;
-        background-color: #00A1B2;
+        border: 2px solid @turq-06;
+        background-color: @turq-06;
         border-radius: 50%;
         opacity: 0.5;
       }
@@ -423,7 +425,7 @@ export default {
         text-align: center;
         line-height: 34px;
         color: #fff;
-        background: #00A1B2;
+        background: @turq-06;
         border-radius: 12%;
         opacity: 0.7;
         min-width: 50px;
@@ -443,7 +445,7 @@ export default {
       height: 0;
       border-top: 10px solid transparent;
       border-bottom: 10px solid transparent;
-      border-left: 10px solid @slider-color-success;
+      border-left: 10px solid @success-color;
     }
 
     .slider-left {
@@ -452,7 +454,7 @@ export default {
       left: 0;
       width: 0;
       height: 10px;
-      background: @slider-color-error;
+      background: @red-05;
     }
 
     .slider-right {
@@ -461,7 +463,7 @@ export default {
       right: 0;
       width: 0;
       height: 10px;
-      background: @slider-color-success;
+      background: @success-color;
     }
   }
 

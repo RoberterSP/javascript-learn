@@ -1,17 +1,17 @@
 <template>
   <div class="">
-    <el-form class="default-width" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
-      <split-title class="title" :title="'基本信息'"></split-title>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
+      <DYSplitTitle :title="'基本信息'" class="h3-title-mb"></DYSplitTitle>
       <!-- 名称 -->
-      <el-form-item class="default-width mt-34" label="名称" prop="name">
+      <el-form-item class="form-default-width" label="名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="例如：接口响应时间监控"></el-input>
       </el-form-item>
       <!-- 标识 -->
-      <el-form-item class="mt37" label="标识" prop="code">
+      <el-form-item class="form-default-width" label="标识" prop="code">
         <el-input v-model="ruleForm.code" :disabled="!create" placeholder="例如：ApiResponseTimeMonitor"></el-input>
       </el-form-item>
       <!-- 联系人 -->
-      <el-form-item class="mt37" label="联系人" prop="contact">
+      <el-form-item class="form-default-width" label="联系人" prop="contact">
         <el-select
           multiple
           style="width: 100%;"
@@ -26,18 +26,19 @@
         </el-select>
       </el-form-item>
       <!-- 描述 -->
-      <el-form-item label="描述" prop="info">
+      <el-form-item class="form-default-width" label="描述" prop="info">
         <el-input
           type="textarea"
           :rows="5"
           :autosize="{ minRows: 5, maxRows: 5 }"
           placeholder="请输入描述"
+          resize="none"
           v-model="ruleForm.info">
         </el-input>
       </el-form-item>
-      <split-title class="title" :title="'预警规则'"></split-title>
+      <DYSplitTitle :title="'预警规则'" class="h3-title-mb h3-title-pt"></DYSplitTitle>
       <!-- 监控对象 -->
-      <el-form-item class="default-width mt-34" label="监控对象" prop="monitored_object">
+      <el-form-item class="form-default-width" label="监控对象" prop="monitored_object">
         <el-select
           style="width: 100%;"
           v-model="ruleForm.monitored_object"
@@ -52,8 +53,8 @@
         </el-select>
       </el-form-item>
       <!-- 过滤条件 -->
-      <p class="default-label">过滤条件</p>
-      <div class="mt18" v-for="(filter, index) in ruleForm.filters_condition" :key="'filter' + index">
+      <p class="default-label el-form-item__label">过滤条件</p>
+      <div class="form-default-width" v-for="(filter, index) in ruleForm.filters_condition" :key="'filter' + index">
         <div class="flex-start mb8">
           <el-select
             style="width: 100%;"
@@ -80,12 +81,12 @@
           </el-select>
         </div>
         <el-input class="mb8" v-model="filter.value" placeholder="请输入内容"></el-input>
-        <el-button @click="deleteFilter(index)">删除</el-button>
+        <div class="el-button-form-item"><DYButton @click="deleteFilter(index)">删除</DYButton></div>
       </div>
-      <el-button @click="addFilter" class="mb44 mt34">添加</el-button>
+      <div class="el-button-form-item"><DYButton @click="addFilter">添加</DYButton></div>
       <!-- 周期 -->
-      <p class="default-label">周期</p>
-      <div class="mt18 flex-start">
+      <p class="default-label el-form-item__label">周期</p>
+      <div class="flex-start mb16 form-default-width">
         <el-input type="number" v-model="ruleForm.cycle_value" class="mr10" placeholder="请输入内容"></el-input>
         <el-select
           v-model="ruleForm.cycle_unit"
@@ -99,7 +100,7 @@
         </el-select>
       </div>
       <!-- 字段 -->
-      <el-form-item class="mt18" label="字段" prop="field">
+      <el-form-item class="form-default-width" label="字段" prop="field">
         <el-select
           style="width: 100%;"
           v-model="ruleForm.field"
@@ -113,7 +114,7 @@
         </el-select>
       </el-form-item>
       <!-- 统计方法 -->
-      <el-form-item class="mt18" label="统计方法" prop="func">
+      <el-form-item class="form-default-width" label="统计方法" prop="func">
         <el-select
           style="width: 100%;"
           v-model="ruleForm.func"
@@ -127,11 +128,11 @@
         </el-select>
       </el-form-item>
       <!-- 阀值设置 -->
-      <p class="default-label">阀值设置</p>
-      <div v-for="(thresholdItem, tIndex) in ruleForm.threshold_setting" :key="'threshold' + tIndex" class="mt18">
+      <p class="default-label el-form-item__label">阀值设置</p>
+      <div class="form-default-width" v-for="(thresholdItem, tIndex) in ruleForm.threshold_setting" :key="'threshold' + tIndex">
         <div class="flex-start mb8">
           <el-select
-            class="mr10 fullWidth"
+            class="mr10 full-width"
             v-model="thresholdItem.level"
             placeholder="请选择等级">
             <el-option
@@ -142,7 +143,7 @@
             </el-option>
           </el-select>
           <el-select
-            class="mr10 fullWidth"
+            class="mr10 full-width"
             v-model="thresholdItem.operator"
             placeholder="请选择操作符">
             <el-option
@@ -167,15 +168,23 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-button @click="deleteThresholdSetting(tIndex)">删除</el-button>
+        <div class="el-button-form-item"><DYButton @click="deleteThresholdSetting(tIndex)">删除</DYButton></div>
       </div>
-      <el-button @click="addThresholdSetting" class="mb44 mt34">添加</el-button>
+      <div class="el-button-form-item"><DYButton @click="addThresholdSetting">添加</DYButton></div>
       <!-- 激活预警策略 -->
-      <nt-switch class="mt18 mb24" @dyClick="switchChange" :title="'激活预警策略'" v-model="ruleForm.state"></nt-switch>
+      <div class="switch_form_item"><nt-switch @dyClick="switchChange" :title="'激活预警策略'" v-model="ruleForm.state"></nt-switch></div>
       <!-- 操作按钮 -->
-      <div class="btns" v-permission="'settingCenter_warningStrategy_edit'">
-        <el-button @click="submitForm('ruleForm')" type="primary">保存</el-button>
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
+      <div class="btns" v-permission="'settingCenter_warningStrategy_edit'" v-if="!create">
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
+      </div>
+      <div class="btns" v-permission="'settingCenter_warningStrategy_add'" v-else>
+        <DYButtonGroup>
+          <DYButton type="primary" @click="submitForm('ruleForm')">保存</DYButton>
+          <DYButton @click="resetForm('ruleForm')">取消</DYButton>
+        </DYButtonGroup>
       </div>
     </el-form>
   </div>
@@ -183,10 +192,17 @@
 
 <script>
 import ntSwitch from 'components/base/switch.vue'
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import { AUTH_USER_LIST, MONITORED_OBJECT_LIST, NOTIFICATION_TYPE_LIST, ALERT_RULE_UPLOAD, ALERT_RULE_INFO, ALERT_RULE_UPDATE } from '@/api'
-import { PAGESIZE } from 'common/util/common.js'
+import {
+  ALERT_RULE_INFO,
+  ALERT_RULE_UPDATE,
+  ALERT_RULE_UPLOAD,
+  AUTH_USER_LIST,
+  MONITORED_OBJECT_LIST,
+  NOTIFICATION_TYPE_LIST
+} from '@/api'
+import {PAGESIZE} from 'common/util/common.js'
 import bus from '@/assets/eventBus.js'
+
 export default {
   data () {
     return {
@@ -291,13 +307,8 @@ export default {
         if (valid) {
           let data = JSON.parse(JSON.stringify(this.ruleForm))
           data.cycle_value = parseInt(data.cycle_value)
-          console.log(data)
 
-          let userArr = []
-          this.ruleForm.notification_user.map(item => {
-            userArr.push({user_id: item})
-          })
-          data.notification_user = userArr
+          data.notification_user = this.ruleForm.notification_user.map(item => ({user_id: item}))
           // data.threshold = parseInt(data.threshold)
 
           if (!data.field) {
@@ -354,11 +365,11 @@ export default {
         this.ruleForm.filters_condition = []
       }
 
-      this.monitoredObjectInfo && this.monitoredObjectInfo.map(item => {
+      this.monitoredObjectInfo && this.monitoredObjectInfo.forEach(item => {
         if (item.code === val) {
           this.fieldList = []
           this.fieldListNoText = []
-          item.field_info && item.field_info.map(info => {
+          item.field_info && item.field_info.forEach(info => {
             this.fieldList.push({
               label: info.fieldKey,
               value: info.fieldKey,
@@ -377,19 +388,16 @@ export default {
     },
     auth_user_list (data) {
       AUTH_USER_LIST(data).then(res => {
-        this.authUserList = []
-        res.data.user_list.map(item => {
-          this.authUserList.push({
-            label: item.name,
-            value: item.id
-          })
-        })
+        this.authUserList = res.data.user_list.map(item => ({
+          label: item.name,
+          value: item.id
+        }))
       })
     },
     monitored_object_list (data) {
       return MONITORED_OBJECT_LIST(data).then(res => {
         this.monitoredObjectInfo = res.data.monitored_object_info
-        res.data.monitored_object_info.map(item => {
+        res.data.monitored_object_info.forEach(item => {
           this.monitoredObjectList.push({
             label: item.name,
             value: item.code
@@ -399,7 +407,7 @@ export default {
     },
     notification_type_list (data) {
       NOTIFICATION_TYPE_LIST(data).then(res => {
-        res.data.notification_types.map(item => {
+        res.data.notification_types.forEach(item => {
           this.notificationList.push({
             value: item.code,
             label: item.name
@@ -421,11 +429,8 @@ export default {
     alert_rule_info (data) {
       ALERT_RULE_INFO(data).then(res => {
         this.ruleForm = res.data
-        let arr = []
-        res.data.notification_user.map(item => {
-          arr.push(item.user_id)
-        })
-        this.ruleForm.notification_user = arr
+        this.ruleForm.notification_user = res.data.notification_user.map(item => item.user_id)
+
         this.ruleFormBk = JSON.parse(JSON.stringify(this.ruleForm))
       })
     }
@@ -452,27 +457,7 @@ export default {
     }
   },
   components: {
-    splitTitle,
     ntSwitch
   }
 }
 </script>
-
-<style scoped lang="less">
-@import "~common/style/variable";
-
-@default-width: 425px;
-.default-width {
-  width: @default-width;
-}
-.mt-34 {
-  margin-top: 34px;
-}
-
-.w425 {
-  width: 42.5%;
-}
-.w45 {
-  width: 45%;
-}
-</style>

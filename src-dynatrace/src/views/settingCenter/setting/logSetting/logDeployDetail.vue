@@ -1,16 +1,15 @@
 <template>
   <div class="filterBox">
-    <div class="flex-between mb20">
-      <h2>{{detailDeloy.name}}</h2>
-      <ntPopover :show.sync="showPublish" type="small">
-        <el-button slot="reference"  class="btn-save" type="primary" v-permission="'settingCenter_logSetting_deploy'" v-if="tableDeployData.data.length > 0"  @click="showPublish = true">发布</el-button>
+    <DYHeader :title="detailDeloy.name" type="small" no-gap class="mb20">
+      <DYPopover :show.sync="showPublish" type="small" slot="actions">
+        <DYButton slot="reference"  class="btn-save" type="primary" v-permission="'settingCenter_logSetting_deploy'" v-if="tableDeployData.data.length > 0"  @click="showPublish = true">发布</DYButton>
         <div>
           <div class="title mb10">确认发布？</div>
 
-          <div>
-            <el-button type="primary" @click="publishClick()">发布</el-button>
-            <el-button @click="showPublish = false" type="primary" class="btn-cancel">取消</el-button>
-          </div>
+          <DYButtonGroup>
+            <DYButton theme="dark" type="primary" @click="publishClick()">发布</DYButton>
+            <DYButton theme="dark" @click="showPublish = false">取消</DYButton>
+          </DYButtonGroup>
 
           <el-divider class="mt40"></el-divider>
 
@@ -21,8 +20,8 @@
           </div>
 
         </div>
-      </ntPopover>
-    </div>
+      </DYPopover>
+    </DYHeader>
     <div class="desc"></div>
     <div class="add-title">
       <!-- 所有的接口组 -->
@@ -35,9 +34,9 @@
       ></nt-table>
     </div>
     <div class="search-bar-box">
-      <split-title :title="'分发部署组配置'"></split-title>
+      <DYSplitTitle :title="'分发部署组配置'" class="h3-title-mb"></DYSplitTitle>
       <el-form class="default-width" ref="ruleForm" label-position="top">
-        <el-form-item class="mb30 mt20" label="服务中心">
+        <el-form-item label="服务中心">
           <el-select
             style="width: 100%;"
             v-model="sevice_code"
@@ -66,11 +65,7 @@
 </template>
 
 <script>
-import splitTitle from 'components/splitTitle/splitTitle.vue'
-import dyButton from 'components/base/button.vue'
 import dySwitch from 'components/base/switch.vue'
-import ntTabs from 'components/base/tabs.vue'
-import ntPopover from 'components/base/popover.vue'
 import searchBar from 'components/searchBar/searchBar.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
 import addLogSetting from './addLogSetting.vue'
@@ -111,7 +106,8 @@ export default {
           {
             name: '服务', // 表头名
             code: 'mesh_code', // 表身
-            type: 'text'
+            type: 'text',
+            width: 400
           },
           {
             name: '节点数', // 表头名
@@ -145,12 +141,14 @@ export default {
           {
             name: '部署组名称', // 表头名
             code: 'deploy_group_code', // 表身
-            type: 'text'
+            type: 'text',
+            width: 300
           },
           {
             name: '服务', // 表头名
             code: 'mesh_code', // 表身
-            type: 'text'
+            type: 'text',
+            width: 400
           },
           {
             name: '节点数', // 表头名
@@ -221,10 +219,12 @@ export default {
           message: res.data.result,
           type: 'success'
         })
+
+        this.showPublish = false
       })
     },
 
-    config_log_deploy_list: function () {
+    config_log_deploy_list () {
       let data = {
         log_config_id: this.detailDeloy.log_config_id,
         page: 1,
@@ -242,7 +242,7 @@ export default {
         page_size: PAGESIZE
       }
       NXMC_MESH_LIST_GET(data).then(res => {
-        res.data.mesh_list.map(item => {
+        res.data.mesh_list.forEach(item => {
           item.label = item.name
           item.value = item.code
         })
@@ -291,11 +291,7 @@ export default {
   },
   created () {},
   components: {
-    splitTitle,
-    dyButton,
     dySwitch,
-    ntTabs,
-    ntPopover,
     searchBar,
     addLogSetting,
     ntTable
@@ -357,17 +353,13 @@ export default {
     }
   }
 }
-.addPanel {
+.add-panel {
   // margin: 0 20px;
   padding: 20px 0 20px 12px;
-  background-color: @default-gray;
+  background-color: @gray-02;
   margin-top: 28px;
+
   .tilte {
-    font-family: @default-font;
-    font-size: @default-font-size;
-    color: @default-font-color;
-    font-weight: @default-font-weight;
-    line-height: @default-line-height;
     margin-bottom: 10px;
   }
   .headerList {

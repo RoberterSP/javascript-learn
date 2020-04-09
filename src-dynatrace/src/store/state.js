@@ -2,7 +2,7 @@
 const state = {
   openMenu: true,
   isLoading: false,
-  primission: [],
+  permission: [],
   addRouters: [],
   menuList: [],
   // start

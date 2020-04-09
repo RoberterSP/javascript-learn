@@ -11,7 +11,7 @@
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="chooseNamespace('ruleForm')">登  录</el-button>
+        <DYButton type="primary" @click="chooseNamespace('ruleForm')">登  录</DYButton>
       </div>
     </el-dialog>
   </div>
@@ -28,7 +28,7 @@ export default {
       },
       rules: {
         namespaceCode: [
-          { required: true, message: '请选择分区', trigger: 'change' }
+          { required: true, message: '请选择Namespace', trigger: 'change' }
         ]
       }
     }
@@ -62,10 +62,10 @@ export default {
   },
   computed: {
     currentValue: {
-      get: function () {
+      get () {
         return this.value
       },
-      set: function (val) {
+      set (val) {
         this.$emit('input', val)
       }
     }

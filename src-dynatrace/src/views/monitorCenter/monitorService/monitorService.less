@@ -1,37 +1,13 @@
 @import "~common/style/variable";
 
 .monitorApplication{
-  .headTitle{
-    width: 100%;
-    background:rgba(255,255,255,1);
-    border-bottom: 1px solid @royalblue-12;
-    span{
-
-      font-size:28px;
-      font-family:PingFangSC-Regular,PingFang SC;
-      font-weight:400;
-      color:rgba(69,70,70,1);
-      line-height:40px;
-    }
-    .head_title_l{
-      display: flex;
-      align-items: center;
-    }
-  }
-  .el-button {
-    border:1px solid rgba(230,230,230,1);
-  }
-  .filter_div{
-  }
   .tit{
     font-size:20px;
-    font-family:PingFangSC-Medium,PingFang SC;
     font-weight:500;
-    color:rgba(69,70,70,1);
     line-height:28px;
   }
   .health{
-    background-color: #fff;
+    background-color: @gray-00;
     min-height: 390px;
     .circleDiv{
       display: flex;
@@ -50,13 +26,8 @@
             display: flex;
             flex-direction: column;
             font-size:16px;
-            font-family:PingFangSC-Regular,PingFang SC;
-            font-weight:400;
-            color:rgba(69,70,70,1);
             line-height:22px;
             margin-left: 20px;
-            display: flex;
-            flex-direction: column;
             justify-content: flex-end;
             margin-bottom: 10px;
             div.val{
@@ -78,10 +49,10 @@
                 font-size: 20px;
                 margin-left: 10px;
                 &.red{
-                  color: #DC172A;
+                  color: @red-05;
                 }
                 &.yellow{
-                  color: #F5D30F;
+                  color: @warning-color;
                 }
                 &.green{
                   color: #2AB06F;
@@ -101,26 +72,7 @@
   }
   .section{
     padding: 16px;
-    background-color: #fff;
-    .tabDiv{
-      .tab_item{
-        flex: 1;
-        font-size: 12px;
-        font-family: PingFangSC-Regular,PingFang SC;
-        font-weight: 400;
-        color: rgba(96,96,96,1);
-        line-height: 29px;
-        border-bottom: 1px solid @royalblue-12;
-        &+.tab_item{
-          margin-left: 4px;
-        }
-        &.is_active{
-          color:rgba(255,255,255,1);
-          cursor: pointer;
-          background-color:@royalblue-12;
-        }
-      }
-    }
+    background-color: @gray-00;
     .column_chart{
       min-height: 436px;
     }
@@ -153,13 +105,13 @@
           color: rgb(51, 51, 51);
           font-weight: normal;
           text-overflow: ellipsis;
-          color: rgb(51, 51, 51);
         }
       }
     }
   }
+
   .table_view{
-    background-color: #fff;
+    background-color: @gray-00;
     .my-table{
       table{
         border-collapse: separate;
@@ -186,18 +138,14 @@
             position: relative;
             &:hover{
               td{
-                background-color:rgba(0,0,0,0);
-                background:rgba(0,0,0,0);
+                background: rgba(0, 0, 0, 0);
               }
             }
             td{
-              padding: 15px 0px;
+              padding: 15px 0;
               .title.highlight_label{
-                font-size: 14px;
-                font-family: SourceHanSansSC-Regular, SourceHanSansSC;
-                font-weight: 400;
                 line-height: 16px;
-                color:rgba(0,161,178,1);
+                color:@turq-06;
               }
               .title{
                 width: 100%;
@@ -219,10 +167,16 @@
                     justify-content: center;
                   }
                 }
+                &.align-width-word {
+                  .title {
+                    position: relative;
+                    right: 17px;
+                  }
+                }
               }
               .slip{
                 height:8px;
-                background: @royalblue-8;
+                background: @royalblue-04;
               }
             }
             .opt_cell{
@@ -233,7 +187,7 @@
                 }
               }
               .tb_filter, .tb_more{
-                color:rgba(0,161,178,1);
+                color: @turq-06;
                 width: 24px;
                 height: 24px;
                 text-align: center;
@@ -243,8 +197,8 @@
                 &:hover, &:focus{
                   text-decoration: unset;
                   outline: none;
-                  background-color:rgba(183,183,183,0.3);
-                  border-radius:3px;
+                  background-color: fade(@gray-05, 30%);
+                  border-radius: @default-border-radius;
                 }
                 img{
                   width: 24px;
@@ -260,8 +214,8 @@
                   width:80px;
                   height:29px;
                   background:rgba(255,255,255,1);
-                  border-radius:3px;
-                  border:1px solid rgba(0,161,178,1);
+                  border-radius: @default-border-radius;
+                  border:1px solid @turq-06;
                   text-align: center;
                   line-height: 29px;
                   z-index: 5;
@@ -278,7 +232,7 @@
             }
           }
           tr:nth-child(even){
-            background-color: rgba(248,248,248,1) !important;
+            background-color: @gray-01 !important;
           }
         }
       }
@@ -286,20 +240,15 @@
         position: absolute;
         top: 990px;
         left: 520px;
-        background-color: #fff;
         min-width:384px;
-        background:rgba(255,255,255,1);
-        border-radius:4px;
-        border:1px solid rgba(0,161,178,1);
+        background: @gray-00;
+        border-radius: @default-border-radius;
+        border:1px solid @turq-06;
         padding: 17px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
-        color:rgba(69,70,70,1);
-        font-size:14px;
         line-height:20px;
         .name{
           padding-bottom: 1px;
-          border-bottom: 1px solid rgba(204,204,204,1);
+          border-bottom: 1px solid @gray-04;
           margin-bottom: 12px;
         }
         .explain,.sec{
@@ -311,8 +260,7 @@
             .dot{
               flex: 1;
               border-bottom: 1px dashed #454646;
-              margin: 0 5px;
-              margin-bottom: 3px;
+              margin: 0 5px 3px;
             }
             .val{
               font-size:12px;
@@ -332,11 +280,9 @@
 .click_pop{
   width:160px;
   height:142px;
-  background:rgba(69,70,70,1);
-  border-radius:3px;
-  font-family:PingFangSC-Regular,PingFang SC;
-  font-weight:400;
-  color:rgba(255,255,255,1);
+  background: @gray-09;
+  border-radius: @default-border-radius;
+  color: @gray-00;
   position: absolute;
   text-align: left;
   .head{
@@ -344,24 +290,23 @@
     height:52px;
     line-height:52px;
     padding: 0 12px;
-    background:rgba(109,109,109,1);
-    border-radius:3px 3px 0px 0px;
+    background: @gray-07;
+    border-radius: @default-border-radius @default-border-radius 0 0;
     font-size:20px;
   }
   .line{
     font-size:14px;
-    line-height:20px;
     height:30px;
     line-height:30px;
     padding: 0 12px;
     &:hover{
-      background:rgba(53,53,53,1);
+      background: @gray-10;
     }
   }
   span{
     width:24px;
     height:24px;
-    border-radius:3px;
+    border-radius: @default-border-radius;
     display: inline-block;
     line-height:24px;
     text-align: center;
@@ -369,11 +314,11 @@
     bottom: 0;
     right: 0;
     &:hover{
-      background:rgba(109,109,109,1);
+      background: @gray-07;
     }
     i{
       font-size: 10px;
-      color: #fff;
+      color: @gray-00;
       font-weight: bolder;
     }
   }

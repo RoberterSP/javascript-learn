@@ -1,9 +1,9 @@
 <template>
   <div class="calendar" :class="[`theme-${theme}`]">
     <div class="calendarTitle flex-between">
-      <div @click="switchMonth(0)" class="iconfont iconarrowleft"></div>
+      <div @click="switchMonth(0)" class="iconfont"><DYIcon type="arrowleft"></DYIcon></div>
       <div class="month">{{currYear}} {{currMonth}}月</div>
-      <div @click="switchMonth(1)" class="iconfont iconarrowright"></div>
+      <div @click="switchMonth(1)" class="iconfont"><DYIcon type="arrowright"></DYIcon></div>
     </div>
     <div class="week flex-start">
       <div class="flex-center square"><span class="lightDay">一</span></div>
@@ -21,9 +21,8 @@
 </template>
 
 <script>
-import bus from '@/assets/eventBus.js'
 import { ExDays } from '@/common/util/common.js'
-import { offset } from 'highcharts'
+import {isNaN, isUndefined} from 'lodash'
 
 export default {
   data () {
@@ -68,7 +67,7 @@ export default {
     selctDay (day, index) {
       if (!this.checkDayLegal(day)) return
       this.setActiveDay(day.year, day.month, day.day)
-      let date = new Date(day.year + '-' + day.month + '-1 00:00:00')
+      let date = new Date(day.year + '/' + day.month + '/1 00:00:00')
       this.dealCalendar(date)
       this.$emit('change', day, this.compName)
     },
@@ -90,7 +89,7 @@ export default {
           this.currMonth -= 1
         }
       }
-      let date = new Date(this.currYear + '-' + this.currMonth + '-1 00:00:00')
+      let date = new Date(this.currYear + '/' + this.currMonth + '/1 00:00:00')
       this.dealCalendar(date)
     },
     dealCalendar (date, detail) {
@@ -98,8 +97,8 @@ export default {
       const endDate = detail ? detail.endDate : new Date().getTime()
       this.currYear = date.getFullYear()
       this.currMonth = date.getMonth() + 1
-      let day = date.getDate()
-      let firstDayOfMonth = this.currYear + '-' + this.currMonth + '-1'
+
+      let firstDayOfMonth = this.currYear + '/' + this.currMonth + '/1'
       let week = new Date(firstDayOfMonth).getDay()
       let offDays = 0
       if (week) {
@@ -107,22 +106,27 @@ export default {
       } else {
         offDays = 6
       }
-      let startDay = ExDays(firstDayOfMonth, offDays, 'yyyy-MM-dd')
+      let startDay = ExDays(firstDayOfMonth, offDays, 'yyyy/MM/dd')
       this.dayList = []
       let tag = 0
       let setDays = 0
       while (tag < 2) {
-        let setDay = ExDays(startDay, setDays, 'yyyy-MM-dd')
+        let setDay = ExDays(startDay, setDays, 'yyyy/MM/dd')
         let cDate = new Date(setDay)
         let cYear = cDate.getFullYear()
         let cMonth = cDate.getMonth() + 1
         let cDay = cDate.getDate()
+
+        if (isNaN(cDay) || isUndefined(cDay)) {
+          break
+        }
+
         if (cDay === 1) {
           tag += 1
         }
         if (tag < 2) {
           this.dayList.push({
-            date: cYear + '-' + cMonth + '-' + cDay,
+            date: cYear + '/' + cMonth + '/' + cDay,
             month: cMonth,
             year: cYear,
             day: cDay,
@@ -137,12 +141,12 @@ export default {
       let lastWeek = lastDate.getDay()
       if (lastWeek) {
         for (let i = 0; i < (7 - lastWeek); i++) {
-          let tailDate = new Date(ExDays(lastDate, -i - 1, 'yyyy-MM-dd'))
+          let tailDate = new Date(ExDays(lastDate, -i - 1, 'yyyy/MM/dd'))
           let tailYear = tailDate.getFullYear()
           let tailMonth = tailDate.getMonth() + 1
           let tailDay = tailDate.getDate()
           this.dayList.push({
-            date: tailYear + '-' + tailMonth + '-' + tailDay,
+            date: tailYear + '/' + tailMonth + '/' + tailDay,
             year: tailYear,
             month: tailMonth,
             day: tailDay,
@@ -179,12 +183,16 @@ export default {
     color: @default-font-color !important;
   }
 
+  .disabledDate {
+    color: #8F8F8F !important;
+  }
+
   .calendarTitle {
     .iconfont {
       color: @default-font-color;
     }
     .iconfont:hover {
-      color: @theme-color;
+      color: @turq-06;
     }
     .month {
       color: @default-font-color;
@@ -197,9 +205,9 @@ export default {
   }
 
   .activeSquare {
-    background-color: @theme-color !important;
+    background-color: @turq-06 !important;
     .days {
-      color: @default-font-color !important;
+      color: #fff !important;
     }
     .days:hover {
       color: @default-font-color !important;
@@ -225,7 +233,7 @@ export default {
       color: #fff;
     }
     .iconfont:hover {
-      color: @theme-color;
+      color: @turq-06;
     }
     .month {
       font-size: 12px;
@@ -248,7 +256,7 @@ export default {
 }
 
 .activeSquare {
-  background-color: @theme-color !important;
+  background-color: @turq-06 !important;
   .days {
     color: #fff !important;
   }
@@ -259,7 +267,7 @@ export default {
 
 .unActiveSquare {
   .days:hover {
-    color: @theme-color !important;
+    color: @turq-06 !important;
   }
 }
 </style>

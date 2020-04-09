@@ -1,3 +1,5 @@
+@import "~common/style/variable";
+
 .simulationRequest {
   .sign {
     line-height: 12px !important;
@@ -5,7 +7,7 @@
   .zhengfangxing {
     width: 20px;
     height: 20px;
-    background-color: #7C38A1;
+    background-color: @purple-06;
     margin-right: 20px;
   }
   .content-bottom {
@@ -13,17 +15,11 @@
     width: 100%;
     min-height: 452px;
     .title {
-      font-size:14px;
-      font-family:SourceHanSansSC-Regular,SourceHanSansSC;
-      font-weight:400;
-      color:rgba(69,70,70,1);
       line-height:14px;
       .time {
         margin-left: 9px;
         font-size:28px;
-        font-family:SourceHanSansSC-Medium,SourceHanSansSC;
         font-weight:500;
-        color:rgba(69,70,70,1);
         line-height:28px;
       }
     }
@@ -80,16 +76,13 @@
       left: 0;
       top: 28px;
       min-width:115px;
-      border:1px solid #cccccc;
+      border:1px solid @gray-04;
       z-index: 9;
       .key_item{
         width: 100%;
         height:28px;
         background-color:rgba(255,255,255,1);
         font-size:12px;
-        font-family:PingFangSC-Regular,PingFang SC;
-        font-weight:400;
-        color:rgba(69,70,70,1);
         line-height:28px;
         padding: 0 12px;
         &:hover{
@@ -120,9 +113,6 @@
             height: 48px;
             padding-left: 7px;
             label{
-              font-size:14px;
-              font-family:PingFangSC-Regular,PingFang SC;
-              font-weight:400;
               color:rgba(69,70,70,1);
               line-height:20px;
             }

@@ -1,10 +1,12 @@
 <template>
   <div>
     <div class="nx_board_item">
-      <div class="chart_l flex-center" v-if="areaLineChartData.halfChart" style="padding-right: 5px">{{areaLineChartData.total}}</div>
+      <div class="chart_l flex-center" v-if="areaLineChartData.halfChart" style="padding-right: 5px">
+        {{areaLineChartData.total}}
+      </div>
       <div class="chart_r">
         <div class="x-chart linechart" style="transform: scale(1);">
-          <div :id="chartId" ></div>
+          <div :id="chartId"></div>
         </div>
         <!-- <x-chart :chartId="chartId" class="linechart" :option="chartOptions"></x-chart> -->
       </div>
@@ -17,8 +19,7 @@
       <div class="ap-item">
         <div class="ap-item_l">
           <div class="flex-start" v-for="(apitem, apindex) in areaLineChartData.appList" :key="apindex">
-<!--            <i class="iconfont iconplaceholder" style="margin-bottom: -1px"></i>-->
-            <icon type="Application" style="margin-bottom: -1px;margin-right: 2px"></icon>
+            <DYIcon type="Application" class="mr2"></DYIcon>
             <span>{{apitem.name}}</span>
           </div>
         </div>
@@ -38,8 +39,6 @@
 <script>
 // import XChart from '@/components/charts/charts.vue'
 import HighCharts from 'highcharts'
-import icon from '@/components/base/icon.vue'
-
 
 export default {
   data () {
@@ -135,7 +134,7 @@ export default {
     },
     comData: {
       type: Object,
-      default: function () {
+      default () {
         return {}
       }
     }
@@ -185,7 +184,7 @@ export default {
         chartOptions.xAxis.tickInterval = areaLineChartData.chartOptions.tickInterval
       }
       if (areaLineChartData.chartOptions.noYAxis) {
-        chartOptions.yAxis.labels = { enabled: false }
+        chartOptions.yAxis.labels = {enabled: false}
       } else {
         chartOptions.yAxis.offset = 15
         chartOptions.yAxis.lineWidth = 1
@@ -201,80 +200,90 @@ export default {
   },
   components: {
     // XChart,
-    icon
   }
 }
 </script>
 <style lang="less" scoped>
-.nx_board_item{
-  min-height: 120px;
-}
-.application_rank{
-  .ap-item{
-    display: flex;
-    font-size: 11px;
-    font-family: SourceHanSansSC-Regular,SourceHanSansSC;
-    font-weight: 400;
-    color: rgba(137,137,137,1);
-    line-height: 9px;
-    .ap-item_l{
+  @import "~common/style/variable";
+
+  .nx_board_item {
+    min-height: 120px;
+  }
+
+  .application_rank {
+    .ap-item {
       display: flex;
-      /*align-items: center;*/
-      justify-content: center;
-      flex-direction: column;
-      div{
-        height: 21px;
-        margin-bottom: 3px;
+      font-size: 12px;
+      color: @gray-06;
+      line-height: 12px;
+
+      .ap-item_l {
         display: flex;
-        align-items: flex-end;
-        justify-content: flex-start;
+        /*align-items: center;*/
+        justify-content: center;
+        flex-direction: column;
+
+        div {
+          height: 21px;
+          margin-bottom: 3px;
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-start;
+        }
+
+        img {
+          width: 10px;
+          height: 10px;
+          margin-right: 4px;
+        }
+
+        span {
+          white-space: nowrap;
+          max-width: 100px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
-      img{
-        width: 10px;
-        height: 10px;
-        margin-right: 4px;
+
+      .ap-item_c {
+        flex: 1;
+        margin-left: 10px;
+        margin-right: 6px;
+        min-width: 20px;
+
+        div {
+          height: 21px;
+          margin-bottom: 3px;
+          position: relative;
+
+          &::after {
+            content: "";
+            width: 100%;
+            height: 1px;
+            background-color: rgba(69, 70, 70, 1);
+            position: absolute;
+            bottom: 0px;
+          }
+        }
       }
-      span{
-        white-space: nowrap;
-        max-width: 100px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-    .ap-item_c{
-      flex: 1;
-      margin-left: 10px;
-      margin-right: 6px;
-      min-width: 20px;
-      div{
-        height: 21px;
-        margin-bottom: 3px;
-        position: relative;
-        &::after{
-          content: "";
-          width: 100%;
-          height: 1px;
-          background-color: rgba(69,70,70,1);
-          position: absolute;
-          bottom: 0px;
+
+      .ap-item_r {
+        display: block;
+
+        div {
+          height: 21px;
+          margin-bottom: 3px;
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-start;
+        }
+
+        .val {
+          font-size: 15px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
         }
       }
     }
-    .ap-item_r{
-      display: block;
-      div{
-        height: 21px;
-        margin-bottom: 3px;
-        display: flex;
-        align-items: flex-end;
-        justify-content: flex-start;
-      }
-      .val{
-        font-size: 15px;
-        font-weight: 500;
-        color: rgba(255,255,255,1);
-      }
-    }
   }
-}
 </style>

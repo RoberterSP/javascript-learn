@@ -1,15 +1,15 @@
 <template>
-  <div class="user_permissions_container p10">
-    <h2>用户权限</h2>
+  <div class="user_permissions_container">
+    <DYHeader title="用户权限" type="small" no-gap/>
     <div class="mt20"></div>
     <edit-roles v-if="!isShowBtn" @cancelContent="cancleHandle"></edit-roles>
     <div class="user_list">
       <nt-table
-      :tableData="userPermissions"
-      :columns="columns"
-      :tableSet="tableSet"
-      :componentsName="'editRoles'"
-      @componentSaveContent="saveHandle"
+        :tableData="userPermissions"
+        :columns="columns"
+        :tableSet="tableSet"
+        :componentsName="'editRoles'"
+        @componentSaveContent="saveHandle"
       ></nt-table>
     </div>
   </div>
@@ -18,11 +18,9 @@
 // import { mapActions, mapState } from 'vuex'
 import ntTable from 'components/ntTable/ntTable.vue'
 import editRoles from './editRoles.vue'
-import {
-  AUTH_USER_LIST,
-  NXMC_AUTH_USER_UPDATE_POST
-} from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import {AUTH_USER_LIST, NXMC_AUTH_USER_UPDATE_POST} from '@/api'
+import {PAGESIZE} from '@/common/util/common.js'
+
 export default {
   data () {
     return {
@@ -52,8 +50,7 @@ export default {
       page: 1 // 第几页
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     // 更新系统用户数据
     updateAuthUserInfo (params) {
@@ -74,14 +71,13 @@ export default {
     },
     // 获取系统用户列表
     getUserPermissionsList () {
-      let _this = this
       let data = {
         page_size: PAGESIZE,
         page: 1
       }
       AUTH_USER_LIST(data).then(res => {
-        _this.isShowBtn = true
-        res.data.user_list.map(item => {
+        this.isShowBtn = true
+        res.data.user_list.forEach(item => {
           let groupNames = []
           let groupIds = []
           item.groups.forEach(el => {
@@ -92,9 +88,9 @@ export default {
           item.group_names = groupNames
           // item.group_names = groupNames.join(', ')
         })
-        _this.userPermissions = res.data.user_list
-        _this.tableSet.paginationConfig.total = res.data.total
-        _this.$forceUpdate()
+        this.userPermissions = res.data.user_list
+        this.tableSet.paginationConfig.total = res.data.total
+        this.$forceUpdate()
       })
     },
     cancleHandle () {
@@ -118,12 +114,13 @@ export default {
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
-.user_permissions_container {
-  .desc {
-    margin-top: 9px;
-    width: 50%;
-    line-height: 20px;
+  @import "~common/style/variable";
+
+  .user_permissions_container {
+    .desc {
+      margin-top: 9px;
+      width: 50%;
+      line-height: 20px;
+    }
   }
-}
 </style>

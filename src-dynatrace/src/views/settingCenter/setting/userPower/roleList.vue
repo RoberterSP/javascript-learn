@@ -1,17 +1,23 @@
 <template>
-  <div class="role_container p10">
-    <h2 class="mb30">角色列表</h2>
-    <div>
+  <div class="role_container">
+    <DYHeader
+      no-gap
+      class="row-title"
+      type="small"
+      title="角色列表"
+    />
 
-      <div class="addPanel mb20" v-if="!isShowBtn">
-        <add-role @addHandle="addHandle" @cancelContent="cancleHandle"></add-role>
-      </div>
+    <div class="add-panel row-action" v-if="!isShowBtn">
+      <add-role @addHandle="addHandle" @cancelContent="cancleHandle"></add-role>
+    </div>
 
-      <el-button type="primary" v-else class="mb20" @click="addRole" v-permission="'settingCenter_roleList_add'">添加角色</el-button>
+    <DYButton type="primary" v-else class="row-action" @click="addRole" v-permission="'settingCenter_roleList_add'">
+      添加角色
+    </DYButton>
 
-      <div class="user_list">
-        <nt-table :tableData="roleList" :columns="columns" @deleteOne="deleteOne" :tableSet="roleListTableSet" :componentsName="'addRole'" @componentSaveContent="saveContent"></nt-table>
-      </div>
+    <div class="row-content">
+      <nt-table :tableData="roleList" :columns="columns" @deleteOne="deleteOne" :tableSet="roleListTableSet"
+                :componentsName="'addRole'" @componentSaveContent="saveContent"/>
     </div>
   </div>
 </template>
@@ -19,9 +25,10 @@
 import ntTable from 'components/ntTable/ntTable.vue'
 import addRole from './addRole'
 import authRole from './authRole'
-import { ROLE_LIST_GET, ROLE_DELETE_POST } from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import {ROLE_DELETE_POST, ROLE_LIST_GET} from '@/api'
+import {PAGESIZE} from '@/common/util/common.js'
 import bus from '@/assets/eventBus.js'
+
 export default {
   data () {
     return {
@@ -34,9 +41,9 @@ export default {
         name: '删除',
         code: '',
         type: 'delete',
-        textAlign: 'right',
+        textAlign: 'center',
         showDel: true, // 删除
-        width: 50,
+        width: 60,
         disable: false
       }],
       roleList: [], // 角色列表
@@ -108,32 +115,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
-.role_container {
-  position: relative;
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .empower_btn{
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
-  .source_name{
-    display: flex;
-    align-items: center;
-    .name{
-      width: 68px;
-    }
-    .line{
-      flex: 1;
-      background-color: #E6E6E6;
-      height: 1px;
-    }
-  }
-}
-</style>

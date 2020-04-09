@@ -7,9 +7,9 @@
              v-for="(item, type) in tabList"
              :class="{'selected': selected === type, ['theme-' + type]: true}"
              :key="type"
-             @click="onItemSelected(type)">
+             @click="onTabSelected(type, {closeLevel2Wrap: true})">
           <div class="name">
-            <icon :type="item.icon" class="mr9" size="25" style="font-weight: 600"></icon>
+            <DYIcon :type="item.icon" class="mr9" size="25" style="font-weight: 600"></DYIcon>
             {{item.name}}
           </div>
           <div class="bottom-img">
@@ -42,6 +42,7 @@
               :nodeSep="-20"
               :rankSep="treeRankSep"
               @expandClick="expandNode"
+              @exportClick="exportClick"
               @onNodeClick="onLevel2NodeClick"
             ></topology>
           </div>
@@ -50,10 +51,12 @@
 
       <div class="topology-detail">
         <topology
+          ref="topology"
           :dataSets="this.infoData"
           :needDrag="true"
           :color-map="colorMap"
-          @onCanvasClick="onCanvasClick"
+          @exportClick="exportClick"
+          @onCanvasClick="closeLevel2Topology"
           @onNodeClick="onNodeClick"></topology>
       </div>
     </div>
@@ -62,20 +65,25 @@
 
 <script>
 import stepper from 'components/stepper/stepper.vue'
-import icon from 'components/base/icon.vue'
 import topology from 'components/topology/topology.vue'
-import {NXMC_TOPOLOGY_INFO_POST, NXMC_TOPOLOGY_LEVEL2_INFO_POST} from '@/api'
+import {
+  APP_INFO_GET,
+  MESH_DEPLOY_GROUP_INFO,
+  NXMC_MESH_INFO_GET,
+  NXMC_TOPOLOGY_INFO_POST,
+  NXMC_TOPOLOGY_LEVEL2_INFO_POST
+} from '@/api'
 import bus from '@/assets/eventBus.js'
-import {getTextWidth} from 'common/util/util'
+import {getTextWidth, getLessColor} from 'common/util/util'
 
 export default {
   data () {
     return {
       colorMap: {
-        'app': '#7C38A1',
-        'service': '#526CFF',
-        'node': '#008CDB',
-        'deploy_group': '#008CDB'
+        'app': getLessColor('@purple-06'),
+        'service': getLessColor('@royalblue-05'),
+        'node': getLessColor('@blue-06'),
+        'deploy_group': getLessColor('@blue-06')
       },
       time_range_obj: {time_range: 'Last 30 minutes'},
       stepper: [
@@ -124,64 +132,95 @@ export default {
   },
   computed: {},
   methods: {
+    // 跳转到详情
+    exportClick (model) {
+      const urlMap = {
+        service: {
+          method: NXMC_MESH_INFO_GET,
+          paramsKey: 'mesh_id',
+          resultKey: 'mesh_info',
+          redirect: 'serviceDetail'
+        },
+        deploy_group: {
+          method: MESH_DEPLOY_GROUP_INFO,
+          paramsKey: 'deploy_group_id',
+          resultKey: 'deploy_group_info',
+          redirect: 'deployGroupDetail'
+        },
+        app: {
+          method: APP_INFO_GET,
+          paramsKey: 'id',
+          resultKey: 'app_info',
+          redirect: 'appDetail'
+        }
+      }
+
+      if (model.type in urlMap) {
+        const obj = urlMap[model.type]
+
+        // 获取详情
+        obj.method({
+          [obj.paramsKey]: +(model.real_id || model.id)
+        }).then(res => {
+          if (res.code === 0) {
+            // 跳转到对应详情页
+            this.$router.push({
+              name: obj.redirect,
+              params: res.data[obj.resultKey]
+            })
+          }
+        })
+      }
+    },
 
     // 联动请求
     onLevel2NodeClick (model) {
-      // 切换tab
-      this.selected = model.type
-      this.fetchLevel2Data(model.code)
+      // 切换tab 并切换 一级拓扑图数据
+      this.onTabSelected(model.type, {
+        closeLevel2Wrap: false,
+        code: model.code,
+        id: model.id
+      })
 
-      // NXMC_TOPOLOGY_INFO_POST({
-      //   type: model.type,
-      //   key: this.selected,
-      //   value: model.title,
-      //   ...this.time_range_obj
-      // }).then((res) => {
-      //   if (res.code === 0) {
-      //     // 处理图标映射
-      //     res.data.nodes = res.data.nodes.map(node => {
-      //       return {
-      //         ...node,
-      //         icon: node.lang || this.tabList[node.type].icon
-      //       }
-      //     })
+      // 重新请求二级拓扑图接口
+      this.fetchLevel2Data(model.code, {
+        id: model.id
+      })
 
-      //     const {nodes, edges} = res.data
-
-      //     this.infoData = {
-      //       nodes,
-      //       edges
-      //     }
-      //   }
-      // })
+      // 处理step
+      this.stepper.push({
+        name: model.title
+      })
     },
     // 展开节点聚合
     expandNode (model) {
-      console.log(model)
-      let isExpand = model.isExpand
+      // console.log(model)
+      let {isExpand} = model
 
       // this.tabList[type].isExpand = !this.tabList[type].isExpand
       //
       // // 展开
       this.computeDynamicNode(!isExpand)
     },
-    onItemSelected (type) {
-      this.showLevel2Topology = false
-      // if (this.selected === type) {
-      //   this.showLevel2Topology = false
-      // } else {
-      // 请求其他数据
+
+    // 点击tab 的时候
+    onTabSelected (type, options = {}) {
+      const {closeLevel2Wrap} = options
+
+      if (closeLevel2Wrap) {
+        this.closeLevel2Topology()
+      }
+
       this.selected = type
 
-      this.fetchData()
-      // }
+      this.fetchData(options)
 
       this.stepper.length = 2
 
       this.$set(this.stepper[1], 'name', this.tabList[this.selected].name)
     },
 
-    computeFitView (isExpand) {
+    computeFitView (isExpand, options = {}) {
       // 计算二级拓扑图应有的高度距离, - 40 是因为圆心的直径是40
       this.$nextTick(() => {
         // eslint-disable-next-line no-unused-vars
@@ -225,7 +264,11 @@ export default {
         // console.log(Object.values(this.dataGroup)[0], x1)
 
         // if (isExpand) {
-        this.$refs.topology2.graph.translate(-70, 0)
+
+        // 如果没有默认展开 hover，才平移位置
+        if (!options.id) {
+          this.$refs.topology2.graph.translate(-70, 0)
+        }
         // } else {
         //   this.$refs.topology2.graph.translate(centerX / 2 - 70 - 20, 0)
         // }
@@ -234,26 +277,24 @@ export default {
     },
 
     // isExpand：是否控制展开
-    computeDynamicNode (isExpand = false) {
+    computeDynamicNode (isExpand = false, options = {}) {
       // 如果要展开， 直接赋值为cache
       let objWidthExpand = isExpand ? this.dataGroupCache : this.dataGroup
 
       // nodes 赋值 给 treeData
       const nodes = Object.values(objWidthExpand).reduce((p, v) => p.concat(v), [])
-      const edges = this.treeData.edges
+      const {edges} = this.treeData
 
       this.treeData = {nodes, edges}
 
       // 寻找聚合后，每个层级的最长宽度，并取最大值
-      const sizeArr = Object.keys(objWidthExpand).map(key => {
-        // 30 为圆半径 + 10为卡片margin，14为文字size， 具体见 topology 卡片绘制部分 40 为宽度补偿
-        return objWidthExpand[key].map(v => {
+      const sizeArr = Object.keys(objWidthExpand).map(key =>
+        // 60 为圆直径 + 10为卡片margin，14为文字size， 具体见 topology 卡片绘制部分 40 为宽度补偿
+        objWidthExpand[key].map(v =>
           // return 90
-          return (60 + 10 + getTextWidth(v.title) + 14 * 2) + 60
-        }).reduce((p, n) => {
-          return p + n
-        })
-      })
+          (60 + 10 + getTextWidth(v.title) + 14 * 2) + 60
+        ).reduce((p, n) => p + n)
+      )
 
       // console.log(objWidthExpand, sizeArr)
 
@@ -265,10 +306,10 @@ export default {
 
       this.$refs.topology2.resize(this.level2TopologyWidth, $El.getBoundingClientRect().height * Object.keys(objWidthExpand).length / Object.keys(this.tabList).length)
 
-      this.computeFitView(isExpand)
+      this.computeFitView(isExpand, options)
     },
 
-    async onNodeClick (e) {
+    onNodeClick (e) {
       // console.log(this.treeRankSep)
       // 添加step
       this.stepper.length = 2
@@ -277,167 +318,124 @@ export default {
       })
 
       // 请求二级拓扑图数据接口
-      await this.fetchLevel2Data(e.code)
-
-      // 激活二级拓扑图
-      this.showLevel2Topology = true
-
-      this.$nextTick(() => {
-        // 动态计算二级拓扑图宽度
-        // 先聚合节点
-        let obj = {}
-        let objWidthExpand = {}
-
-        this.treeData.nodes.forEach(item => {
-          if (!obj[item.type]) {
-            obj[item.type] = [item]
-          } else {
-            obj[item.type].push(item)
-          }
-        })
-
-        // 依赖上次循环结果，所以需要单独循环
-        this.treeData.nodes.forEach(item => {
-          // 如果这个类型没有统计过， 就记录一次
-          if (!objWidthExpand[item.type]) {
-            objWidthExpand[item.type] = [{
-              ...item,
-              expandCount: obj[item.type].length,
-              isExpand: false // 默认闭合
-            }]
-            this.tabList[item.type].expandCount = obj[item.type].length
-
-            obj[item.type][0] = {
-              ...obj[item.type][0],
-              expandCount: obj[item.type].length,
-              isExpand: true // 开启
-            }
-
-            // obj 第一个节点要赋值 count 和 isExpand true
-
-            // 如果该层状态为聚合，则 push 节点
-          }
-          // else if (this.tabList[item.type].expandCount === 0) {
-          //   console.log(111)
-          //   objWidthExpand[item.type].push(item)
-          // }
-        })
-
-        // 缓存下来聚合过的数据
-        this.dataGroup = objWidthExpand
-        this.dataGroupCache = obj
-
-        // 计算 动态节点
-        this.computeDynamicNode()
-
-        // 计算画布父级的绝对定位高距离和高度
-        let topOffset = 0
-        let bottomOffset = 0
-        const offsetStep = 100 / Object.keys(this.tabList).length
-
-        // 正序 + 逆序 循环， 每一个不存在，对应top 、 bottom 偏移量 + offsetStep
-        for (let i = 0; i < 100 / offsetStep - 1; i++) {
-          if (!(Object.keys(this.tabList)[i] in objWidthExpand)) {
-            topOffset += offsetStep
-          } else {
-            break
-          }
-        }
-        for (let i = 0; i < 100 / offsetStep - 1; i++) {
-          if (!(Object.keys(this.tabList)[100 / offsetStep - 1 - i] in objWidthExpand)) {
-            bottomOffset += offsetStep
-          } else {
-            break
-          }
-        }
-
-        this.$refs.level2TopologyWrap.style.top = topOffset + '%'
-        this.$refs.level2TopologyWrap.style.bottom = bottomOffset + '%'
-        this.$refs.level2TopologyWrap.style.height = Object.keys(objWidthExpand).length * offsetStep + '%'
-      })
+      this.fetchLevel2Data(e.code)
     },
 
-    onCanvasClick (evt) {
+    closeLevel2Topology () {
       // 点击canvas 后，关闭二级拓扑图
       this.showLevel2Topology = false
+
+      // 关闭二级拓扑图的时候， 清除一级拓扑图的选中效果
+      this.$refs.topology.clearAllNodeSelected()
     },
 
     // 从缓存数据中提取选中的 tab 的数据
-    fetchData () {
-      this.infoData = this.tabList[this.selected].cacheData
+    fetchData (options) {
+      let infoData = this.tabList[this.selected].cacheData
+
+      // 如果存在选中状态预设
+      if (options.code) {
+        let nodes = [].concat(infoData.nodes)
+
+        infoData.nodes = nodes.map(node => {
+          node.isSelected = node.code === options.code
+          return node
+        })
+      }
+
+      this.infoData = infoData
     },
 
-    fetchLevel2Data (code) {
+    fetchLevel2Data (code, options = {}) {
       return NXMC_TOPOLOGY_LEVEL2_INFO_POST({
         ...this.time_range_obj,
         key: this.selected,
         value: code
       }).then(res => {
-        // res.data = {
-        //   nodes: [{
-        //     id: '1',
-        //     type: 'app',
-        //     title: 'alps_file1'
-        //   },
-        //   {
-        //     id: '2',
-        //     type: 'service',
-        //     title: 'alps_file2'
-        //   },
-        //   {
-        //     id: '3',
-        //     type: 'deploy_group',
-        //     title: 'alps_file3'
-        //   },
-        //   {
-        //     id: '4',
-        //     type: 'node',
-        //     title: 'sql_file1'
-        //   },
-        //   {
-        //     id: '5',
-        //     type: 'node',
-        //     title: 'sql_file2'
-        //   },
-        //   {
-        //     id: '6',
-        //     type: 'node',
-        //     title: 'sql_file3'
-        //   }
-        //   ],
-        //   edges: [{
-        //     source: '2',
-        //     target: '1'
-        //   },
-        //   {
-        //     source: '3',
-        //     target: '2'
-        //   },
-        //   {
-        //     source: '4',
-        //     target: '3'
-        //   },
-        //   {
-        //     source: '5',
-        //     target: '3'
-        //   },
-        //   {
-        //     source: '6',
-        //     target: '3'
-        //   }
-        //   ]
-        // }
-
-        // 处理图标映射
+        // 处理图标映射, 和 激活映射
         res.data.nodes = res.data.nodes.map(node => {
+          const nodeNew = node
+
+          if (options.id) {
+            nodeNew.isSelected = node.id === options.id
+          }
           return {
-            ...node,
+            ...nodeNew,
             icon: node.lang || this.tabList[node.type].icon
 
           }
         })
 
         this.treeData = res.data
+
+        // 激活二级拓扑图
+        this.showLevel2Topology = true
+
+        this.$nextTick(() => {
+          // 动态计算二级拓扑图宽度
+          // 先聚合节点
+          let obj = {}
+          let objWidthExpand = {}
+
+          this.treeData.nodes.forEach(item => {
+            if (!obj[item.type]) {
+              obj[item.type] = [item]
+            } else {
+              obj[item.type].push(item)
+            }
+          })
+
+          // 依赖上次循环结果，所以需要单独循环
+          this.treeData.nodes.forEach(item => {
+            // 如果这个类型没有统计过， 就记录一次
+            if (!objWidthExpand[item.type]) {
+              objWidthExpand[item.type] = [{
+                ...item,
+                expandCount: obj[item.type].length,
+                isExpand: false // 默认聚合功能闭合
+              }]
+              this.tabList[item.type].expandCount = obj[item.type].length
+
+              obj[item.type][0] = {
+                ...obj[item.type][0],
+                expandCount: obj[item.type].length,
+                isExpand: true // 开启
+              }
+            }
+          })
+
+          // 缓存下来聚合过的数据
+          this.dataGroup = objWidthExpand
+          this.dataGroupCache = obj
+
+          // 计算 动态节点
+          this.computeDynamicNode(false, options)
+
+          // 计算画布父级的绝对定位高距离和高度
+          let topOffset = 0
+          let bottomOffset = 0
+          const offsetStep = 100 / Object.keys(this.tabList).length
+
+          // 正序 + 逆序 循环， 每一个不存在，对应top 、 bottom 偏移量 + offsetStep
+          for (let i = 0; i < 100 / offsetStep - 1; i++) {
+            if (!(Object.keys(this.tabList)[i] in objWidthExpand)) {
+              topOffset += offsetStep
+            } else {
+              break
+            }
+          }
+          for (let i = 0; i < 100 / offsetStep - 1; i++) {
+            if (!(Object.keys(this.tabList)[100 / offsetStep - 1 - i] in objWidthExpand)) {
+              bottomOffset += offsetStep
+            } else {
+              break
+            }
+          }
+
+          this.$refs.level2TopologyWrap.style.top = topOffset + '%'
+          this.$refs.level2TopologyWrap.style.bottom = bottomOffset + '%'
+          this.$refs.level2TopologyWrap.style.height = Object.keys(objWidthExpand).length * offsetStep + '%'
+        })
       })
     },
 
@@ -452,12 +450,10 @@ export default {
         }).then((res) => {
           if (res.code === 0) {
             // 处理图标映射
-            res.data.nodes = res.data.nodes.map(node => {
-              return {
-                ...node,
-                icon: node.lang || this.tabList[node.type].icon
-              }
-            })
+            res.data.nodes = res.data.nodes.map(node => ({
+              ...node,
+              icon: node.lang || this.tabList[node.type].icon
+            }))
 
             const {nodes, edges, total} = res.data
 
@@ -479,18 +475,16 @@ export default {
     }
   },
   created () {
-    this.fetchAllData()
+    // this.fetchAllData()
   },
 
   beforeDestroy () {
     bus.$off('timeChanged')
   },
   mounted () {
-    // bus.$emit('resetTime')
     bus.$on('timeChanged', (obj) => {
       // eslint-disable-next-line camelcase
       const {code, start_time, end_time} = obj
-
       if (code) {
         this.time_range_obj.time_range = code
       } else {
@@ -506,6 +500,8 @@ export default {
       this.fetchAllData()
     })
 
+    bus.$emit('resetTime')
+
     // 使用稳定的节点 计算二级拓扑节点行间距
     const $El = this.$refs.topologyList
 
@@ -516,7 +512,6 @@ export default {
 
   components: {
     stepper,
-    icon,
     topology
   }
 }
@@ -541,7 +536,7 @@ export default {
     width: 220px;
     flex-shrink: 0;
 
-    background-color: @theme-edit-dark;
+    background-color: @gray-10;
     color: #ccc;
     font-size: 16px;
 
@@ -573,34 +568,34 @@ export default {
         background-color: #191919;
 
         &.theme-app {
-          color: @theme-function-app;
+          color: @purple-06;
 
           .bottom-img::before {
-            background-color: @theme-function-app
+            background-color: @purple-06
           }
         }
 
         &.theme-service {
-          color: @theme-function-service;
+          color: @royalblue-05;
 
           .bottom-img::before {
-            background-color: @theme-function-service
+            background-color: @royalblue-05
           }
         }
 
         &.theme-deploy_group {
-          color: @theme-function-deploy-group;
+          color: @blue-06;
 
           .bottom-img::before {
-            background-color: @theme-function-deploy-group
+            background-color: @blue-06
           }
         }
 
         &.theme-node {
-          color: @theme-function-node;
+          color: @blue-06;
 
           .bottom-img::before {
-            background-color: @theme-function-node
+            background-color: @blue-06
           }
         }
       }
@@ -644,8 +639,8 @@ export default {
     }
 
     &::after {
-      border-top: 1px solid #cccccc;
-      border-left: 2px solid #cccccc;
+      border-top: 1px solid @gray-04;
+      border-left: 2px solid @gray-04;
       left: 49px;
       right: 13px;
 

@@ -1,5 +1,5 @@
 <template>
-  <ntPopover :show.sync="_visible" width="320">
+  <DYPopover :show.sync="_visible" width="320">
 
     <slot name="reference" slot="reference"></slot>
 
@@ -24,21 +24,21 @@
 
       <div v-if="isEdit" class="popper-footer">
         <el-divider></el-divider>
-
-        <el-button size="small" type="primary" @click="save">确定</el-button>
-        <el-button size="small" @click="cancel">取消</el-button>
+        <div class="flex-end">
+          <DYButtonGroup>
+            <DYButton theme="dark" type="primary" @click="save">确定</DYButton>
+            <DYButton theme="dark" @click="cancel">取消</DYButton>
+          </DYButtonGroup>
+        </div>
       </div>
     </div>
-  </ntPopover>
+  </DYPopover>
 
 </template>
 <script>
-import ntPopover from 'components/base/popover'
 
 export default {
-  components: {
-    ntPopover
-  },
+  components: {},
   props: ['isEdit', 'workerProcessTagList', 'dialogFormTagsVisible'],
   data () {
     return {

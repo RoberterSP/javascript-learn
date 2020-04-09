@@ -1,34 +1,38 @@
 <template>
   <div>
-    <stepper :stepper="stepper" theme="purple"></stepper>
+    <stepper :stepper="stepper" theme="purple" />
     <div v-if="total > 0 || query">
-      <div class="banner">
-        <div class="head_title_l">
-          <div class="bannericon iconfont iconAPIgroup1"></div>
-          <div class="title">接口组</div>
+      <DYPageHeader
+        theme="purple"
+        icon="APIgroup1"
+        title="接口组"
+      >
+        <DYButton slot="actions" type="primary" @click="createScope"  v-permission= "'gatewayCenter_scopeList_add'">创建</DYButton>
+      </DYPageHeader>
+
+      <div class="p20">
+        <div style="width: 80%" class="mb20">
+          <search-bar
+            v-model.trim="query"
+            @search="queryTable"
+            :placeholder="'请输入内容'"
+          />
         </div>
-        <el-button class="btn" type="primary" @click="createScope"  v-permission= "'gatewayCenter_scopeList_add'">创建</el-button>
-      </div>
-      <div class="down plr20 pt19">
-        <el-input
-          style="width: 80%"
-          @change="queryTable"
-          placeholder="请输入内容"
-          suffix-icon="el-icon-search"
-          v-model="query">
-        </el-input>
-        <div class="content p15">
-          <h2>{{total}}个接口组</h2>
+
+        <DYCard>
+          <DYHeader class="mb24" :title="`${total}个接口组`" type="small" no-gap />
           <nt-table
           :tableData="tableData"
           :columns="columns"
           :tableSet="tableSet"
+          @deleteOne="deleteOne"
           @readDetail="readDetail">
           </nt-table>
-        </div>
+        </DYCard>
       </div>
     </div>
-    <blank v-if="total <= 0 && !query"
+
+    <blank v-if="showEmpty"
       @createScope="createScope"
       :blankData="blankData"
     ></blank>
@@ -39,16 +43,19 @@
 import blank from 'components/base/blank.vue'
 import stepper from 'components/stepper/stepper.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
-import { SCOPE_LIST_GET } from '@/api'
+import searchBar from 'components/searchBar/searchBar.vue'
+import { SCOPE_LIST_GET, SCOPE_DELETE_POST } from '@/api'
 import { PAGESIZE } from 'common/util/common.js'
+import bus from '@/assets/eventBus.js'
 
 export default {
   data () {
     return {
+      showEmpty: false,
       query: '',
       total: 0,
       blankData: {
-        title: '创建接口组',
+        title: '创建你的接口组',
         subtitle: '创建接口组，并通过分配接口的方式规范能访问的接口',
         img_num: 2,
         img_1: require('@/assets/image/scope_list_img1.png'),
@@ -74,7 +81,7 @@ export default {
           code: 'name', // 表身
           type: 'edit',
           showicon: 'iconfont',
-          icon_url: 'iconAPIgroup1'
+          icon_url: 'APIgroup1'
         },
         {
           name: '标识', // 表头名字
@@ -86,22 +93,36 @@ export default {
           code: 'endpoint_num', // 表身显示值
           type: 'text',
           sortAbled: true,
-          textAlign: 'center',
-          width: 84,
+          textAlign: 'right',
+          textAiignWithoutIcon: true, // 右对齐但是不希望和sort icon对齐仅和文字右对齐
+          width: 100, // 为了图片不变形，要保证足够图片和文字一起不挤压
           sortOrder: 'none'
+        },
+        {
+          name: '删除',
+          code: '',
+          type: 'delete',
+          textAlign: 'center',
+          showDel: true, // 删除
+          width: 60,
+          disable: false
         }
       ]
     }
   },
   computed: {},
   methods: {
-    queryTable (val) {
-      let data = {
-        page: 1,
-        page_size: PAGESIZE,
-        name: val
-      }
-      this.scope_list_get(data)
+    deleteOne (row) {
+      SCOPE_DELETE_POST({id: row.id}).then(res => {
+        bus.$emit('openMessage', {
+          message: res.data.result,
+          type: 'success'
+        })
+        this.scope_list_get()
+      })
+    },
+    queryTable () {
+      this.scope_list_get()
     },
     createScope () {
       this.$router.push({
@@ -118,81 +139,50 @@ export default {
     readDetail (row) {
       this.$router.push({ name: 'scopeDetail', params: row })
     },
-    scope_list_get (data) {
+    scope_list_get () {
+      this.showEmpty = false
+
+      let data = {
+        page: 1,
+        page_size: PAGESIZE
+      }
+
+      if (this.query) {
+        data.name = this.query
+      }
       SCOPE_LIST_GET(data).then(res => {
-        console.log('获取接口组信息', res)
         if (data.page === 1) {
           this.tableSet.paginationConfig.currentPage = 1
         }
         this.tableData = res.data.scope_list
+
+        if (!this.$_accessRoutes('gatewayCenter_scopeList_delete')) {
+          this.$set(this.columns[3], 'disable', true)
+        }
+
         // 判断是否有路由跳转权限
         if (!this.$_hasRoute('scopeDetail')) {
           this.$set(this.columns[0], 'type', 'text')
         }
         this.tableSet.paginationConfig.total = res.data.total
         this.total = res.data.total
+
+        if (this.total === 0) {
+          this.showEmpty = true
+        }
       })
     }
   },
   mounted () {
-    let data = {
-      page: 1,
-      page_size: PAGESIZE
-    }
-    this.scope_list_get(data)
+    this.scope_list_get()
   },
   created () {
   },
   components: {
     stepper,
     blank,
-    ntTable
+    ntTable,
+    searchBar
   }
 }
 </script>
-<style scoped lang="less">
-@import "~common/style/variable";
-.banner {
-  position: relative;
-  padding: 18px 32px 19px 16px;
-  width: 100%;
-  height: 73px;
-  background: rgba(255,255,255,1);
-  border-bottom: 1px solid @purple-12;
-  .head_title_l {
-    display: flex;
-    align-items: center;
-    height: 40px;
-    .bannericon {
-      width: 36px;
-      height: 40px;
-      font-size: 36px;
-      line-height: 40px;
-    }
-    .title {
-      margin-left: 11px;
-      height: 40px;
-      font-size: 28px;
-      line-height: 40px;
-      font-weight: 500;
-    }
-  }
-  .btn {
-    position: absolute;
-    top: 16px;
-    right: 32px;
-  }
-}
-
-.down {
-  background-color: @default-gray;
-  // .scopeTable {
-  //   margin-top: 27px;
-  // }
-  .content {
-    width: 100%;
-    background-color: #fff;
-    margin-top: 20px;
-  }
-}
-</style>

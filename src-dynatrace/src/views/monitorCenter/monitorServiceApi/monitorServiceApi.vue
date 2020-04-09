@@ -1,45 +1,51 @@
 <template>
   <div class="wrapper">
     <stepper :stepper="stepper" @goRouter="goRouter" theme="blue"></stepper>
-    <div class="monitorApplication" >
-      <div class="headTitle flex-between p20">
-        <div class="head_title_l">
-          <icon type="API" size="36" class="mr10"></icon>
-          <span>{{detailApi.name}}</span>
-        </div>
-      </div>
+    <div class="monitorApplication">
+      <DYPageHeader theme="blue" icon="API" :title="detailApi.name"/>
       <div class="filter_div m20">
         <!-- <input type="text" placeholder="过滤条件"/> -->
-        <tags-input ref="tagsInput" :filterKeys="filterKeys" :keysValue="keysValue" @returnFilterFunc="returnFilterFunc"></tags-input>
+        <!--        <tags-input ref="tagsInput" :filterKeys="filterKeys" :keysValue="keysValue"-->
+        <!--                    @returnFilterFunc="returnFilterFunc"></tags-input>-->
+
+        <DYFilter
+          class="input-filter"
+          :filters-model="filterModelValues"
+          :filterKeys="filterKeys"
+          :quickSearch="false"
+          @returnFilterFunc="returnFilterFunc"
+        />
       </div>
-      <div class="health mlr20">
+      <div class="health ml20 mr20">
         <div class="tit p16">健康指数</div>
         <div class="circleDiv">
           <div class="fx">
             <div class="pie_chart">
-              <charts :ref="pieChartOptions[0].id" :chartId="pieChartOptions[0].id" :option="pieChartOptions[0].option"></charts>
+              <charts :ref="pieChartOptions[0].id" :chartId="pieChartOptions[0].id"
+                      :option="pieChartOptions[0].option"></charts>
               <div class="data_view">
                 <div class="val">{{healthTotal}}</div>
-                <div >{{headthEvaluate}}</div>
+                <div>{{headthEvaluate}}</div>
               </div>
             </div>
           </div>
           <div class="fx">
             <div class="pie_chart">
-              <charts :ref="pieChartOptions[1].id" :chartId="pieChartOptions[1].id" :option="pieChartOptions[1].option"></charts>
+              <charts :ref="pieChartOptions[1].id" :chartId="pieChartOptions[1].id"
+                      :option="pieChartOptions[1].option"></charts>
               <div class="data_view">
                 <div class="view_item">
                   <div class="flex">
                     <span>{{pieChartOptions[1].option.series[0].data[0].y}}%</span>
-                    <i class="iconfont iconmanyi green"></i>
+                    <DYIcon type="manyi" class="iconfont green"></DYIcon>
                   </div>
                   <div class="flex">
                     <span>{{pieChartOptions[1].option.series[0].data[1].y}}%</span>
-                    <i class="iconfont iconyiban yellow"></i>
+                    <DYIcon type="yiban" class="iconfont yellow"></DYIcon>
                   </div>
                   <div class="flex">
                     <span>{{pieChartOptions[1].option.series[0].data[2].y}}%</span>
-                    <i class="iconfont iconshiwang red"></i>
+                    <DYIcon type="shiwang" class="iconfont red"></DYIcon>
                   </div>
                 </div>
               </div>
@@ -51,17 +57,22 @@
         </div>
       </div>
       <div class="section m20">
-        <div class="tabDiv flex-center p16">
-          <div class="tab_item flex-center" v-for="(item, index) in tabList" :key="index" @click="tabClick(item, index)" :class="[tab_active_index===index?'is_active':'']">{{item.title}}</div>
-        </div>
+        <DYTabs
+          theme="blue"
+          :tab-list="tabList"
+          @onClick="tabClick"
+        />
+
         <div class="column_chart p16">
           <charts ref="columnChart" :chartId="columnLineChartOption.id" :option="columnLineChartOption.option"></charts>
           <div class="sf_chart_legend">
             <div class="legend_item" v-for="(item, index) in legends" :key="index">
               <div class="legend_item_icon">
-                <img src="~@/assets/image/dynatrace/blue_chart_line.svg" alt="" v-if="item.chartType === 'line'" />
-                <img src="~@/assets/image/dynatrace/purple_chart_column.svg" alt="" v-if="item.chartType === 'column' && item.title!=='Failed Requests'" />
-                <img src="~@/assets/image/dynatrace/red_chart_column.svg" alt="" v-if="item.chartType === 'column' && item.title==='Failed Requests'" />
+                <img src="~@/assets/image/dynatrace/blue_chart_line.svg" alt="" v-if="item.chartType === 'line'"/>
+                <img src="~@/assets/image/dynatrace/purple_chart_column.svg" alt=""
+                     v-if="item.chartType === 'column' && item.title!=='Failed Requests'"/>
+                <img src="~@/assets/image/dynatrace/red_chart_column.svg" alt=""
+                     v-if="item.chartType === 'column' && item.title==='Failed Requests'"/>
                 <!-- <svg v-if="item.chartType === 'line'">
                   <path fill="none" d="M 0 11 L 16 11" class="highcharts-graph" :stroke="item.color" stroke-width="2"></path>
                 </svg>
@@ -83,9 +94,7 @@ import HighCharts from 'highcharts'
 import bus from '@/assets/eventBus.js'
 import '@/components/ntTable/index.less'
 import stepper from 'components/stepper/stepper.vue'
-import icon from 'components/base/icon.vue'
 import charts from '@/components/charts/charts.vue'
-import tagsInput from '@/components/tagsInput/tagsInput.vue'
 import searchBar from 'components/searchBar/searchBar.vue'
 import '@/directives/currency.js'
 /* eslint-disable-next-line */
@@ -96,7 +105,7 @@ import {
   NXMC_SERVICE_INTERFACE_REQ_ERROR_RATE_GET,
   NXMC_SERVICE_INTERFACE_THROUGHPUT_GET
 } from '@/api'
-import { healthLineChartOption } from '@/common/mock/usdeur'
+import {healthLineChartOption} from '@/common/mock/usdeur'
 
 export default {
   data () {
@@ -142,7 +151,7 @@ export default {
               spacing: [0, 0, 0, 0]
             },
             credits: {
-            // 不显示水印
+              // 不显示水印
               enabled: false
             },
             title: {
@@ -186,7 +195,7 @@ export default {
               spacing: [0, 0, 0, 0]
             },
             credits: {
-            // 不显示水印
+              // 不显示水印
               enabled: false
             },
             title: {
@@ -324,7 +333,7 @@ export default {
             useHTML: true,
             headerFormat: '<small>{point.key}</small><table>',
             pointFormat: '<table><tr><td style="color: {series.userOptions.fontColor};line-height:20px;"><span style="color:{point.color}">\u25A0 </span> {series.name}: &nbsp;</td>' +
-            '<td style="text-align: right"><b>{point.y} {series.userOptions.unit}</b></td></tr>',
+                '<td style="text-align: right"><b>{point.y} {series.userOptions.unit}</b></td></tr>',
             footerFormat: '</table>',
             // valueDecimals: 2,
             dateTimeLabelFormats: {
@@ -355,8 +364,7 @@ export default {
               marker: {
                 enabled: false
               },
-              dataLabels: {
-              }
+              dataLabels: {}
             },
             series: {
               states: {
@@ -500,19 +508,19 @@ export default {
     }
   },
   computed: {
-    menuState: function () {
+    menuState () {
       return this.$store.state.openMenu
     }
   },
   watch: {
-    menuState: function (newVal) {
+    menuState (newVal) {
       // console.log('左菜单伸缩state变化')
       // 菜单变化  echart图表自适应
       this.$nextTick(() => {
-        this.$refs['pie_chart001'].drawChart(this.pieChartOptions[0].option)
-        this.$refs['pie_chart002'].drawChart(this.pieChartOptions[1].option)
-        this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
-        this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+        this.$refs.pie_chart001.drawChart(this.pieChartOptions[0].option)
+        this.$refs.pie_chart002.drawChart(this.pieChartOptions[1].option)
+        this.$refs.healthlineChart.drawChart(this.healthChartOption.option)
+        this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
       })
     }
   },
@@ -582,7 +590,7 @@ export default {
       switch (type) {
         case 'asc':
           // 从小到大
-          var min
+          let min
           for (let i = 0; i < arr.length; i++) {
             for (let j = i; j < arr.length; j++) {
               if (arr[i][key] > arr[j][key]) {
@@ -631,7 +639,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_api_avg_res_time_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
         case 'req_error_rate':
           this.tableData.forEach(DATA => {
@@ -647,7 +655,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_api_error_rate_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
         case 'throughput':
           this.columnLineChartOption.option.yAxis[0].labels.format = '{value} /s'
@@ -660,7 +668,7 @@ export default {
           this.columnLineChartOption.option.series[2].data = []
           this.columnLineChartOption.option.series[0].data = []
           await this.nxmc_api_throughput_get()
-          this.$refs['columnChart'].drawChart(this.columnLineChartOption.option)
+          this.$refs.columnChart.drawChart(this.columnLineChartOption.option)
           break
       }
     },
@@ -695,7 +703,7 @@ export default {
         })
         this.query = ''
       }
-      this.$refs['tagsInput'].setModelValues(this.filterModelValues)
+      // this.$refs.tagsInput.setModelValues(this.filterModelValues)
       this.nxmc_api_health_index_get()
       this.tabClick(this.tabList[this.tab_active_index], this.tab_active_index)
     },
@@ -735,7 +743,8 @@ export default {
     handleCommonParams (isTable = false) {
       let postParams = {
         namespace: this.namespace_code,
-        path: this.detailApi.endpoint
+        // path: this.detailApi.endpoint
+        path: this.detailApi.path
       }
       if (this.stepper[0].name === '部署组') {
         postParams.service_code = this.todetailData.mesh_code
@@ -780,13 +789,13 @@ export default {
         data: dateLabelFormats
       }
       this[type].option.xAxis.labels = {
-        formatter: function () {
-          var labelVal = HighCharts.dateFormat(dateLabelFormats, this.value)
-          var reallyVal = ''
+        formatter () {
+          let labelVal = HighCharts.dateFormat(dateLabelFormats, this.value)
+          let reallyVal = ''
           if (labelVal) {
-            var arr = labelVal.split(' ')
+            let arr = labelVal.split(' ')
             if (labelVal.length <= 5) {
-              reallyVal = arr[0]
+              [reallyVal] = arr
             } else {
               reallyVal = arr[0] + '<br/>' + arr[1]
             }
@@ -816,13 +825,13 @@ export default {
           }
           this.pieChartOptions[0].option.series[0].data[0].y = res.data.total
           this.pieChartOptions[0].option.series[0].data[1].y = 100 - res.data.total
-          this.$refs['pie_chart001'].drawChart(this.pieChartOptions[0].option)
+          this.$refs.pie_chart001.drawChart(this.pieChartOptions[0].option)
           // 右上 环形
           if (res.data.health_level) {
             res.data.health_level.data.forEach((data, index) => {
               this.pieChartOptions[1].option.series[0].data[index].y = data
             })
-            this.$refs['pie_chart002'].drawChart(this.pieChartOptions[1].option)
+            this.$refs.pie_chart002.drawChart(this.pieChartOptions[1].option)
           }
           console.log('this.pieChartOptions[1].option.series', this.pieChartOptions[1].option.series)
           // 健康指数图
@@ -855,7 +864,7 @@ export default {
             this.healthChartOption.option.series[3].data = [[min + 3600000, -1]]
           }
           console.log('this.healthChartOption.option', this.healthChartOption.option)
-          this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
+          this.$refs.healthlineChart.drawChart(this.healthChartOption.option)
         }
       })
     },
@@ -878,8 +887,8 @@ export default {
               it.value = arr[index + 1]
             })
             this.healthChartOption.option.yAxis[1].labels = {
-              formatter: function () {
-                var result = _this.healthObj
+              formatter () {
+                let result = _this.healthObj
                 return result[this.value]
               },
               style: {
@@ -890,7 +899,8 @@ export default {
             }
           })
           // this.$refs['healthlineChart'].drawChart(this.healthChartOption.option)
-          this.nxmc_api_health_index_get()
+          // 健康接口重复调用注释
+          // this.nxmc_api_health_index_get()
         }
       })
     },
@@ -919,15 +929,15 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Response time') {
-                  handelData['response_time'].push(itemData)
+                  handelData.response_time.push(itemData)
                 } else if (el1.code === 'Reuqests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[2].data = handelData['response_time']
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
+          this.columnLineChartOption.option.series[2].data = handelData.response_time
+          this.columnLineChartOption.option.series[0].data = handelData.requests
         }
       })
     },
@@ -956,18 +966,18 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Failure rate') {
-                  handelData['failure_rate'].push(itemData)
+                  handelData.failure_rate.push(itemData)
                 } else if (el1.code === 'Requests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 } else if (el1.code === 'Failure requests') {
-                  handelData['failure_requests'].push(itemData)
+                  handelData.failure_requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
-          this.columnLineChartOption.option.series[1].data = handelData['failure_requests']
-          this.columnLineChartOption.option.series[2].data = handelData['failure_rate']
+          this.columnLineChartOption.option.series[0].data = handelData.requests
+          this.columnLineChartOption.option.series[1].data = handelData.failure_requests
+          this.columnLineChartOption.option.series[2].data = handelData.failure_rate
         }
       })
     },
@@ -996,15 +1006,15 @@ export default {
                   itemData = [tms, 0]
                 }
                 if (el1.code === 'Throughput') {
-                  handelData['throughput'].push(itemData)
+                  handelData.throughput.push(itemData)
                 } else if (el1.code === 'Requests') {
-                  handelData['requests'].push(itemData)
+                  handelData.requests.push(itemData)
                 }
               })
             })
           }
-          this.columnLineChartOption.option.series[2].data = handelData['throughput']
-          this.columnLineChartOption.option.series[0].data = handelData['requests']
+          this.columnLineChartOption.option.series[2].data = handelData.throughput
+          this.columnLineChartOption.option.series[0].data = handelData.requests
         }
       })
     }
@@ -1055,31 +1065,29 @@ export default {
   components: {
     stepper,
     charts,
-    icon,
-    tagsInput,
     searchBar
   }
 }
 </script>
 <style scoped lang="less">
-@import "~common/style/variable";
-@import './monitorServiceApi';
+  @import "~common/style/variable";
+  @import './monitorServiceApi';
 
-.empty {
-  width: 100%;
-  .iconrecords {
-    width: 80px;
-    height: 83px;
-    margin-top: 29px;
-    font-size: 80px;
+  .empty {
+    width: 100%;
+
+    .iconrecords {
+      width: 80px;
+      height: 83px;
+      margin-top: 29px;
+      font-size: 80px;
+    }
+
+    span {
+      margin-left: 10px;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 26px;
+    }
   }
-  span {
-    margin-left: 10px;
-    font-size:18px;
-    font-family:SourceHanSansSC-Medium,SourceHanSansSC;
-    font-weight:500;
-    color:rgba(69,70,70,1);
-    line-height:26px;
-  }
-}
 </style>

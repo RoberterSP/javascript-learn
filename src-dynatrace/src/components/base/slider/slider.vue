@@ -1,8 +1,8 @@
 <template>
   <div
     class="el-slider"
-    :style="{paddingTop: inForm ? '30px' : '', paddingBottom: inForm ? '30px' : ''}"
-    :class="{ 'is-vertical': vertical, 'el-slider--with-input': showInput }"
+    :style="{...computedPadding}"
+    :class="{ 'is-vertical': vertical, 'el-slider--with-input': showInput, 'dy-slider--move-button': showTooltip }"
     role="slider"
     :aria-valuemin="min"
     :aria-valuemax="max"
@@ -97,11 +97,11 @@ export default {
     sliderButton,
     sliderMarker
   },
-  // inject: {
-  //   elForm: {
-  //     default: ''
-  //   }
-  // },
+  inject: {
+    elForm: {
+      default: ''
+    }
+  },
 
   props: {
     inForm: Boolean,
@@ -197,10 +197,8 @@ export default {
 
   watch: {
     value (val, oldVal) {
-      if (this.dragging ||
-          Array.isArray(val) &&
-          Array.isArray(oldVal) &&
-          val.every((item, index) => item === oldVal[index])) {
+      // eslint-disable-next-line no-mixed-operators
+      if (this.dragging || Array.isArray(val) && Array.isArray(oldVal) && val.every((item, index) => item === oldVal[index])) {
         return
       }
       this.setValues()
@@ -240,9 +238,8 @@ export default {
       if (this.range) {
         return ![this.minValue, this.maxValue]
           .every((item, index) => item === this.oldValue[index])
-      } else {
-        return this.value !== this.oldValue
       }
+      return this.value !== this.oldValue
     },
     setValues () {
       if (this.min > this.max) {
@@ -328,6 +325,30 @@ export default {
   },
 
   computed: {
+    computedPadding () {
+      if (!this.showTooltip) {
+        return {
+          paddingTop: 0,
+          paddingBottom: 0
+        }
+      }
+
+      let paddingBottom = 0
+      let paddingTop = 0
+
+      if (this.startTooltip === 'bottom' || (this.range && this.endTooltip === 'bottom')) {
+        paddingBottom = '23px'
+      }
+
+      if (this.startTooltip === 'top' || (this.range && this.endTooltip === 'top')) {
+        paddingTop = '23px'
+      }
+
+      return {
+        paddingTop,
+        paddingBottom
+      }
+    },
     elSliderBarType () {
       return {
         [`el-slider__bar__${this.sliderType}`]: true
@@ -347,13 +368,10 @@ export default {
         result.push(i * stepWidth)
       }
       if (this.range) {
-        return result.filter(step => {
-          return step < 100 * (this.minValue - this.min) / (this.max - this.min) ||
-              step > 100 * (this.maxValue - this.min) / (this.max - this.min)
-        })
-      } else {
-        return result.filter(step => step > 100 * (this.firstValue - this.min) / (this.max - this.min))
+        return result.filter(step => step < 100 * (this.minValue - this.min) / (this.max - this.min) ||
+              step > 100 * (this.maxValue - this.min) / (this.max - this.min))
       }
+      return result.filter(step => step > 100 * (this.firstValue - this.min) / (this.max - this.min))
     },
 
     markList () {
@@ -462,7 +480,9 @@ export default {
   @import "~common/style/variable.less";
 
   .el-slider {
-
+    &.dy-slider--move-button {
+      margin-bottom: 24px;
+    }
   }
 
   .nt-slider__demonstration {
@@ -471,22 +491,25 @@ export default {
   }
 
   .el-slider__bar {
-    background: @slide-color;
+    background: @blue-05;
     border-radius: 0;
     height: 10px;
 
     &__error {
-      background: @slider-color-error;
+      background: @red-05;
     }
 
     &__wraning {
-      background: @slider-color-warning;
+      background: @warning-color;
     }
   }
 
   .el-slider__runway {
-    background-color: #CCCCCC;
+    background-color: @gray-04;
     height: 10px;
     border-radius: 0;
+  }
+  .nt-slider__demonstration{
+    line-height: 40px;
   }
 </style>

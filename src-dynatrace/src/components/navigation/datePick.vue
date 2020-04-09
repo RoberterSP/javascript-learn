@@ -1,8 +1,8 @@
 <template>
   <div v-show="tabList.length" class="timeComp flex" @mouseleave="timeShow = false">
-    <div @click="lastTime" class="flex-center arr iconfont iconarrowleft"></div>
+    <div @click="lastTime" class="flex-center arr iconfont icon_arrowleft"><DYIcon type="arrowleft"></DYIcon></div>
     <span class="defaultSpan" :class="{open: timeShow}" @click="shosquareime">{{timeLabel}}</span>
-    <div :class="{canForward: canForward}" @click="nextTime" class="flex-center arr iconfont iconarrowright"></div>
+    <div :class="{canForward: canForward}" @click="nextTime" class="flex-center arr iconfont"><DYIcon type="arrowright"></DYIcon></div>
     <datePickContainer
       ref="datePickerContent"
       :show.sync="timeShow"
@@ -10,7 +10,7 @@
       :selectTimeList.sync="selectTimeList"
       @timeChanged="timeChanged"
       @canForwardChange="canForwardChange"
-    ></datePickContainer>
+    />
   </div>
 </template>
 
@@ -61,7 +61,6 @@ export default {
       }
     },
     shosquareime () {
-      this.$refs.datePickerContent.$refs.tabs.setColor('#525252', '#fff')
       this.timeShow = !this.timeShow
     },
     timeChanged (lastEmitData, tabLab) {
@@ -106,28 +105,28 @@ export default {
   }
 
   .canForward {
-    color: #6d6d6d;
+    color: @gray-07;
   }
 
   .canForward:hover {
-    color: @theme-color !important;
+    color: @turq-06 !important;
   }
 
-  .iconarrowleft:hover {
-    color: @theme-color !important;
+  .icon_arrowleft:hover {
+    color: @turq-06 !important;
   }
 
   .timeComp {
     position: relative;
 
     .open {
-      background-color: #525252;
+      background-color: @gray-08;
     }
 
     .arr {
       width: 44px;
       height: 44px;
-      color: #6d6d6d;
+      color: @gray-07;
     }
 
     .defaultSpan {
@@ -138,7 +137,7 @@ export default {
     }
 
     .defaultSpan:hover {
-      background-color: #525252;
+      background-color: @gray-08;
     }
   }
 </style>

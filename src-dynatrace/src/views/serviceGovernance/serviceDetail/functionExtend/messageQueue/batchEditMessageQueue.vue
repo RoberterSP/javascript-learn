@@ -1,31 +1,33 @@
 <template>
-<div class="wrapper">
+  <div class="wrapper">
     <div class="app-list">
-      <stepper :stepper="stepper" @goRouter="cancel"></stepper>
-      <div class="content">
+      <stepper :stepper="stepper" theme="blue" @goRouter="cancel"></stepper>
+      <DYCard class="content">
         <div class="message_container">
           <div class="flex-between">
             <div style="flex: 1;">
-              <h2>批量编辑</h2>
-              <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div>
+              <DYHeader class="row-title" title="批量编辑" type="small" no-gap/>
+              <div class="row-desc">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div>
             </div>
             <div class="flex-end">
-              <el-button @click="cancel" class="mr10">取消</el-button>
-
-              <dialogCompontent :isEdit ="true" :workerProcessTagList="workerProcessTagList" :dialogFormTagsVisible.sync="dialogFormTagsVisible" @save="save">
-                <el-button @click="saveEdit" type="primary" slot="reference">下一步</el-button>
+              <DYButton @click="cancel" class="mr10">取消</DYButton>
+              <dialogCompontent :isEdit="true" :workerProcessTagList="workerProcessTagList"
+                                :dialogFormTagsVisible.sync="dialogFormTagsVisible" @save="save">
+                <DYButton slot="reference" type="primary" @click="saveEdit">下一步</DYButton>
               </dialogCompontent>
 
             </div>
           </div>
-          <div class="user_list">
-            <nt-table :tableData="dialogTableConfigData" :columns="columns" :tableSet="tableSet" @selectValue="selectValue" @changeValue="changeValue" @changeSwitch="changeSwitch"></nt-table>
+          <div class="row-content">
+            <nt-table :tableData="dialogTableConfigData" :columns="columns" :tableSet="tableSet"
+                      @selectValue="selectValue" @changeValue="changeValue" @changeSwitch="changeSwitch"></nt-table>
           </div>
         </div>
-      </div>
+      </DYCard>
     </div>
-</div>
+  </div>
 </template>
+
 <script>
 import stepper from 'components/stepper/stepper.vue'
 import ntTable from 'components/ntTable/ntTable.vue'
@@ -49,7 +51,7 @@ export default {
   props: {
     detailData: {
       type: Object,
-      default: function () {
+      default () {
         return {
           meshCode: 'nxmc'
         }
@@ -71,13 +73,13 @@ export default {
           name: '功能扩展',
           routerTo: 'functionExtend',
           step: 3,
-          myCoutomRouter: true
+          myCustomRouter: true
         },
         {
           name: '消息队列',
           routerTo: 'functionExtend',
           step: 4,
-          myCoutomRouter: true
+          myCustomRouter: true
         },
         {
           name: '批量编辑',
@@ -120,21 +122,20 @@ export default {
       dialogTableConfigData: [],
       serviceDetail: {},
       queue_list: [],
-      messageTags: []
+      messageTags: [],
+      messageList: []
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     saveEdit () {
-      this.getEnableList()
-      // 如果 后端返回为空， 就初始化为 0
+      let enableTagList = this.getEnableList().filter(item => item.enable)
 
       // 过滤重复的tag_name
-      this.queue_list = arrUnique(this.queue_list, 'priority')
+      enableTagList = arrUnique(enableTagList, 'priority')
 
-      // 过滤出启用的条目
-      this.workerProcessTagList = this.queue_list.filter(item => item.enable).map(item => {
+      // 处理数据
+      this.workerProcessTagList = enableTagList.map(item => {
         // 通过value 查找对应的标签 id 和 name
         const priorityItem = this.messageTags.find(v => v.code === item.priority) || {}
 
@@ -158,20 +159,17 @@ export default {
       this.dialogFormTagsVisible = true
     },
     getEnableList () {
-      // let _copy = []
-      // _copy = JSON.parse(JSON.stringify(this.dialogTableConfigData))
-      // let arr = _copy.filter(item => item.enable)
-      // this.workerProcessTagList = this.getEditData(arr, this.messageTags)
-      const list = []
-      this.dialogTableConfigData.map((item) => {
+      this.queue_list = this.dialogTableConfigData.map((item) => {
         let _obj = {}
         _obj.code = item.code
         _obj.enable = item.enable
         _obj.priority = item.priority
         _obj.priority_num = Number(item.priority_num)
-        list.push(_obj)
+
+        return _obj
       })
-      this.queue_list = list
+
+      return this.messageList.concat(this.queue_list)
     },
 
     cancel () {
@@ -187,11 +185,9 @@ export default {
           }
         }
       })
-      // this.$router.push({name: 'messageQueueList', params: {detailData: this.serviceDetail, showComponent: {name: '消息队列', code: 'messageQueueList'}}})
     },
 
     save (list) {
-      this.dialogFormTagsVisible = false
       let params = {
         mesh_code: this.serviceDetail.code,
         queue_list: this.queue_list,
@@ -200,18 +196,15 @@ export default {
       NXMC_MESSAGE_QUEUE_EDIT_POST(params).then(res => {
         window.sessionStorage.removeItem('messageQueueChooseList')
         window.sessionStorage.removeItem('serviceDetail')
-        // this.$message({
-        //   message: '编辑更改成功!',
-        //   type: 'success',
-        //   onClose: () => {
-        //     this.$router.push({name: 'messageQueueList', params: {detailData: this.serviceDetail, showComponent: {name: '消息队列', code: 'messageQueueList'}}})
-        //   }
-        // })
+
         bus.$emit('openMessage', {
-          message: '编辑更改成功！',
+          message: res.data.result,
           type: 'success',
           onClose: () => {
-            this.$router.push({name: 'messageQueueList', params: {detailData: this.serviceDetail, showComponent: {name: '消息队列', code: 'messageQueueList'}}})
+            this.$router.push({
+              name: 'messageQueueList',
+              params: {detailData: this.serviceDetail, showComponent: {name: '消息队列', code: 'messageQueueList'}}
+            })
           }
         })
       })
@@ -226,7 +219,7 @@ export default {
     async resourcesAllocation () {
       await NXMC_MESSAGE_PROCESS_TAG_RESOURCE({mesh_code: this.serviceDetail.code}).then(res => {
         if (res.code === 0) {
-          res.data.message_process_tag_resource.map((item) => {
+          res.data.message_process_tag_resource.forEach((item) => {
             item.process_num = item.worker_process_num
           })
           this.workerProcessTagList = res.data.message_process_tag_resource
@@ -271,6 +264,13 @@ export default {
 
     if (this.serviceDetail.standard && this.serviceDetail.code !== 'nxgw') this.fcExt = true
     if (this.serviceDetail.standard || (!this.serviceDetail.standard && !this.serviceDetail.component)) this.serGo = true
+
+    // 拿到上一级的全部启用标签
+    if (this.$route.params) {
+      const {messageList} = this.$route.params
+
+      this.messageList = messageList || []
+    }
   },
   created () {
   },
@@ -283,28 +283,15 @@ export default {
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
-.wrapper {
-  .app-list {
-    min-height: 744px;
-    .content {
-      width: 100%;
+  @import "~common/style/variable";
+
+  .wrapper {
+    .app-list {
       min-height: 744px;
-      padding: 20px;
-      background: #ffffff;
+
+      .content {
+        min-height: 744px;
+      }
     }
   }
-}
-.message_container {
-
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-
-  .user_list{
-    margin-top: 44px;
-  }
-}
 </style>

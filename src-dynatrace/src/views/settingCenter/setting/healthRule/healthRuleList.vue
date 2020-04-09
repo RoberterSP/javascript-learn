@@ -1,26 +1,40 @@
 <template>
-  <div class="role_container p10">
-    <h2 class="mb30">健康规则</h2>
+  <div class="role_container">
+    <DYHeader class="row-title" title="健康规则" type="small" no-gap />
     <!-- <div class="desc default-label">这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的说明这里写的</div> -->
-    <el-button v-if="isShowBtn" type="primary" @click="addRule" v-permission="'settingCenter_healthRule_add'">添加规则</el-button>
 
-    <div class="addPanel" v-else>
-      <addHealthRule @empowerHandle="empowerHandle" @addHandle="addHandle" @cancelContent="cancleHandle"></addHealthRule>
+    <div v-if="isShowBtn" class="row-action">
+      <DYButton type="primary" @click="addRule" v-permission="'settingCenter_healthRule_add'">
+        添加规则
+      </DYButton>
     </div>
 
-    <div class="user_list mt30">
-      <el-input class="search" suffix-icon="el-icon-search" v-model="select_name" placeholder="请输入健康规则名称" clearable @change="getRuleList()"></el-input>
-      <nt-table :tableData="ruleList" :columns="columns" :tableSet="ruleListTableSet" :componentsName="'addHealthRule'" @empowerHandle="empowerHandle" @deleteOne="deleteOne"  @changeSwitch="changeSwitch" @componentSaveContent="saveContent"></nt-table>
+    <div class="add-panel row-action" v-else>
+      <addHealthRule @empowerHandle="empowerHandle" @addHandle="addHandle"
+                     @cancelContent="cancleHandle"></addHealthRule>
     </div>
+
+    <div class="search row-action">
+      <search-bar
+        v-model.trim="select_name"
+        @search="getRuleList"
+        :placeholder="'请输入健康规则名称'"
+      />
+    </div>
+    <nt-table class="row-content" :tableData="ruleList" :columns="columns" :tableSet="ruleListTableSet" :componentsName="'addHealthRule'"
+              @empowerHandle="empowerHandle" @deleteOne="deleteOne" @changeSwitch="changeSwitch"
+              @componentSaveContent="saveContent"></nt-table>
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import {mapMutations} from 'vuex'
 import ntTable from 'components/ntTable/ntTable.vue'
+import searchBar from 'components/searchBar/searchBar.vue'
 import addHealthRule from './addHealthRule'
-import { GET_HEALTH_RULE_LIST, DELETE_HEALTH_RULE, GET_DEFAULT_HEALTH_RULE_LIST, UPDATE_HEALTH_RULE } from '@/api'
-import { PAGESIZE } from '@/common/util/common.js'
+import {DELETE_HEALTH_RULE, GET_DEFAULT_HEALTH_RULE_LIST, GET_HEALTH_RULE_LIST, UPDATE_HEALTH_RULE} from '@/api'
+import {PAGESIZE} from '@/common/util/common.js'
 import bus from '@/assets/eventBus.js'
+
 export default {
   data () {
     return {
@@ -54,15 +68,16 @@ export default {
         name: '启用/禁用', // 表头名
         code: 'state',
         type: 'switch',
-        disable: false
+        disable: false,
+        textAlign: 'right'
       },
       {
         name: '删除', // 表头名
         code: '',
         type: 'delete',
         disable: false,
-        textAlign: 'right',
-        width: 50
+        textAlign: 'center',
+        width: 60
       }],
       ruleList: [], // 角色列表
       page: 1, // 第几页
@@ -79,8 +94,7 @@ export default {
       select_name: ''
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     ...mapMutations(['SET_DEFAULT_HEALTH_RULE']),
     changeSwitch (code, row, val) {
@@ -151,7 +165,11 @@ export default {
           obj.name = '默认规则'
           obj.code = 'default'
           obj.type = 'default'
-          obj.state = true
+          obj.state = {
+            value: true,
+            disabled: true
+          }
+
           this.ruleList.push(obj)
           this.ruleListTableSet.paginationConfig.total = 1
           this.SET_DEFAULT_HEALTH_RULE(obj)
@@ -195,42 +213,47 @@ export default {
   },
   components: {
     ntTable,
-    addHealthRule
+    addHealthRule,
+    searchBar
   }
 }
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
-@import "~common/style/variable";
-.role_container {
-  position: relative;
-  .desc {
-    margin-top: 8px;
-    width: 50%;
-    line-height: 20px;
-  }
-  .empower_btn{
-    position: absolute;
-    right: 10px;
-    top: 5px;
-  }
+  @import "~common/style/variable";
 
-  .source_name{
-    display: flex;
-    align-items: center;
-    .name{
-      width: 68px;
+  .role_container {
+    position: relative;
+
+    .desc {
+      margin-top: 8px;
+      width: 50%;
+      line-height: 20px;
     }
-    .line{
-      flex: 1;
-      background-color: #E6E6E6;
-      height: 1px;
+
+    .empower_btn {
+      position: absolute;
+      right: 10px;
+      top: 5px;
+    }
+
+    .source_name {
+      display: flex;
+      align-items: center;
+
+      .name {
+        width: 68px;
+      }
+
+      .line {
+        flex: 1;
+        background-color: @gray-03;
+        height: 1px;
+      }
+    }
+
+    .search {
+      width: 80%;
     }
   }
-  .search {
-    width: 80%;
-    // margin: 32px 0 20px;
-    margin-bottom: 20px;
-  }
-}
 </style>
