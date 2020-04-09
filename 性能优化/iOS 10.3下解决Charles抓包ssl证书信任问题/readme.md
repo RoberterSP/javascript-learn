@@ -1,3 +1,5 @@
+```
+
 在公司里用Charles抓包竟然出现了一些问题,https的请求都会失败,提示错误信息为Failure SSLHandshake: Received fatal alert: unknown_ca 和You may need to configure your browser or application to trust the Charles Root Certificate. 然而之前任何问题都没有,并且相关设置都正确:Mac上安装了Charles的根证书,并且设置了始终信任,然后手机上也登录了http://chls.pro/ssl安装了描述文件,一切都按正常程序走的,但是错误始终无法解决
 
 相关环境
@@ -10,3 +12,5 @@ iPad Air2 iOS 10.3.3
 
 解决
 设置->通用->关于本机->证书信任设置-> 找到charles proxy custom root certificate然后信任该证书即可.
+
+```
