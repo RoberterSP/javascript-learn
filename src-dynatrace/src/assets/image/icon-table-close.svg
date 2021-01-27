@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="10px" viewBox="0 0 16 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>Icons/通用/arrow down</title>
+    <desc>Created with Sketch.</desc>
+    <g id="应用列表" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="接口过滤-add" transform="translate(-1843.000000, -975.000000)" fill="#00A1B2" fill-rule="nonzero">
+            <g id="Group-2" transform="translate(520.000000, 98.000000)">
+                <g id="P3" transform="translate(20.000000, 769.000000)">
+                    <g id="taline1" transform="translate(0.000000, 86.000000)">
+                        <g id="5" transform="translate(1299.000000, 0.000000)">
+                            <g id="icon/arrow-down-copy" transform="translate(2.000000, 17.000000)">
+                                <g id="Icons/通用/arrow-down">
+                                    <path d="M8.40944754,10.2325915 L14.5577966,16.3944073 L12.870478,18.086811 L6.14326051,11.344859 C6.10494636,11.3166667 6.06825122,11.2852687 6.03354327,11.250665 L5.7008303,10.9189518 C5.33400574,10.5532294 5.32468934,9.96463366 5.67353473,9.58759917 C5.68437614,9.57557827 5.6955751,9.56376529 5.70713161,9.55217396 L6.03884489,9.219461 C6.05347658,9.20478521 6.06846501,9.19068165 6.08378235,9.17715036 L12.8757766,2.4 L14.5681803,4.08731865 L8.40944754,10.2325915 Z" id="Combined-Shape" transform="translate(9.993405, 10.243405) rotate(-90.000000) translate(-9.993405, -10.243405) "></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

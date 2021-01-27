@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400px" height="400px" viewBox="0 0 400 400" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>Icons/通用/search</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="400" height="400"></rect>
+    </defs>
+    <g id="Icons/通用/search" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-3" opacity="0">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <rect stroke="#35F6FF" x="0.5" y="0.5" width="399" height="399"></rect>
+            <circle id="Oval" stroke="#35F6FF" mask="url(#mask-2)" cx="200" cy="200" r="199.5"></circle>
+            <g id="Group" mask="url(#mask-2)" stroke="#A35AD8">
+                <g transform="translate(59.000000, 59.000000)">
+                    <circle id="Oval" cx="141.4" cy="141.4" r="140.9"></circle>
+                    <rect id="Rectangle" transform="translate(141.400000, 141.400000) rotate(90.000000) translate(-141.400000, -141.400000) " x="0.5" y="0.5" width="281.8" height="281.8"></rect>
+                </g>
+            </g>
+            <g id="Group" mask="url(#mask-2)" stroke="#A35AD8">
+                <g transform="translate(100.000000, 100.000000)">
+                    <circle id="Oval" cx="100" cy="100" r="99.5"></circle>
+                    <path d="M0.5,0.5 L0.5,199.5 L199.5,199.5 L199.5,0.5 L0.5,0.5 Z" id="Rectangle" transform="translate(100.000000, 100.000000) rotate(90.000000) translate(-100.000000, -100.000000) "></path>
+                </g>
+            </g>
+            <rect id="Rectangle" stroke="#35F6FF" mask="url(#mask-2)" transform="translate(200.000000, 200.000000) rotate(90.000000) translate(-200.000000, -200.000000) " x="0.5" y="43.5" width="399" height="313"></rect>
+            <rect id="Rectangle" stroke="#35F6FF" mask="url(#mask-2)" x="0.5" y="43.5" width="399" height="313"></rect>
+            <rect id="Rectangle" stroke="#35F6FF" mask="url(#mask-2)" transform="translate(200.200000, 200.200000) rotate(90.000000) translate(-200.200000, -200.200000) " x="23.5" y="23.5" width="353.4" height="353.4"></rect>
+            <path d="M0,0 L400,400" id="Path" stroke="#35F6FF" mask="url(#mask-2)"></path>
+            <path d="M0,0 L400,400" id="Path" stroke="#35F6FF" mask="url(#mask-2)" transform="translate(200.000000, 200.000000) scale(-1, 1) translate(-200.000000, -200.000000) "></path>
+            <g id="Group-2" mask="url(#mask-2)" stroke="#35F6FF">
+                <g transform="translate(200.000000, 200.000000) rotate(45.000000) translate(-200.000000, -200.000000) " id="Path">
+                    <path d="M0,0 L400,400"></path>
+                    <path d="M0,0 L400,400" transform="translate(200.000000, 200.000000) scale(-1, 1) translate(-200.000000, -200.000000) "></path>
+                </g>
+            </g>
+        </g>
+        <path d="M381.732424,334.907625 L309.660301,262.835857 C352.661411,203.482657 347.210596,120.508904 293.913621,67.2122839 C265.448372,38.7466804 227.292668,23 186.71426,23 C146.135853,23 107.980149,38.7466804 79.5148999,67.2122839 C20.1617,126.565484 20.1617,222.25745 79.5148999,281.611005 C107.980149,310.076253 146.135853,325.822934 186.71426,325.822934 C218.813386,325.822934 249.701337,315.527068 275.138473,297.357685 L347.816006,368.824044 L381.732424,334.907625 Z M114.036728,247.089177 C74.064085,207.116534 74.064085,141.706755 114.036728,101.128347 C133.417285,81.7477904 159.460186,70.8461605 186.71426,70.8461605 C213.968335,70.8461605 240.011236,81.7477904 259.391793,101.128347 C299.364436,141.10099 299.364436,206.51077 259.391793,247.089177 C240.011236,266.469734 213.968335,277.371364 186.71426,277.371364 C159.460186,277.371364 133.417285,266.469734 114.036728,247.089177 Z" id="Shape" fill="#FFFFFF"></path>
+    </g>
+</svg>

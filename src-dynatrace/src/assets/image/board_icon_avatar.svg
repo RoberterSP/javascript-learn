@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400px" height="400px" viewBox="0 0 400 400" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>Icons/通用/personal</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Icons/通用/personal" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Oval" fill="#FFFFFF" cx="200" cy="126" r="68"></circle>
+        <path d="M269,364 L131,364 L131,299 L117,299 L117,364 L99,364 C76.90861,364 59,346.09139 59,324 L59,238 C59,222.536027 71.536027,210 87,210 L313,210 C328.463973,210 341,222.536027 341,238 L341,324 C341,346.09139 323.09139,364 301,364 L283,364 L283,299 L269,299 L269,364 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+    </g>
+</svg>

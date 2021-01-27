@@ -1,0 +1,33 @@
+@import "~common/style/variable";
+
+.add-user-container {
+  .el-form{
+    max-width: 400px;
+  }
+  .el-form-item.is-error {
+    margin-bottom: 37px;
+  }
+}
+.update_password_popover{
+  .el-form{
+    padding: 20px 4px;
+    max-width: 400px;
+    .el-form-item {
+      margin-bottom: 32px;
+      input.el-input__inner{
+        &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+          color:@gray-04;
+        }
+        &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+          color:@gray-04;
+        }
+        &::-moz-placeholder { /* Mozilla Firefox 19+ */
+          color:@gray-04;
+        }
+        &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+          color:@gray-04;
+        }
+      }
+    }
+  }
+}

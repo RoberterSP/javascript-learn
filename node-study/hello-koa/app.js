@@ -8,7 +8,7 @@ const router = require('koa-router')();
 const bodyParser = require('koa-bodyparser');
 const static = require('koa-static') // 设置项目根目录为静态资源根目录
 const path = require('path') // path 通道
-const test = require('./lib/test')
+const test = require('./lib/db/test')
 // 从KWT中获取 sign 的方法
 const {sign} = require('jsonwebtoken');
 
@@ -17,7 +17,7 @@ const staticPath = './'
 
 const jwt = require('koa-jwt')({secret})
 
-const User = require('./lib/test')
+const User = require('./lib/db/test')
 
 const JSON_TYPE = 'application/json'
 

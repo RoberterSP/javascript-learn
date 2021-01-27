@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>icon/add</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/add" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" x="0" y="0" width="20" height="20"></rect>
+        <g id="add" fill="#00A1B2" fill-rule="nonzero">
+            <path d="M10.0206646,8.32957103 L15.0451935,3.31238758 L16.7388571,4.99844641 L11.709286,10.0206646 L16.7264695,15.0451935 L15.0404106,16.7388571 L10.0181924,11.709286 L4.99366354,16.7264695 L3.3,15.0404106 L8.32957103,10.0181924 L3.31238758,4.99366354 L4.99844641,3.3 L10.0206646,8.32957103 Z" id="Combined-Shape" transform="translate(10.019429, 10.019429) rotate(-315.000000) translate(-10.019429, -10.019429) "></path>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>icon/通用/节点_2_open</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon/通用/节点_2_open" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(1.260000, 1.260000)" fill="#0980E2">
+            <path d="M7.56,15.12 C3.38472729,15.12 0,11.7352727 0,7.56 C0,3.38472729 3.38472729,0 7.56,0 C11.7352727,0 15.12,3.38472729 15.12,7.56 C15.12,11.7352727 11.7352727,15.12 7.56,15.12 Z M7.56,13.86 C11.0393939,13.86 13.86,11.0393939 13.86,7.56 C13.86,4.08060608 11.0393939,1.26 7.56,1.26 C4.08060608,1.26 1.26,4.08060608 1.26,7.56 C1.26,11.0393939 4.08060608,13.86 7.56,13.86 Z" id="Combined-Shape"></path>
+        </g>
+        <rect id="Rectangle" fill="#0980E2" x="8.19" y="5.04" width="1.26" height="7.56" rx="0.126"></rect>
+    </g>
+</svg>

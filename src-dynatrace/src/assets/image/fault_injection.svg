@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="60px" viewBox="0 0 100 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>img/服务详情/fault_injection</title>
+    <desc>Created with Sketch.</desc>
+    <g id="img/服务详情/fault_injection" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(68.000000, 19.000000)">
+            <path d="M24.8,5.97272727 L1.2,5.97272727 L1.2,29.948888 C1.2,31.5943567 6.44948515,33.5216153 13,33.5216153 C19.5505148,33.5216153 24.8,31.5943567 24.8,29.948888 L24.8,5.97272727 Z" id="Combined-Shape" stroke="#748CFF" stroke-width="2.4" fill="#FFFFFF"></path>
+            <path d="M12.5165605,15 L19,26 L6,26 L12.5165605,15 Z M11.7961783,23.4272926 L11.7961783,24.7492208 L13.2038217,24.7492208 L13.2038217,23.4272926 L11.7961783,23.4272926 Z M11.7961783,17.8090975 L11.7961783,22.0640541 L13.2038217,22.0640541 L13.2038217,17.8090975 L11.7961783,17.8090975 Z" id="Combined-Shape" fill="#748CFF"></path>
+            <ellipse id="Oval" stroke="#748CFF" stroke-width="2.4" fill="#FFFFFF" cx="13" cy="4.77272727" rx="11.8" ry="3.57272727"></ellipse>
+        </g>
+        <path d="M70,18.5568216 C66.3231944,19.7159503 64,21.4214581 64,23.3230196 L64,14 L70,14 L70,18.5568216 Z M8,33 L14,33 L14,50 L8,50 L8,33 Z M19,27 L25,27 L25,50 L19,50 L19,27 Z M30,14 L36,14 L36,50 L30,50 L30,14 Z M42,5 L48,5 L48,50 L42,50 L42,5 Z M53,27 L59,27 L59,50 L53,50 L53,27 Z" id="Combined-Shape" fill="#748CFF"></path>
+    </g>
+</svg>

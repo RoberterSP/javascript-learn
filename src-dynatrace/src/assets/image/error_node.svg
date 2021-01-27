@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="89px" height="92px" viewBox="0 0 89 92" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>img/服务详情/error_node</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="89" height="92"></rect>
+    </defs>
+    <g id="img/服务详情/error_node" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon/功能">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Mask"></g>
+            <g id="negative" opacity="0.2" mask="url(#mask-2)">
+                <g transform="translate(-30.000000, 25.000000)">
+                    <rect id="Rectangle" fill="none" x="0" y="0" width="82.8" height="82.8"></rect>
+                    <path d="M53.82,62.1 C53.82,55.2406234 48.2593766,49.68 41.4,49.68 C34.5406234,49.68 28.98,55.2406234 28.98,62.1 L24.84,62.1 C24.84,52.9541645 32.2541645,45.54 41.4,45.54 C50.5458355,45.54 57.96,52.9541645 57.96,62.1 L53.82,62.1 Z M20.7,28.98 L33.12,28.98 L33.12,35.19 L20.7,35.19 L20.7,28.98 Z M49.68,28.98 L62.1,28.98 L62.1,35.19 L49.68,35.19 L49.68,28.98 Z M41.4,78.66 C20.8218702,78.66 4.14,61.9781298 4.14,41.4 C4.14,20.8218702 20.8218702,4.14 41.4,4.14 C61.9781298,4.14 78.66,20.8218702 78.66,41.4 C78.66,61.9781298 61.9781298,78.66 41.4,78.66 Z M41.4,74.52 C59.6916709,74.52 74.52,59.6916709 74.52,41.4 C74.52,23.1083291 59.6916709,8.28 41.4,8.28 C23.1083291,8.28 8.28,23.1083291 8.28,41.4 C8.28,59.6916709 23.1083291,74.52 41.4,74.52 Z" id="Combined-Shape" fill="#FFFFFF" fill-rule="evenodd"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

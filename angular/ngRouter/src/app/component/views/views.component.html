@@ -1,0 +1,23 @@
+<div [title]='title'>{{msg}}</div>
+
+<div *ngIf="isShow">isShow</div>
+<div [innerHtml]="content" class="isRed"></div>
+<div>1+1 = {{1+1}}</div>
+
+<!-- <div>{{username.username}}</div> -->
+
+<div *ngFor="let item of cars; let index = index">
+  <div [ngClass]="{isRed: index%2 === 0}">{{item.name}}</div>
+  <div *ngFor="let key of item.data | keyvalue">
+    {{key.key}}---{{key.value}}
+  </div>
+</div>
+
+<div [ngSwitch]='ngSwitch'>
+  <div *ngSwitchCase="1" [ngClass]="{'isRed': isShow}">ngSwitchCase1</div>
+</div>
+
+<div>{{date | date:'yyyy-MM-dd HH:mm:ss'}}</div>
+<button (click)="run()">点击</button>
+<input type="text" (keydown)="keydown($event)">
+<img src="assets/images/star_brown.png" alt="">

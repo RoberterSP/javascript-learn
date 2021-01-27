@@ -1,0 +1,296 @@
+@import "~common/style/variable";
+
+.my-table {
+  .disableColor {
+    color: #E4E7ED !important;
+  }
+
+  .el-table {
+    table tbody tr {
+      td {
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent !important;
+      }
+
+      td:first-child {
+        border-left: 1px solid transparent;
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+      }
+
+      td:last-child {
+        border-right: 1px solid transparent;
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+      }
+
+      &.self-table__row:hover,
+      &.el-table__row:hover {
+        td {
+          border-top: 1px solid #7c8286;
+          border-bottom: 1px solid #7c8286 !important;
+          background-color: rgba(0, 0, 0, 0);
+        }
+
+        td:first-child {
+          border-left: 1px solid #7c8286;
+          border-top-left-radius: 3px;
+          border-bottom-left-radius: 3px;
+        }
+
+        td:last-child {
+          border-right: 1px solid #7c8286;
+          border-top-right-radius: 3px;
+          border-bottom-right-radius: 3px;
+        }
+      }
+    }
+
+    thead th {
+      white-space: nowrap;
+
+      .cell, .header-style {
+        white-space: nowrap;
+      }
+    }
+
+    .align-width-word {
+      .title {
+        position: relative;
+        right: 17px;
+      }
+    }
+
+    .header-style {
+      width: 100% !important;
+      display: flex !important;
+      padding-top: initial !important;
+      padding-bottom: initial !important;
+      padding-right: initial !important;
+
+      .checkDiv {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        height: 16px;
+
+        .checkImg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        line-height: 16px;
+        margin: 0 9px;
+        padding: initial !important;
+        cursor: pointer;
+
+        .alert-text {
+          margin-right: 10px;
+          line-height: 14px;
+        }
+
+        .img_icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .split {
+        border-bottom: 0.5px solid @gray-03;
+        -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        padding: initial !important;
+        margin-bottom: 2px;
+
+        &.align_right {
+          margin-right: 4px;
+        }
+      }
+
+      .column-icon {
+        // margin-right: 8px;
+        //width: 20px;
+        //height: 20px;
+        &.iconfont {
+          font-size: 18px;
+        }
+      }
+
+      .column-icon.iconfont.icon_arrowdown {
+        color: @turq-06;
+        cursor: pointer;
+        text-align: center;
+      }
+
+    }
+  }
+
+  .el-table td, .el-table th.is-leaf {
+    border-bottom: none !important;
+  }
+
+  .demo-table-expand {
+    font-size: 0;
+  }
+
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+
+  .el-table .first-row {
+    background: #ffffff;
+
+    .deleteText {
+      background: #ffffff;
+      height: 32px;
+    }
+  }
+
+  .el-table .second-row {
+    background: @gray-01;
+
+    .delete-background {
+      background: @gray-01;
+    }
+  }
+
+  .el-table .sort-caret.ascending {
+    top: -5px !important;
+  }
+
+  .el-table .sort-caret.descending {
+    bottom: -5px !important;
+  }
+
+  .el-table .caret-wrapper {
+    height: 15px !important;
+    width: 17px;
+    position: relative;
+
+    img.sort_icon {
+      width: 15px;
+      height: 15px;
+      position: absolute;
+      right: -3px;
+      top: 0;
+    }
+  }
+
+  .empty {
+    img {
+      width: 80px;
+      height: 83px;
+      margin-top: 29px;
+    }
+
+    .records {
+      width: 80px;
+      height: 83px;
+      //margin-top: 29px;
+      font-size: 80px;
+    }
+
+    span {
+      margin-left: 10px;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 26px;
+    }
+  }
+
+  .el-table::before {
+    height: 0 !important;
+  }
+
+  // 分页样式
+  .pagination {
+    // margin-top: 18px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .el-table__expand-column {
+    line-height: 17px;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding: initial !important;
+
+    .cell {
+      line-height: 16px;
+      margin-bottom: -1px;
+    }
+
+    .el-table__expand-icon {
+      font-size: 20px;
+      color: @turq-06;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .el-icon.el-icon-arrow-right {
+        font-size: 20px;
+        color: @turq-06;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: unset;
+        margin: 0;
+        padding: 0;
+      }
+
+      &.el-table__expand-icon--expanded {
+        transform: rotate(180deg);
+        // .el-icon-arrow-right:before {
+        //   background-image: url('~@/assets/image/icon-arrow-up.svg');
+        //   transition: backgroundImage 1 linear;
+        // }
+      }
+
+      .el-icon-arrow-right:before {
+        content: "\e6df";
+        // content: ' ';
+        // width: 17px;
+        // height: 17px;
+        // display: inline-block;
+        // background-image: url('~@/assets/image/icon-arrow-down.svg');
+        // background-position: center;
+        // background-repeat: no-repeat;
+      }
+    }
+  }
+
+  .el-table .cell, .el-table th div {
+    padding-right: initial !important;
+  }
+
+  // 动态组件的样式
+  .componentStyle {
+    padding: 16px 0 32px 11px;
+    border-top: 2px solid #191919;
+    border-bottom: 2px solid #191919;
+  }
+
+  .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell {
+    padding-left: initial !important;
+  }
+
+  .el-table__expanded-cell[class*=cell] {
+    padding: initial !important;
+  }
+}

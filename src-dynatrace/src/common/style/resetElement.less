@@ -1,0 +1,141 @@
+@import "~common/style/variable";
+
+// 表格第一列字重加大
+.el-table__row td:first-child .header-style .title,
+.el-table__row td:first-child .header-style .title a {
+  font-weight: 600;
+}
+// 图标 400
+.el-table__row td:first-child .header-style .title .iconfont {
+  font-weight: 400;
+}
+
+.el-select-dropdown .popper__arrow {
+  display: none !important;
+}
+
+.el-select-dropdown {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  // transform: translateY(-4px);
+}
+
+.el-select .el-input .el-select__caret {
+  color: @turq-06;
+}
+
+.el-form-item {
+  margin-bottom: 24px;
+}
+
+.el-form-item__label:before {
+  display: none;
+}
+.el-form--label-top .el-form-item__label {
+  line-height: 19px !important;
+}
+
+.el-form-item.is-error .el-input__inner, .el-form-item.is-error .el-input__inner:focus, .el-form-item.is-error .el-textarea__inner, .el-form-item.is-error .el-textarea__inner:focus, .el-message-box__input input.invalid, .el-message-box__input input.invalid:focus {
+  border-color: @gray-04 !important;
+}
+
+.el-form-item__error {
+  width: 100% !important;
+  color: @red-05 !important;
+  line-height: 33px !important;
+  height: 33px !important;
+  padding: 0 13px !important;
+  border: 1px solid @gray-04 !important;
+  border-top: 2px solid #DC172A !important;
+  top: 88% !important;
+  background: @gray-01;
+}
+.el-form-item.is-error {
+  margin-bottom: 37px;
+}
+
+.el-form-item.full-content .el-form-item__content{
+  width: 100%;
+}
+
+.el-tag {
+  margin-right: 10px;
+}
+
+// select 里面的 tags
+.el-tag--info {
+  display: inline-flex !important;
+  align-items: center  !important;
+  background: @gray-02  !important;
+  color: @default-font-color  !important;
+  padding: 5px 8px  !important;
+  border-radius: 3px  !important;
+  height: 22px !important;
+  font-size: 12px !important;
+  line-height: 22px !important;
+
+  .el-tag__close {
+    .fontFace();
+
+    background: none !important;
+    font-size: 16px !important;
+    color: @turq-06 !important;
+    top: 2px !important;
+
+    &:hover {
+      color: @turq-07 !important;
+    }
+
+    &:before {
+      content: "\e6d7" !important;
+    }
+  }
+}
+
+
+// icon 替换
+.fontFace() {
+  font-family: 'iconfont', serif !important;
+  src: url('../../assets/iconfont/iconfont.eot'),
+  url('../../assets/iconfont/iconfont.woff2') format('woff2'),
+  url('../../assets/iconfont/iconfont.woff') format('woff'),
+  url('../../assets/iconfont/iconfont.ttf') format('truetype');
+}
+
+.el-icon-arrow-up {
+  .fontFace();
+
+  &:before {
+    content: "\e662" !important;
+  }
+}
+
+.el-icon-circle-close {
+  .fontFace();
+
+  &:before {
+    content: "\e6d7" !important;
+  }
+}
+
+// checkbox
+.el-checkbox__input {
+  .el-checkbox__inner {
+    width: 16px;
+    height: 16px;
+    border-radius: 0;
+    border-width: 2px;
+  }
+
+  &.is-checked {
+    .el-checkbox__inner {
+      background: #fff;
+
+      &::after {
+        border-color: @turq-06;
+        border-width: 1.8px;
+        top: 0;
+      }
+    }
+  }
+}

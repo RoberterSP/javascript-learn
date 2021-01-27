@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400px" height="400px" viewBox="0 0 400 400" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53 (72520) - https://sketchapp.com -->
+    <title>Icons/通用/home</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="400" height="400"></rect>
+    </defs>
+    <g id="Icons/通用/home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-3" opacity="0">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <rect stroke="#35F6FF" x="0.5" y="0.5" width="399" height="399"></rect>
+            <circle id="Oval" stroke="#35F6FF" mask="url(#mask-2)" cx="200" cy="200" r="199.5"></circle>
+            <g id="Group" mask="url(#mask-2)" stroke="#A35AD8">
+                <g transform="translate(59.000000, 59.000000)">
+                    <circle id="Oval" cx="141.4" cy="141.4" r="140.9"></circle>
+                    <rect id="Rectangle" transform="translate(141.400000, 141.400000) rotate(90.000000) translate(-141.400000, -141.400000) " x="0.5" y="0.5" width="281.8" height="281.8"></rect>
+                </g>
+            </g>
+            <g id="Group" mask="url(#mask-2)" stroke="#A35AD8">
+                <g transform="translate(100.000000, 100.000000)">
+                    <circle id="Oval" cx="100" cy="100" r="99.5"></circle>
+                    <path d="M0.5,0.5 L0.5,199.5 L199.5,199.5 L199.5,0.5 L0.5,0.5 Z" id="Rectangle" transform="translate(100.000000, 100.000000) rotate(90.000000) translate(-100.000000, -100.000000) "></path>
+                </g>
+            </g>
+            <rect id="Rectangle" stroke="#35F6FF" mask="url(#mask-2)" x="0.5" y="43.5" width="399" height="313"></rect>
+            <rect id="Rectangle" stroke="#35F6FF" mask="url(#mask-2)" transform="translate(200.000000, 200.000000) rotate(90.000000) translate(-200.000000, -200.000000) " x="0.5" y="43.5" width="399" height="313"></rect>
+            <rect id="Rectangle" stroke="#35F6FF" mask="url(#mask-2)" transform="translate(200.200000, 200.200000) rotate(90.000000) translate(-200.200000, -200.200000) " x="23.5" y="23.5" width="353.4" height="353.4"></rect>
+            <path d="M0,0 L400,400" id="Path" stroke="#35F6FF" mask="url(#mask-2)"></path>
+            <path d="M0,0 L400,400" id="Path" stroke="#35F6FF" mask="url(#mask-2)" transform="translate(200.000000, 200.000000) scale(-1, 1) translate(-200.000000, -200.000000) "></path>
+            <g id="Group-2" mask="url(#mask-2)" stroke="#35F6FF">
+                <g transform="translate(200.000000, 200.000000) rotate(45.000000) translate(-200.000000, -200.000000) " id="Path">
+                    <path d="M0,0 L400,400"></path>
+                    <path d="M0,0 L400,400" transform="translate(200.000000, 200.000000) scale(-1, 1) translate(-200.000000, -200.000000) "></path>
+                </g>
+            </g>
+        </g>
+        <path d="M219.984879,283 L219.991816,332.048262 L295.928668,332.094376 C298.132626,332.095714 299.92025,333.879583 299.926224,336.083534 L299.969314,351.981765 C299.975302,354.190896 298.189302,355.986604 295.980171,355.992592 C295.975747,355.992604 295.971324,355.992609 295.9669,355.992606 L216.583753,355.944399 C216.391677,355.972751 216.195154,355.98745 215.995202,355.987479 C215.979498,355.987481 215.963795,355.98739 215.948092,355.987208 L212.031849,355.941635 L104.031716,355.876051 C101.827759,355.874712 100.040134,354.090843 100.03416,351.886893 L99.9910696,335.988661 C99.985082,333.779531 101.771083,331.983822 103.980213,331.977835 C103.984637,331.977823 103.98906,331.977818 103.993484,331.977821 L179.996528,332.023975 L179.989594,283 L59,283 C50.163444,283 43,275.836556 43,267 L43,59 C43,50.163444 50.163444,43 59,43 L341,43 C349.836556,43 357,50.163444 357,59 L357,267 C357,275.836556 349.836556,283 341,283 L219.984879,283 Z M81,71 C76.581722,71 73,74.581722 73,79 L73,247 C73,251.418278 76.581722,255 81,255 L319,255 C323.418278,255 327,251.418278 327,247 L327,79 C327,74.581722 323.418278,71 319,71 L81,71 Z M95,94 L237,94 L237,158 L95,158 L95,94 Z M252,94 L306,94 L306,158 L252,158 L252,94 Z M252,173 L306,173 L306,237 L252,237 L252,173 Z M95,173 L158,173 L158,237 L95,237 L95,173 Z M174,173 L237,173 L237,237 L174,237 L174,173 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+    </g>
+</svg>

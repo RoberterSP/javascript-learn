@@ -1,0 +1,214 @@
+@import "~common/style/variable";
+
+
+.cubic-bezier() {
+  transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.backGround {
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+  background-color: #242424;
+}
+
+.loginBox {
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+
+
+  .logo-img {
+    margin-top: 80px;
+    background: url("../../../static/img/logo.png") no-repeat;
+    background-size: cover;
+    height: 90px;
+    width: 310px;
+    .cubic-bezier;
+  }
+
+
+  .btns {
+    button {
+      width: 100%;
+      border: 1px solid #ffffff !important;
+    }
+  }
+
+  .errorMsg {
+    padding-top: 11px;
+    text-align: center;
+    color: #ffffff;
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .secondbtns {
+    display: flex;
+    width: 100%;
+
+    /deep/.dy-button-group {
+      flex: 1;
+      .dy-button {
+        flex: 1;
+      }
+    }
+  }
+
+  .el-input__inner:focus {
+    background-color: #E8F0FE;
+  }
+
+  /deep/ .el-form-item__label {
+    color: @gray-00;
+  }
+
+  .head {
+    width: 100%;
+    height: 124px !important;
+    // background-color: rgba(81,87,99,.6);
+    border-radius: 8px 8px 0 0;
+
+    img {
+      margin-top: 0px;
+      width: 350px;
+      height: 82px;
+    }
+  }
+
+  .item_body {
+    margin-top: 38px;
+    margin-bottom: 48px;
+    width: 310px;
+    .cubic-bezier;
+
+    .item {
+      width: 100%;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.80);
+      border: 1px solid #0980E2;
+      border-radius: 8px;
+      font-size: 20px;
+      color: #34495E;
+      margin-bottom: 24px;
+      padding-right: 15px;
+      position: relative;
+
+      input {
+        border: 0;
+        height: 80%;
+        width: 100%;
+        padding-left: 15px;
+        padding-right: 30px;
+        background-color: rgba(255, 255, 255, 0);
+        font-size: 20px;
+        color: #34495E;
+      }
+
+      input:-moz-placeholder {
+        font-size: 20px;
+        color: #34495E;
+      }
+
+      input::-moz-placeholde {
+        font-size: 20px;
+        color: #34495E;
+      }
+
+      input:-ms-input-placeholder {
+        font-size: 20px;
+        color: #34495E;
+      }
+
+      input::-webkit-input-placeholder {
+        font-size: 20px;
+        color: #34495E;
+      }
+
+      // 自动填充样式
+      input:-internal-autofill-selected {
+        background-color: rgb(255, 255, 255, 0) !important;
+        background-image: none !important;
+        color: #34495E !important;
+        font-size: 20px;
+      }
+
+      img {
+        margin-left: 12px;
+        margin-right: 10px;
+      }
+
+      .input_block {
+        width: 100%;
+        height: 100%;
+        position: relative;
+
+        input {
+          padding-right: 59px;
+        }
+      }
+
+      .input_delete {
+        position: absolute;
+        right: 27px;
+        margin-left: 0px;
+        margin-right: 0px;
+        cursor: pointer;
+      }
+
+      .psd_icon {
+        position: absolute;
+        right: 39px;
+        margin-left: 0px;
+        margin-right: 0px;
+        cursor: pointer;
+      }
+    }
+
+    .login_btn {
+      height: 60px;
+      background-color: #0980E2;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &.isClick {
+        color: rgba(255, 255, 255, 0.60);
+        background-color: rgba(9, 128, 226, 0.60);
+      }
+
+      span {
+        font-size: 20px;
+        color: #FFFFFF;
+        letter-spacing: 0.6px;
+      }
+    }
+  }
+}
+
+.logoBottom {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 80px;
+  flex-direction: column;
+
+  img {
+    width: 127px;
+  }
+
+  .text {
+    font-size: 12px;
+    color: @gray-06;
+    letter-spacing: 1px;
+    margin-top: 15px;
+
+    a {
+      color: @gray-06;
+    }
+
+    a:hover {
+      color: #7DC540;
+    }
+  }
+}
